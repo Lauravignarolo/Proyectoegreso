@@ -1,0 +1,9 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    background-color: aliceblue;
+}
+
+.HeaderInicio { background-color: aliceblue;}
