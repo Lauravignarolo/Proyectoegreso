@@ -1,0 +1,67 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+}
+
+body {
+    margin: 0;
+
+}
+main{
+    
+    font-family: Arial, sans-serif;
+}
+.HeaderInicio {
+    
+    display: flex;
+    background-color: var(--Azul);
+    height: 25vh;
+    margin: 0;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.HeaderInicio h1{
+    color: var(--DoradoClaro);
+    font-size: 5rem;
+    font-family: 'Bebas Neue', sans-serif;
+}
+.HeaderChico{
+    display: flex;
+    background-color: var(--Azul);
+    height: 20vh;
+    margin: 0;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 65px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-left: 30px;
+}
+.HeaderChico h1{
+    color: var(--DoradoClaro);
+    font-size: 5rem;
+    font-family: 'Bebas Neue', sans-serif;
+}
+.NavNavegacion{
+    display: flex;
+    background-color: var(--AzulOscuro);
+    height: 8vh;
+    margin: 0;
+    flex-direction: row-reverse;
+    padding: 5px;
+}
