@@ -8,20 +8,50 @@
     --AzulOscuro: #343576;
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
+    --Gris: #999999;
     --Blanco: #f8f8fa;
 }
 
 .SectionFormularioLogin { 
+    margin-top: 2%;
     background-color: var(--Blanco);
 }
 
 .Inputllenar { 
     background-color: var(--Blanco);
+    width: 100%;
+    padding: 12px;
+    font-size: 20px;
+    border: 1px solid var(--Gris);
+}
+.ButtonIngresar{
+    background-color: var(--Azul);
+    color: var(--Blanco);
+    width: 100%;
+    padding: 12px;
+    font-size: 20px;
+    border: none;
+
+}
+.AIngresar {
+    width: 100%;
 }
 
 fieldset{
+    display: flex;
+    flex-direction: column;
     border: none;
+    width: 40%;
+    gap: 20px;
+    align-items: center;
+
 }
 legend{
     color: var(--Azul);
+    display: flex;
+    text-align: center;
+}
+form {
+    display: flex;
+    justify-content: center;
 }
