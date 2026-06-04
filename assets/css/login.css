@@ -1,7 +1,27 @@
-.NavLogin { background-color: aliceblue;}
+* {
+    box-sizing: border-box;
+}
 
-.UlLogin { background-color: aliceblue;}
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Blanco: #f8f8fa;
+}
 
-.SectionFormularioLogin { background-color: aliceblue;}
+.SectionFormularioLogin { 
+    background-color: var(--Blanco);
+}
 
-.InputReyenar { background-color: aliceblue;}
+.Inputllenar { 
+    background-color: var(--Blanco);
+}
+
+fieldset{
+    border: none;
+}
+legend{
+    color: var(--Azul);
+}

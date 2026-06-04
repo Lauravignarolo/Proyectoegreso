@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/general.css">
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
 
 <body id="inicio">
@@ -17,6 +18,27 @@
         <h1> S.G.R.S.I </h1>
     </header>
     <main>
+        <Section class="SectionFormularioLogin">
+            <form>
+                <fieldset>
+                    <legend> INICIAR SESION </legend>
+
+                    <input class="Inputllenar" type="text" id="cedula" name="cedula" pattern="[1-9][0-9]{7}"
+                        title="Ingrese exactamente 8 dígitos sin puntos ni guiones" inputmode="numeric" maxlength="8"
+                        required placeholder="Usuario">
+
+                    <input class="Inputllenar" type="password" minlength="8" title="Ingrese mas de 8 caracteres"
+                        required placeholder="Contraseña">
+
+                    <a>
+                        <button type="submit">INGRESAR</button>
+                    </a>
+
+                </fieldset>
+                
+            </form>
+
+        </Section>
     </main>
     <a href="#inicio" class="ASubir">
         <img src="assets/img/circulo-de-flecha-hacia-arriba.png" alt="" width="35px">
