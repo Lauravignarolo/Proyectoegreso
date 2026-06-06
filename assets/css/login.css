@@ -21,7 +21,7 @@
     background-color: var(--Blanco);
     width: 100%;
     padding: 12px;
-    font-size: 20px;
+    font-size: 1.2rem;
     border: 1px solid var(--Gris);
 }
 .ButtonIngresar{
@@ -29,7 +29,7 @@
     color: var(--Blanco);
     width: 100%;
     padding: 12px;
-    font-size: 20px;
+    font-size: 1.2rem;
     border: none;
 
 }
@@ -50,6 +50,7 @@ legend{
     color: var(--Azul);
     display: flex;
     text-align: center;
+    margin-bottom: 3%;
 }
 form {
     display: flex;
