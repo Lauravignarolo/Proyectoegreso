@@ -9,14 +9,75 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/general.css">
+    <link rel="stylesheet" href="assets/css/formularios.css">
+    <link rel="stylesheet" href="assets/css/creartickets.css">
+
+
 </head>
 
 <body id="inicio">
-    <header class="HeaderChico" >
+    <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
     </header>
     <main>
+        <Section class="SectionFormularioTickets">
+            <form>
+                <fieldset>
+                    <legend> REGISTRAR ESTADO DEL EQUIPO </legend>
+
+                    <label for="">Nombre del Estudiante</label>
+                    <input class="Inputllenar" type="text" name="NombreEstudiante" required
+                        placeholder="Ingresar Nombre">
+
+                    <label for="">Hora de Entrada</label>
+                    <input class="Inputllenar" type="text" required placeholder="Ingresar Hora">
+
+
+                    <label for="">Hora de Salida</label>
+                    <input class="Inputllenar" type="text" required placeholder="Ingresar Hora">
+
+                    <label for="color">Tipo de salon</label>
+                    <select id="salon" name="salon">
+                        <option disabled selected>Seleccione un tipo de salon</option>
+                        <option value="Taller">Taller</option>
+                        <option value="Laboratorio">Laboratorio</option>
+                    </select>
+
+                    <label for="">Numero del Salon</label>
+                    <input class="Inputllenar" type="number" required placeholder="Ingresar Numero">
+
+
+                    <label for="">Numero de Equipo</label>
+                    <input class="Inputllenar" type="number" required placeholder="Ingresar Numero">
+
+
+                    <label for="">Asignatura</label>
+                    <input class="Inputllenar" type="text" required placeholder="Ingresar Asignatura">
+
+
+                    <label for="">Grupo</label>
+                    <input class="Inputllenar" type="text" required placeholder="Ingresar Grupo">
+
+
+                    <label for="">Turno</label>
+                    <select id="turno" name="turno">
+                        <option disabled selected>Seleccione un turno</option>
+                        <option value="M">Matutino</option>
+                        <option value="V">Vespertino</option>
+                        <option value="N">Nocturno</option>
+                    </select>
+
+                    <label for="">Estado del Equipo</label>
+                    <input class="Inputllenar" type="text" name="cedula" required placeholder="Ingresar Estado del Equipo">
+
+                    <a href="confirmacionticket.html" class="AEnviar">
+                        <button class="ButtonEnviar" type="submit">Enviar</button>
+                    </a>
+
+                </fieldset>
+            </form>
+        </section>
     </main>
     <a href="#inicio" class="ASubir">
         <img src="assets/img/circulo-de-flecha-hacia-arriba.png" alt="" width="35px">

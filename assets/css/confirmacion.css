@@ -1,0 +1,23 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --Blanco: #f8f8fa;
+    --GrisOscuro: #757575;
+
+}
+.SectionTick{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--Azul);
+    flex-direction: column;
+    margin-top: 2%;
+}

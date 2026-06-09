@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
 }
@@ -12,22 +13,7 @@
     --Blanco: #f8f8fa;
 }
 
-.SectionFormularioLogin { 
+.SectionFormularioTickets { 
     margin-top: 2%;
     background-color: var(--Blanco);
 }
-
-
-.ButtonIngresar{
-    background-color: var(--Azul);
-    color: var(--Blanco);
-    width: 100%;
-    padding: 12px;
-    font-size: 1.2rem;
-    border: none;
-
-}
-.AIngresar {
-    width: 100%;
-}
-
