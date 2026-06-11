@@ -12,17 +12,6 @@
     --Blanco: #f8f8fa;
 }
 
-.SectionBotones{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 5%;
-}
-.ABotones{
-    display: flex;
-    width: 100%;
-    text-decoration: none;
-}
 .ButtonSolicitar{
     background-color: var(--Blanco);
     color: var(--Azul);
@@ -33,7 +22,7 @@
     border-radius: 10px;
     margin-bottom: 3%;
 }
-.ButtonRegistrar{
+.ButtonRegistrarEquipo{
     background-color: var(--Blanco);
     color: var(--Azul);
     width: 100%;

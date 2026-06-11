@@ -30,4 +30,29 @@
 .AIngresar {
     width: 100%;
 }
+.user{
+    text-indent: 30px;
+}
+.password{
+    text-indent: 30px;
+}
 
+.LabelIconoUser{
+    z-index: 1;
+    position: absolute;
+    top: 40%;
+    left: 31%;
+}
+.LabelIconoPassword{
+    z-index: 1;
+    position: absolute;
+    top: 53%;
+    left: 31%;
+}
+.LabelCerradoIcon{
+    z-index: 1;
+    position: absolute;
+    top: 52%;
+    right: 31%;
+    font-size: 2rem;
+}

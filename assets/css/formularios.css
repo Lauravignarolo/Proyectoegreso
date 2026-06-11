@@ -52,6 +52,7 @@ legend {
     display: flex;
     text-align: center;
     margin-bottom: 3%;
+    justify-content: center;
 }
 
 form {

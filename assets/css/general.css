@@ -47,6 +47,9 @@ main{
     text-decoration: none;
     color: var(--Blanco);
 }
+.HeaderInicio a:hover{
+    color: var(--AzulClaro);
+}
 .HeaderInicio h1{
     color: var(--DoradoClaro);
     font-size: 5rem;
@@ -77,6 +80,10 @@ main{
     text-decoration: none;
     color: var(--Blanco);
 
+}
+
+.HeaderChico a:hover{
+    color: var(--AzulClaro);
 }
 .HeaderChico h1{
     color: var(--DoradoClaro);
@@ -116,5 +123,22 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-decoration: none;
+    color: var(--Negro);
+}
+
+.ASubir:hover{
+    color: var(--AzulClaro);
+}
+
+.SectionBotones{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5%;
+}
+.ABotones{
+    display: flex;
+    width: 100%;
     text-decoration: none;
 }
