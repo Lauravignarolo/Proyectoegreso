@@ -19,10 +19,11 @@
     <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
+        <a href="docente.html">Volver</a>
     </header>
     <main>
         <Section class="SectionFormularioTickets">
-            <form>
+            <form action="confirmacionticket.html">
                 <fieldset>
                     <legend> REGISTRAR ESTADO DEL EQUIPO </legend>
 
@@ -31,11 +32,11 @@
                         placeholder="Ingresar Nombre">
 
                     <label for="">Hora de Entrada</label>
-                    <input class="Inputllenar" type="text" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" required placeholder="Ingresar Hora">
 
 
                     <label for="">Hora de Salida</label>
-                    <input class="Inputllenar" type="text" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" required placeholder="Ingresar Hora">
 
                     <label for="color">Tipo de salon</label>
                     <select id="salon" name="salon">
@@ -69,7 +70,7 @@
                     </select>
 
                     <label for="">Estado del Equipo</label>
-                    <input class="Inputllenar" type="text" name="cedula" required placeholder="Ingresar Estado del Equipo">
+                    <input class="Inputllenar" type="text"required placeholder="Ingresar Estado del Equipo">
 
                     <a href="confirmacionticket.html" class="AEnviar">
                         <button class="ButtonEnviar" type="submit">Enviar</button>

@@ -9,14 +9,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/general.css">
+        <link rel="stylesheet" href="assets/css/formularios.css">
+            <link rel="stylesheet" href="assets/css/solicitar.css">
+
+
 </head>
 
 <body id="inicio">
     <header class="HeaderChico" >
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
+        <a href="docente.html">Volver</a>
     </header>
     <main>
+        <Section class="SectionFormularioSolicitud">
+            <form action="confirmacionsoli.html">
+                <fieldset>
+                    <legend> REGISTRAR SOLICITUD </legend>
+
+                    <label for="">Fecha Solicitada</label>
+                    <input class="Inputllenar" type="date" name="NombreEstudiante" required
+                        placeholder="Ingresar Nombre">
+
+                    <label for="">Descripcion</label>
+                    <input class="Inputllenar" type="text" required placeholder="Ingresar Hora">
+
+                    <a href="confirmacionsoli.html" class="AEnviar">
+                        <button class="ButtonEnviar" type="submit">Enviar</button>
+                    </a>
+
+                </fieldset>
+            </form>
+        </section>
     </main>
     <a href="#inicio" class="ASubir">
         <img src="assets/img/circulo-de-flecha-hacia-arriba.png" alt="" width="35px">
