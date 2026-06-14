@@ -9,10 +9,11 @@
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
     --Gris: #999999;
-    --Blanco: #f8f8fa;
     --GrisOscuro: #757575;
-
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
 }
+
 .SectionTick{
     display: flex;
     justify-content: center;

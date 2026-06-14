@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
+}
+.SectionInventario{
+    display: flex;
+    justify-content: center;
+    margin-top: 2%;
+    
+}
+.TableInventario {
+    width: 60%;
+}
+.TableInventario tr,.TableInventario th,.TableInventario td{
+    border: 1px solid var(--Gris);
+    padding: 5px 15px 5px 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+.TableInventario thead{
+    background-color: var(--Azul);
+    color: var(--Blanco);
+}
+
+
+@media (max-width: 576px) {
+    
+.TableInventario {
+    width: 20%;
+}
+
+.TableInventario, tr, th, td{
+    font-size: 1.1rem;
+}
+
+}

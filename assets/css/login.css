@@ -9,8 +9,11 @@
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
     --Gris: #999999;
+    --GrisOscuro: #757575;
     --Blanco: #f8f8fa;
+    --Negro: #101010;
 }
+
 
 .SectionFormularioLogin { 
     margin-top: 2%;
@@ -55,4 +58,28 @@
     top: 52%;
     right: 31%;
     font-size: 2rem;
+}
+
+@media (max-width: 576px) {
+    
+.LabelIconoUser{
+    z-index: 1;
+    position: absolute;
+    top: 36%;
+    left: 22%;
+}
+.LabelIconoPassword{
+    z-index: 1;
+    position: absolute;
+    top: 48%;
+    left: 23%;
+}
+.LabelCerradoIcon{
+    z-index: 1;
+    position: absolute;
+    top: 47%;
+    right: 23%;
+    font-size: 2rem;
+}
+
 }

@@ -8,7 +8,10 @@
     --AzulOscuro: #343576;
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
     --Blanco: #f8f8fa;
+    --Negro: #101010;
 }
 
 .SectionImagen img{ 
@@ -41,4 +44,13 @@
 .SectionBienvenida h2{
     text-align: center;
     color: var(--DoradoClaro);
+}
+
+@media (max-width: 576px) {
+    .SectionImagen{
+    width: 550px;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
 }

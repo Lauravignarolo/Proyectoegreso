@@ -9,10 +9,11 @@
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
     --Gris: #999999;
-    --Blanco: #f8f8fa;
     --GrisOscuro: #757575;
-
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
 }
+
 
 .Inputllenar {
     background-color: var(--Blanco);
@@ -77,4 +78,17 @@ form {
 
 label {
     color: var(--Azul);
+}
+
+@media (max-width: 576px) {
+    fieldset {
+    display: flex;
+    display: inline;
+    border: none;
+    width: 60%;
+    align-items: center;
+
+}
+
+
 }

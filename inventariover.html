@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/inventario.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/css/general.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 </head>
@@ -16,9 +18,57 @@
     <header class="HeaderChico" >
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="inventario.html">Volver</a>
+        <a href="direccion.html">Volver</a>
     </header>
+    
+    <nav class="NavBuscar">
+        <form class="FormBuscar">
+            <fieldset>
+    <input type="search" placeholder="Buscar...">
+    <button type="submit"><i class="bi bi-search"></i></button>
+    </fieldset>
+</form>
+    </nav>
     <main>
+        <section class="SectionInventario">
+            <table class="TableInventario">
+    <thead>
+        <tr>
+            <th>Periférico</th>
+            <th>Marca</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Mouse</td>
+            <td>Logitech</td>
+            <td>15</td>
+        </tr>
+        <tr>
+            <td>Teclado</td>
+            <td>Redragon</td>
+            <td>10</td>
+        </tr>
+        <tr>
+            <td>Auriculares</td>
+            <td>HyperX</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>Monitor</td>
+            <td>Samsung</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>Webcam</td>
+            <td>Genius</td>
+            <td>12</td>
+        </tr>
+    </tbody>
+</table>
+        </section>
     </main>
     <a href="#inicio" class="ASubir">
         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">

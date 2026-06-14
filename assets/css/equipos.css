@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
+}
+.SectionEquipos{
+    display: flex;
+    justify-content: center;
+    margin-top: 2%;
+    
+}
+.TableEquipos {
+    width: 60%;
+}
+.TableEquipos tr,.TableEquipos th,.TableEquipos td{
+    border: 1px solid var(--Gris);
+    padding: 5px 15px 5px 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+.TableEquipos thead{
+    background-color: var(--Azul);
+    color: var(--Blanco);
+}
+
+
+@media (max-width: 576px) {
+    
+.TableEquipos {
+    width: 20%;
+}
+
+.TableEquipos, tr, th, td{
+    font-size: 1.1rem;
+}
+
+}

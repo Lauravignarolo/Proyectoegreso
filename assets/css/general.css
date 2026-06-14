@@ -8,6 +8,8 @@
     --AzulOscuro: #343576;
     --DoradoClaro: #DFD398;
     --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
     --Blanco: #f8f8fa;
     --Negro: #101010;
 }
@@ -105,6 +107,23 @@ main{
 .NavNavegacion a:hover{
     color: var(--Blanco);
 }
+.FormBuscar{
+    display: flex;
+    justify-content: right;
+    margin: 2% 2% 2% auto;
+    font-size: 1.2rem;
+}
+.FormBuscar input{
+    border: 1px solid var(--Gris);
+    border-radius: 20px;
+    padding: 3px;
+    text-indent: 8px;
+}
+.FormBuscar button{
+    border: none;
+    background-color: var(--Blanco);
+    border-radius: 20px;
+}
 footer {
     display: flex;
     justify-content: center;
@@ -141,4 +160,71 @@ footer {
     display: flex;
     width: 100%;
     text-decoration: none;
+}
+
+
+.ButtonEquipos{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 5%;
+
+}
+.ButtonInventario{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 5%;
+
+}
+.ButtonTickets{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 5%;
+
+}
+.ButtonSolicitudes{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 5%;
+
+}
+
+@media (max-width: 576px) {
+    .HeaderChico{
+        display: flex;
+        padding-right: 5%;
+    }
+    .HeaderChico img{
+        display: none;
+    }
+    .HeaderInicio{
+        display: flex;
+        padding-right: 5%;
+    }
+    .HeaderInicio img{
+        display: none;
+    }
+    .SectionImagen img{
+        width: 80%;
+        height: 80%;
+    }
 }
