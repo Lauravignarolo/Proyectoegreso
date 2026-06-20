@@ -32,7 +32,6 @@ function CerrarConfirmar(){
 
 }
 
-
 function LimpiarForm(){
     FormCrearTickets.reset();
 }
