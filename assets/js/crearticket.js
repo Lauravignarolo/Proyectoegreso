@@ -15,6 +15,24 @@ const EntradaGrupo = document.getElementById("Grupo");
 const EntradaTurno = document.getElementById("Turno");
 const EntradaEstadoDelEquipo = document.getElementById("EstadoDelEquipo");
 
+//Dialog de confirmacion
+
+const ButtonCerrarConfirmacion = document.getElementById("ButtonCerrarConfirmacion");
+const DialogConfirmacion = document.querySelector(".DialogConfirmacion");
+
+//Confirmar
+function Confirmar(){
+    
+    DialogConfirmacion.showModal();
+
+}
+function CerrarConfirmar(){
+    
+    DialogConfirmacion.close();
+
+}
+
+
 function LimpiarForm(){
     FormCrearTickets.reset();
 }
@@ -81,9 +99,12 @@ function CrearTicket(eventoForm){
 
     LimpiarForm();
 
+    Confirmar();
+
 }
 
 FormCrearTickets.addEventListener("submit", CrearTicket);
-/*
-ButtonEnviar
-*/
+
+// Aviso de confirmacion
+ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
+DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
