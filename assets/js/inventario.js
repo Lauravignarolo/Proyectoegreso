@@ -33,6 +33,7 @@ function RecuperarDatosItemInventario(filaItemInventario){
     return ItemInventario;
 }
 
+
 function ActualizarItemInventario(filaItemInventario, ItemInventario){
     filaItemInventario.cells[0].textContent = ItemInventario.componente;
     filaItemInventario.cells[1].textContent = ItemInventario.marca;
