@@ -18,6 +18,52 @@ const EntradaUrgencia = document.getElementById("Urgencia");
 //Auxiliar para guardar datos vinculados a la modificacion de un equipo
 let EquiposEnEdicion = null;
 
+
+//LocalStorage
+
+function GuardarEquiposLocal() {
+
+    const filas = TbodyEquipos.querySelectorAll("tr");
+
+    const Equipos = [];
+
+    filas.forEach(fila => {
+
+        const Equipo = {
+            pc: fila.cells[0].textContent,
+            salon: fila.cells[1].textContent,
+            estado: fila.cells[2].textContent,
+            urgencia: fila.cells[3].textContent
+        };
+
+        Equipos.push(Equipo);
+
+    });
+
+    localStorage.setItem("equipos", JSON.stringify(Equipos));
+}
+
+function CargarEquiposLocal() {
+
+    const EquiposGuardados = localStorage.getItem("equipos");
+
+    if (EquiposGuardados === null) {
+        return [];
+    }
+
+    return JSON.parse(EquiposGuardados);
+}
+
+function CargarTablaEquipos() {
+
+    const Equipos = CargarEquiposLocal();
+
+    Equipos.forEach(Equipo => {
+        AgregarFilaItemEquipos(Equipo);
+    });
+
+}
+
 //Gestion del estado del formulario
 
 function RecuperarDatosItemEquipos(filaItemEquipos){
@@ -73,12 +119,15 @@ function EliminarItemEquipos(EventoEliminarIteam) {
     const filaItemEquipos = botonPresionado.closest('tr');
 
     filaItemEquipos.remove();
+
+    GuardarEquiposLocal();
 }
 
 //Limpia todos los campos del formulario
 function limpiarEstadoGestionarEquipos() {
     EquiposEnEdicion = null;
     EntradaPc.readOnly = false;
+    EntradaSalon.readOnly = false;
     FormGestionarEquipos.reset();
 }
 
@@ -188,9 +237,12 @@ function IngresarItemEquipos(eventoForm){
         ActualizarItemEquipos(EquiposEnEdicion, ItemEquipos);
     }
 
+    GuardarEquiposLocal();
+
     CerrarGestionarEquipos();
 
 }
+
 
 
 //EVENTOS BOTONES MODAL
@@ -199,3 +251,5 @@ FormGestionarEquipos.addEventListener("submit", IngresarItemEquipos);
 ButtonAgregar.addEventListener("click", AbrirAgregarEquipos);
 ButtonCerrarGestionarEquipos.addEventListener("click", CerrarGestionarEquipos);
 DialogGestionarEquipos.addEventListener("cancel", limpiarEstadoGestionarEquipos);
+
+CargarTablaEquipos();

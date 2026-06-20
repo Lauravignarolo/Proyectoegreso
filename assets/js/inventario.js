@@ -17,6 +17,52 @@ const EntradaCantidad = document.getElementById("Cantidad");
 //Auxiliar para guardar datos vinculados a la modificacion de un componente
 let InventarioEnEdicion = null;
 
+
+//LocalStorage
+
+function GuardarInventarioLocal() {
+
+    const filas = TbodyInventario.querySelectorAll("tr");
+
+    const Inventario = [];
+
+    filas.forEach(fila => {
+
+        const ItemInventario = {
+            componente: fila.cells[0].textContent,
+            marca: fila.cells[1].textContent,
+            cantidad: fila.cells[2].textContent
+        };
+
+        Inventario.push(ItemInventario);
+
+    });
+
+    localStorage.setItem("inventario", JSON.stringify(Inventario));
+}
+
+function CargarInventarioLocal() {
+
+    const InventarioGuardado = localStorage.getItem("inventario");
+
+    if (InventarioGuardado === null) {
+        return [];
+    }
+
+    return JSON.parse(InventarioGuardado);
+}
+
+function CargarTablaInventario() {
+
+    const Inventario = CargarInventarioLocal();
+
+    Inventario.forEach(ItemInventario => {
+
+        AgregarFilaItemInventario(ItemInventario);
+
+    });
+}
+
 //Gestion del estado del formulario
 
 function RecuperarDatosItemInventario(filaItemInventario){
@@ -67,8 +113,11 @@ function EliminarItemInventario(EventoEliminarIteam) {
     const botonPresionado = EventoEliminarIteam.currentTarget;
 
     const filaItemInventario = botonPresionado.closest('tr');
+    
 
     filaItemInventario.remove();
+
+    GuardarInventarioLocal();
 }
 //
 //Limpia todos los campos del formulario
@@ -180,6 +229,8 @@ function IngresarItemInventario(eventoForm){
         ActualizarItemInventario(InventarioEnEdicion, ItemInventario);
     }
 
+    GuardarInventarioLocal();
+
     CerrarGestionarInventario();
 
 }
@@ -192,3 +243,5 @@ FormGestionarInventario.addEventListener("submit", IngresarItemInventario);
 ButtonAgregar.addEventListener("click", AbrirAgregarInventario);
 ButtonCerrarGestionarInventario.addEventListener("click", CerrarGestionarInventario);
 DialogGestionarInventario.addEventListener("cancel", limpiarEstadoGestionarInventario);
+
+CargarTablaInventario();
