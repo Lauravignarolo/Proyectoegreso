@@ -31,7 +31,7 @@
                 <fieldset>
                     <legend> INICIAR SESION </legend>
 
-
+                    <div>
                     <label class="LabelIconoUser"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
                             fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                             <path
@@ -40,6 +40,9 @@
                     <input class="Inputllenar user" type="text" id="cedula" pattern="[1-9][0-9]{7}"
                         title="Ingrese exactamente 8 dígitos sin puntos ni guiones" inputmode="numeric" maxlength="8"
                         required placeholder="Usuario">
+
+                    </div>
+                    <div>
 
                     <label class="LabelIconoPassword"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                             fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
@@ -52,6 +55,9 @@
                     <label class="LabelCerradoIcon">
                         <i id="ojo" class="bi bi-eye-slash"></i>
                     </label>
+
+                    </div>
+
                     <a class="AIngresar">
                         <button onclick="iniciarSesion()" type="button" class="ButtonIngresar">INGRESAR</button>
                     </a>
