@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/general.css">
     <link rel="stylesheet" href="assets/css/formularios.css">
-    <link rel="stylesheet" href="assets/css/creartickets.css">
+    <link rel="stylesheet" href="assets/css/crearregistrodiario.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 
 
@@ -23,14 +23,10 @@
         <a href="docente.html">Volver</a>
     </header>
     <main>
-        <Section class="SectionFormularioTickets">
-            <form action="confirmacionticket.html" class="FormCrearTickets" id="FormCrearTickets">
+        <Section class="SectionFormularioRegistroDiario">
+            <form class="FormCrearRegistroDiario" id="FormCrearRegistroDiario">
                 <fieldset>
-                    <legend> REGISTRAR ESTADO DEL EQUIPO </legend>
-
-                    <label>Nombre del Estudiante</label>
-                    <input class="Inputllenar" type="text" id="NombreEstudiante" required
-                        placeholder="Ingresar Nombre">
+                    <legend> REGISTRO DIARIO </legend>
 
                     <label>Hora de Entrada</label>
                     <input class="Inputllenar" type="time" id="HoraEntrada" required placeholder="Ingresar Hora">
@@ -50,10 +46,6 @@
                     <input class="Inputllenar" type="number" id="NumeroDelSalon" required placeholder="Ingresar Numero">
 
 
-                    <label>Numero de Equipo</label>
-                    <input class="Inputllenar" type="number" id="NumeroDeEquipo" required placeholder="Ingresar Numero">
-
-
                     <label>Asignatura</label>
                     <input class="Inputllenar" type="text" id="Asignatura" required placeholder="Ingresar Asignatura">
 
@@ -70,12 +62,8 @@
                         <option value="N">Nocturno</option>
                     </select>
 
-                    <label>Estado del Equipo</label>
-                    <input class="Inputllenar" type="text" id="EstadoDelEquipo" required placeholder="Ingresar Estado del Equipo">
-
-                    <a href="confirmacionticket.html" class="AEnviar" id="AEnviar">
+                
                         <button class="ButtonEnviar" id="ButtonEnviar" type="submit">Enviar</button>
-                    </a>
 
                 </fieldset>
             </form>

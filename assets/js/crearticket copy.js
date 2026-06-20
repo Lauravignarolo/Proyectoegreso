@@ -1,5 +1,4 @@
 
-
 //Tomar datos del formulario gestionar Inventario
 const FormCrearTickets = document.getElementById("FormCrearTickets");
 
