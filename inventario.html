@@ -33,41 +33,44 @@
             <table class="TableInventario">
     <thead>
         <tr>
-            <th>Periférico</th>
+            <th>Componente</th>
             <th>Marca</th>
             <th>Stock</th>
+            <th>Accion</th>
         </tr>
     </thead>
 
-    <tbody>
-        <tr>
-            <td>Mouse</td>
-            <td>Logitech</td>
-            <td>15</td>
-        </tr>
-        <tr>
-            <td>Teclado</td>
-            <td>Redragon</td>
-            <td>10</td>
-        </tr>
-        <tr>
-            <td>Auriculares</td>
-            <td>HyperX</td>
-            <td>8</td>
-        </tr>
-        <tr>
-            <td>Monitor</td>
-            <td>Samsung</td>
-            <td>5</td>
-        </tr>
-        <tr>
-            <td>Webcam</td>
-            <td>Genius</td>
-            <td>12</td>
-        </tr>
+    <tbody class="TbodyInventario" id="TbodyInventario">
+        
     </tbody>
 </table>
+<button class="ButtonAgregarComponente" id="ButtonAgregarComponente">Agregar</button>
+
         </section>
+        <dialog class="DialogGestionarInventario">
+            <button class="ButtonCerrarGestionarInventario" id="ButtonCerrarGestionarInventario" type="button">
+
+            </button>
+            <form id="FormGestionarInventario">
+                <fieldset>
+                    <legend> REGISTRAR NUEVO COMPONENTE </legend>
+
+                    <label for="">Componente</label>
+                    <input class="Inputllenar" id="Componente" type="text" required placeholder="Ingresar Componente">
+
+
+                    <label for="">Marca</label>
+                    <input class="Inputllenar" id="Marca" type="text" required placeholder="Ingresar Marca">
+
+
+                    <label for="">Cantidad</label>
+                    <input class="Inputllenar" id="Cantidad" type="number" required  placeholder="Ingresar Cantidad">
+
+
+                        <button class="ButtonAceptar" type="submit">Aceptar</button>
+                </fieldset>
+            </form>
+        </dialog>
     </main>
     <a href="#inicio" class="ASubir">
         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">
@@ -79,6 +82,7 @@
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/inventario.js"></script>
 </body>
 
 </html>

@@ -35,7 +35,8 @@
 .TableSolicitudes{
     padding: 2px;
     text-align: center;
-    color: var(--Azul);
+    color: var(--Azul)
+    ;
     width: 100%;
     flex-wrap: wrap;
 }

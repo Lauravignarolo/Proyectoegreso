@@ -16,11 +16,26 @@
 .SectionInventario{
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 2%;
+    flex-direction: column;
     
 }
 .TableInventario {
     width: 60%;
+}
+.ButtonAgregarComponente{
+    width: 8%;
+    margin-top: 2%;
+    margin-right: 52%;
+    border: 1px solid var(--Negro);
+    background-color: var(--Azul);
+    color: var(--Blanco);
+}
+.ButtonAgregarComponente:hover{
+    color: var(--Negro);
+    background-color: var(--AzulClaro);
+    border: 1px solid var(--GrisClaro);
 }
 .TableInventario tr,.TableInventario th,.TableInventario td{
     border: 1px solid var(--Gris);

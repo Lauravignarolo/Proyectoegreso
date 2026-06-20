@@ -1,6 +1,9 @@
+
+//Tomar datos para cambiar el icono de mostrar la contraseña
 const password = document.getElementById("password");
 const icono = document.getElementById("ojo");
 
+//Cambiar el tipo de input al presionar el icono
 icono.addEventListener("click", () => {
     if (password.type === "password") {
         password.type = "text";
@@ -13,6 +16,7 @@ icono.addEventListener("click", () => {
     }
 });
 
+//Funcion para iniciar secion con cedulas predeterminadas 
 function iniciarSesion() {
 
     const usuario = document.getElementById("cedula").value;
