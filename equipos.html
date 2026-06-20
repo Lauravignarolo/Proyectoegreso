@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/css/general.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/equipos.css">
+    <link rel="stylesheet" href="assets/css/formularios.css">
 </head>
 
 <body id="inicio">
@@ -28,51 +29,60 @@
     </fieldset>
 </form>
     </nav>
-    <main>
-        <section class="SectionEquipos" >
+  <main>
+        <section class="SectionEquipos">
             <table class="TableEquipos">
-                <thead>
-    <tr>
-        <th>PC</th>
-        <th>Salon</th>
-        <th>Estado</th>
-        <th>Urgencia</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>PC</th>
+            <th>Salon</th>
+            <th>Estado</th>
+            <th>Urgencia</th>
+            <th>Accion</th>
+        </tr>
     </thead>
-    <tbody>
-    <tr>
-        <td>1</td>
-        <td>L3</td>
-        <td>Bien</td>
-        <td>Nula</td>
-    </tr>
-    <tr>
-        <td>10</td>
-        <td>T4</td>
-        <td>Bien</td>
-        <td>Nula</td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>T2</td>
-        <td>Bien</td>
-        <td>Nula</td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td>L5</td>
-        <td>Bien</td>
-        <td>Nula</td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td>L4</td>
-        <td>Bien</td>
-        <td>Nula</td>
-    </tr>
+
+    <tbody class="TbodyEquipos" id="TbodyEquipos">
+        
     </tbody>
 </table>
+<button class="ButtonAgregarPC" id="ButtonAgregarPC">Agregar</button>
+
         </section>
+        <dialog class="DialogGestionarEquipos">
+            <button class="ButtonCerrarGestionarEquipos" id="ButtonCerrarGestionarEquipos" type="button">
+                Cancelar
+            </button>
+            <form id="FormGestionarEquipos">
+                <fieldset class="FieldsetEquipos">
+                    <legend> REGISTRAR NUEVA PC </legend>
+
+                    <label for="">Pc</label>
+                    <input class="Inputllenar" id="Pc" type="text" required placeholder="Ingresar Pc">
+
+
+                    <label for="">Salon</label>
+                    <input class="Inputllenar" id="Salon" type="text" required placeholder="Ingresar Salon">
+
+
+                    <label for="">Estado</label>
+                    <input class="Inputllenar" id="Estado" type="text" required  placeholder="Ingresar Estado">
+
+                    <label for="">Urgencia</label>
+                    <select id="Urgencia" name="Urgencia">
+                        <option disabled selected>Seleccione un tipo de Usuario</option>
+                        <option value="Nula">Nula</option>
+                        <option value="Poca">Poca</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+
+                    </select>
+
+                        <button class="ButtonAceptar" type="submit">Aceptar</button>
+                </fieldset>
+            </form>
+        </dialog>
+    </main>            
     </main>
     <a href="#inicio" class="ASubir">
         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">
@@ -84,6 +94,7 @@
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/equipos.js"></script>
 </body>
 
 </html>

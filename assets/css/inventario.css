@@ -37,6 +37,55 @@
     background-color: var(--AzulClaro);
     border: 1px solid var(--GrisClaro);
 }
+
+.DivAccion{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.ButtonEditar, .ButtonEliminar {
+    border: 1px solid var(--Negro);
+    background-color: var(--Azul);
+    color: var(--Blanco);
+}
+.ButtonEditar:hover, .ButtonEliminar:hover {
+    color: var(--Negro);
+    background-color: var(--AzulClaro);
+    border: 1px solid var(--GrisClaro);
+}
+
+.DialogGestionarInventario{
+    width: 50%;
+}
+
+.FieldsetInventario{
+    width: 100%;
+}
+
+.ButtonCerrarGestionarInventario{
+    display: flex;
+    padding: 3px;
+    border: 1px solid var(--Negro);
+    background-color: var(--Azul);
+    color: var(--Blanco);
+
+}
+.ButtonCerrarGestionarInventario:hover{
+    background-color: var(--AzulClaro);
+    color: var(--Negro);
+    border: 1px solid var(--GrisClaro);
+}
+.ButtonAceptar {
+    background-color: var(--Azul);
+    color: var(--Blanco);
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    border: none;
+    margin-top: 10px;
+
+}
+
 .TableInventario tr,.TableInventario th,.TableInventario td{
     border: 1px solid var(--Gris);
     padding: 5px 15px 5px 15px;

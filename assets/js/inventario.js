@@ -40,7 +40,7 @@ function ActualizarItemInventario(filaItemInventario, ItemInventario){
     filaItemInventario.cells[2].textContent = ItemInventario.cantidad;
 }
 
-function AbrirEditarIteamInventario(ItemInventario){
+function AbrirEditarItemInventario(ItemInventario){
     EntradaComponente.value = ItemInventario.componente;
     EntradaMarca.value = ItemInventario.marca;
     EntradaCantidad.value = ItemInventario.cantidad;
@@ -60,7 +60,7 @@ function EditarItemInventario(EventoEditarIteam) {
 
     const ItemInventario = RecuperarDatosItemInventario(filaItemInventario);
 
-    AbrirEditarIteamInventario(ItemInventario);
+    AbrirEditarItemInventario(ItemInventario);
 }
 
 function EliminarItemInventario(EventoEliminarIteam) {
