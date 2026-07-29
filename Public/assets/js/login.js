@@ -17,6 +17,7 @@ icono.addEventListener("click", () => {
 });
 
 //Funcion para iniciar secion con cedulas predeterminadas 
+/*
 function iniciarSesion() {
 
     const usuario = document.getElementById("cedula").value;
@@ -40,3 +41,4 @@ function iniciarSesion() {
     }
     
 }
+    */
