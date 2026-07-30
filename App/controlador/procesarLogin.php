@@ -45,12 +45,9 @@ session_regenerate_id(true);
 
 $_SESSION["cedula"] = $usuario->getCedula();
 $_SESSION["administrador"] = $usuario->esAdministrador();
-$_SESSION["logistica"] = $usuario->esLogistica();
 
-if ($_SESSION["administrador"] && $_SESSION["logistica"]) {
+if ($_SESSION["administrador"]) {
     header("Location: panelRoles.php");
-} elseif ($_SESSION["logistica"]) {
-    header("Location: logistica.php");
 } elseif ($_SESSION["administrador"]) {
     header("Location: administrador.php");
 }
