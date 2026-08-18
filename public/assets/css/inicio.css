@@ -1,0 +1,56 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
+}
+
+.SectionImagen img{ 
+    border-radius: 10px;
+}
+.SectionImagen{
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 4px 10px var(--GrisClaro);
+    margin: 1% 13% 0 13%;
+
+}
+
+.SectionBienvenida{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: justify;
+    background-color: var(--AzulClaro);
+    margin: 8% 5% 0 5%;
+    padding: 1%;
+    border-radius: 12px;
+}
+.SectionBienvenida p{
+    background-color: var(--GrisClaro);
+    border-radius: 8px;
+    padding: 12px;
+}
+.SectionBienvenida h2{
+    text-align: center;
+    color: var(--DoradoClaro);
+}
+
+@media (max-width: 576px) {
+    .SectionImagen{
+    width: 550px;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+}

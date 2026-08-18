@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/../modelo/ConectorPDO.php";
 require_once __DIR__ . "/../modelo/AccesoDatosUsuario.php";
-require_once __DIR__ . "/../modelo/Usuario.php";
+require_once __DIR__ . "/../modelo/users.php";
 require_once __DIR__ . "/../modelo/Login.php";
 
 //Comprueba que el formulario haya sido enviado mediante POST
