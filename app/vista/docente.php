@@ -21,12 +21,13 @@
     </header>
     <main>
         <section class="SectionBotones">
-            <a class="AOpcion ButtonSolicitar" href="solicitar.html">
+            <a class="AOpcion ButtonSolicitar" href="solicitar.php">
                 ENVIAR SOLICITUD
             </a>
-            <a class="AOpcion ButtonRegistrarEquipo" href="creartickets.html">
-                REGISTRAR EQUIPO></a>
-            <a class="AOpcion ButtonRegistroDiario" href="registrodiario.html">
+            <a class="AOpcion ButtonRegistrarEquipo" href="creartickets.php">
+                REGISTRAR EQUIPO
+            </a>
+            <a class="AOpcion ButtonRegistroDiario" href="registrodiario.php">
                 REGISTRO DIARIO
             </a>
         </section>

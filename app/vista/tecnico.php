@@ -22,16 +22,16 @@
     </header>
     <main>
         <section class="SectionBotones">
-            <a class="AOpcion ButtonEquipos" href="equipos.html">
-                EQUIPOS TOTALES
+            <a class="AOpcion ButtonEquipos" href="salonesver.php">
+                SALONES
             </a>
-            <a class="AOpcion ButtonInventario" href="inventario.html">
+            <a class="AOpcion ButtonInventario" href="inventario.php">
                 INVENTARIO
             </a>
-            <a class="AOpcion ButtonTickets" href="tickets.html">
+            <a class="AOpcion ButtonTickets" href="tickets.php">
                 TICKETS
             </a>
-            <a class="AOpcion ButtonSolicitudes" href="solicitudes.html">
+            <a class="AOpcion ButtonSolicitudes" href="solicitudes.php">
                 SOLICITUDES
             </a>
         </section>

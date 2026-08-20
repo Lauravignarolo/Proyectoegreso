@@ -43,6 +43,9 @@ CREATE TABLE SALON (
 
     CONSTRAINT pk_salon
         PRIMARY KEY (numero_de_salon)
+    
+    CONSTRAINT pk_tipo_de_salon
+        PRIMARY KEY (tipo_de_salon)
 );
 
 
@@ -155,6 +158,12 @@ ALTER TABLE TICKETS
     ADD CONSTRAINT fk_tickets_salon
     FOREIGN KEY (numero_de_salon)
     REFERENCES SALON (numero_de_salon);
+
+ALTER TABLE TICKETS
+    ADD CONSTRAINT fk_tickets_tipo_de_salon
+    FOREIGN KEY (tipo_de_salon)
+    REFERENCES SALON (tipo_de_salon);
+
 
 
 ALTER TABLE AVISO_DE_ESTADO 

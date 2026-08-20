@@ -22,45 +22,45 @@
     <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="docente.html">Volver</a>
+        <a href="docente.php">Volver</a>
     </header>
     <main>
         <Section class="SectionFormularioTickets">
-            <form action="confirmacionticket.html" class="FormCrearTickets" id="FormCrearTickets">
+            <form action="/public/procesarCrearTickets.php" class="FormCrearTickets" id="FormCrearTickets" method="POST">
                 <fieldset>
                     <legend> REGISTRAR ESTADO DEL EQUIPO </legend>
 
                     <label>Nombre del Estudiante</label>
-                    <input class="Inputllenar" type="text" id="NombreEstudiante" required placeholder="Ingresar Nombre">
+                    <input class="Inputllenar" type="text" name="estudiante_a_cargo" id="NombreEstudiante" required placeholder="Ingresar Nombre">
 
                     <label>Hora de Entrada</label>
-                    <input class="Inputllenar" type="time" id="HoraEntrada" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" name="hora_de_entrada" id="HoraEntrada" required placeholder="Ingresar Hora">
 
 
                     <label>Hora de Salida</label>
-                    <input class="Inputllenar" type="time" id="HoraSalida" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" name="hora_de_salida" id="HoraSalida" required placeholder="Ingresar Hora">
 
                     <label>Tipo de salon</label>
-                    <select id="TipoDeSalon" name="salon">
+                    <select id="TipoDeSalon" name="tipo_de_salon">
                         <option disabled selected>Seleccione un tipo de salon</option>
                         <option value="Taller">Taller</option>
                         <option value="Laboratorio">Laboratorio</option>
                     </select>
 
                     <label>Numero del Salon</label>
-                    <input class="Inputllenar" type="number" id="NumeroDelSalon" required placeholder="Ingresar Numero">
+                    <input class="Inputllenar" name="numero_de_salon" type="number" id="NumeroDelSalon" required placeholder="Ingresar Numero">
 
 
                     <label>Numero de Equipo</label>
-                    <input class="Inputllenar" type="number" id="NumeroDeEquipo" required placeholder="Ingresar Numero">
+                    <input class="Inputllenar" name="numero_de_equipo" type="number" id="NumeroDeEquipo" required placeholder="Ingresar Numero">
 
 
                     <label>Asignatura</label>
-                    <input class="Inputllenar" type="text" id="Asignatura" required placeholder="Ingresar Asignatura">
+                    <input class="Inputllenar" name="asignatura" type="text" id="Asignatura" required placeholder="Ingresar Asignatura">
 
 
                     <label>Grupo</label>
-                    <input class="Inputllenar" type="text" id="Grupo" required placeholder="Ingresar Grupo">
+                    <input class="Inputllenar" name="grupo" type="text" id="Grupo" required placeholder="Ingresar Grupo">
 
 
                     <label>Turno</label>
@@ -72,7 +72,7 @@
                     </select>
 
                     <label>Estado del Equipo</label>
-                    <input class="Inputllenar" type="text" id="EstadoDelEquipo" required
+                    <input class="Inputllenar" name="estado" type="text" id="EstadoDelEquipo" required
                         placeholder="Ingresar Estado del Equipo">
 
                     <a href="confirmacionticket.html" class="AEnviar" id="AEnviar">

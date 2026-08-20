@@ -9,11 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="assets/css/general.css">
-    <link rel="stylesheet" href="assets/css/formularios.css">
-    <link rel="stylesheet" href="assets/css/solicitar.css">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/confirmacion.css">
+    <link rel="stylesheet" href="/public/assets/css/general.css">
+    <link rel="stylesheet" href="/public/assets/css/formularios.css">
+    <link rel="stylesheet" href="/public/assets/css/solicitar.css">
+    <link rel="stylesheet" href="/public/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/assets/css/confirmacion.css">
 
 
 </head>
@@ -22,19 +22,24 @@
     <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="docente.html">Volver</a>
+        <a href="docente.php">Volver</a>
     </header>
     <main>
         <Section class="SectionFormularioSolicitud">
-            <form class="FormCrearSolicitud" id="FormCrearSolicitud">
+            <form
+                class="FormCrearSolicitud"
+                id="FormCrearSolicitud"
+                action="/public/procesarSolicitud.php"
+                method="POST">
+
                 <fieldset>
                     <legend> REGISTRAR SOLICITUD </legend>
 
                     <label for="">Fecha Solicitada</label>
-                    <input class="Inputllenar" type="date" id="FechaSoliditada" required>
+                    <input class="Inputllenar" type="date" name="fechaSolicitada" id="FechaSoliditada" required>
 
                     <label for="">Descripcion</label>
-                    <textarea class="Inputllenar InputDescripcion" type="text" id="Descripcion" required
+                    <textarea class="Inputllenar InputDescripcion" type="text" name="descripcion" id="Descripcion" required
                         placeholder="Escribir Solicitud"></textarea>
 
                     <button class="ButtonEnviar" type="submit" id="ButtonEnviar">Enviar</button>
@@ -68,7 +73,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="/public/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/solicitar.js"></script>
 </body>
 
