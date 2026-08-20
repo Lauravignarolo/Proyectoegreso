@@ -9,29 +9,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../public/assets/css/general.css">
-    <link rel="stylesheet" href="../../public/assets/css/administrador.css">
     <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/assets/css/direccion.css">
 </head>
 
 <body id="inicio">
-    <header class="HeaderInicio">
+    <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
-        <a href="/public/cerrarSesion.php" class="AInicio">Cerrar Sesión</a>
-    
+        <a href="/public/cerrarSesion.php">CERRAR SESION</a>
     </header>
     <main>
         <section class="SectionBotones">
-
-    <a class="AOpcion ButtonRegistrarUsuario" href="agregaruser.php">
-        REGISTRAR NUEVO USUARIO
-    </a>
-
-    <a class="AOpcion ButtonRegistrarUsuario" href="verusers.php">
-        VER USUARIOS
-    </a>
-
-</section>
+            <a class="AOpcion ButtonEquipos" href="equiposver.html">
+                EQUIPOS TOTALES
+            </a>
+            <a class="AOpcion ButtonInventario" href="inventariover.html">
+                inventario
+            </a>
+        </section>
     </main>
     <a href="#inicio" class="ASubir">
         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-arrow-up-circle"
@@ -44,7 +40,6 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-
     <script src="bootstrap/js/bootstrap.min.js"></script>
 </body>
 

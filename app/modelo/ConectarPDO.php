@@ -24,8 +24,9 @@ class ConectorPDO
     public function establecerConexion(): ?PDO
     {
         try {
+
             $this->conexion = new PDO(
-                "mysql:host=$this->servername;dbname=$this->dbname;charset=utf8mb4",
+                "mysql:host={$this->servername};port=3306;dbname={$this->dbname};charset=utf8mb4",
                 $this->username,
                 $this->password
             );
@@ -35,12 +36,14 @@ class ConectorPDO
                 PDO::ERRMODE_EXCEPTION
             );
 
-        } catch (PDOException $e) {
-            echo "Error al conectar..." . $e->getMessage();
-            $this->conexion = null;
-        }
+            return $this->conexion;
 
-        return $this->conexion;
+        } catch (PDOException $e) {
+
+            echo "ERROR DE CONEXIÓN: " . $e->getMessage();
+
+            return null;
+        }
     }
 
     public function desconectar(): void

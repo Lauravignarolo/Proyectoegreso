@@ -1,0 +1,61 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
+}
+
+
+.ButtonEquipos{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px 8%;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-bottom: 3%;
+}
+.ButtonInventario{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px 8%;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 3%;
+
+}
+
+.ButtonTickets{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px 8%;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 4%;
+
+}
+.ButtonSolicitudes{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    width: 100%;
+    padding: 18px 8%;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 4%;
+
+}

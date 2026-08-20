@@ -1,70 +1,85 @@
 <?php
 
-/**
- * Clase que simula una recuperación de credenciales correspondientes a la base de datos.
- */
-class AccesoDatosUsuario {
+class AccesoDatosUsuario
+{
     private PDO $conexion;
 
-    /**
-     * Constructor parametrizado que recibe una conexión a la base de datos.
-     * @param PDO $conexion La conexion a la base de datos. PRECONDICION: No debe ser NULL.
-     */
-    public function __construct (PDO $conexion) {
+    public function __construct(PDO $conexion)
+    {
         $this->conexion = $conexion;
     }
 
-    /**
-     * Busca un usuario por su cédula y determina el rol.
-     * @param string $cedula La cedula del usuario sin puntos ni guiones.
-     * @return Usuario|null Los datos del usuario, retorna su objeto si existe, null en caso contrario.
-     */
-    public function buscarUsuario(Int $cedula): ?Usuario
+    public function buscarUsuario(string $cedula): ?Usuario
     {
         $sql = "
             SELECT
-                u.cedula,
-                u.claveHash,
-                u.activo,
+                u.documento_identidad,
+                u.contrasena,
 
                 CASE
-                    WHEN a.cedula IS NOT NULL THEN 1
+                    WHEN a.documento_identidad IS NOT NULL THEN 1
                     ELSE 0
                 END AS administrador,
 
                 CASE
-                    WHEN l.cedula IS NOT NULL THEN 1
+                    WHEN d.documento_identidad IS NOT NULL THEN 1
                     ELSE 0
-                END AS logistica
+                END AS docente,
+
+                CASE
+                    WHEN di.documento_identidad IS NOT NULL THEN 1
+                    ELSE 0
+                END AS direccion,
+
+                CASE
+                    WHEN t.documento_identidad IS NOT NULL THEN 1
+                    ELSE 0
+                END AS tecnico
 
             FROM USUARIO AS u
 
             LEFT JOIN ADMINISTRADOR AS a
-                ON a.cedula = u.cedula
+                ON a.documento_identidad = u.documento_identidad
 
-            LEFT JOIN LOGISTICA AS l
-                ON l.cedula = u.cedula
+            LEFT JOIN DOCENTE AS d
+                ON d.documento_identidad = u.documento_identidad
 
-            WHERE u.cedula = :cedula
+            LEFT JOIN DIRECCION AS di
+                ON di.documento_identidad = u.documento_identidad
+
+            LEFT JOIN TECNICO AS t
+                ON t.documento_identidad = u.documento_identidad
+
+            WHERE u.documento_identidad = :cedula
         ";
 
         $consulta = $this->conexion->prepare($sql);
 
-        $consulta->execute(["cedula" => $cedula]);
+        $consulta->execute([
+            "cedula" => $cedula
+        ]);
 
         $datos = $consulta->fetch(PDO::FETCH_ASSOC);
+
+        $consulta = null;
 
         if ($datos === false) {
             return null;
         }
 
         return new Usuario(
-            $datos["cedula"],
-            $datos["claveHash"],
-            (bool) $datos["activo"],
+            $datos["documento_identidad"],
+            $datos["contrasena"],
             (bool) $datos["administrador"],
-            (bool) $datos["logistica"]
+            (bool) $datos["docente"],
+            (bool) $datos["direccion"],
+            (bool) $datos["tecnico"]
         );
+    }
+
+    public function listarUsuarios(): array
+    {
+        return [];
     }
 }
 
