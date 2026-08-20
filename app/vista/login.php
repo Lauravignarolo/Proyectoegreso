@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/general.css">
-    <link rel="stylesheet" href="assets/css/login.css">
-    <link rel="stylesheet" href="assets/css/formularios.css">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/assets/css/general.css">
+    <link rel="stylesheet" href="../../public/assets/css/login.css">
+    <link rel="stylesheet" href="../../public/assets/css/formularios.css">
+    <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
 </head>
@@ -22,7 +22,7 @@
      <header class="HeaderInicio">
         <img src="assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
-        <a href="index.html">Volver</a>
+        <a href="../../public/index.html">Volver</a>
     </header>
     <nav>
         <a class="AInicio" href="index.html"></a>
@@ -91,7 +91,7 @@
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
     <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/login.js"></script>
+    <script src="../../public/assets/js/login.js"></script>
 </body>
 
 </html>
