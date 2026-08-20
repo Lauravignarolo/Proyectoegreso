@@ -1,5 +1,10 @@
 <?php
 
+require_once __DIR__ . "/../../vendor/autoload.php";
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
+$dotenv->load();
+
 require_once __DIR__ . "/../modelo/ConectarPDO.php";
 require_once __DIR__ . "/../modelo/AccesoDatosUsuario.php";
 require_once __DIR__ . "/../modelo/users.php";
@@ -16,7 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $cedula = trim($_POST["cedula"] ?? "");
 $clave = $_POST["clave"] ?? "";
 
-$conectorPDO = new ConectorPDO($_ENV['DB_HOST'] . ":" . $_ENV['DB_PUERTO'], $_ENV['DB_USUARIO'], $_ENV['DB_CLAVE'], $_ENV['DB_NOMBRE']);
+$conectorPDO = new ConectorPDO(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USUARIO'],
+    $_ENV['DB_CLAVE'],
+    $_ENV['DB_NOMBRE']
+);
 $conexion = $conectorPDO->establecerConexion();
 
 if ($conexion === null) {
@@ -41,34 +51,39 @@ if ($usuario === null) {
     exit;
 }
 
-//rol administrador
-if (!$usuario->esAdministrador()) {
-    $mensaje = "Acceso Denegado: El usuario no tiene acceso al panel de administración.";
-    header("Location: login.php?" . "error=" . $mensaje);
-    exit;
-}
-if (!$usuario->esAdministrador()) {
-    $mensaje = "Acceso Denegado: El usuario no tiene acceso al panel de administración.";
-    header("Location: login.php?" . "error=" . $mensaje);
-    exit;
-}
-if (!$usuario->esAdministrador()) {
-    $mensaje = "Acceso Denegado: El usuario no tiene acceso al panel de administración.";
-    header("Location: login.php?" . "error=" . $mensaje);
-    exit;
-}
-if (!$usuario->esAdministrador()) {
-    $mensaje = "Acceso Denegado: El usuario no tiene acceso al panel de administración.";
-    header("Location: login.php?" . "error=" . $mensaje);
+//negar usuarios
+
+if ($usuario->esAdministrador()) {
+    header("Location: ../vista/administrador.php");
     exit;
 }
 
+if ($usuario->esDocente()) {
+    header("Location: ../vista/docente.php");
+    exit;
+}
+
+if ($usuario->esTecnico()) {
+    header("Location: ../vista/tecnico.php");
+    exit;
+}
+
+if ($usuario->esDireccion()) {
+    header("Location: ../vista/direccion.php");
+    exit;
+}
+
+header("Location: login.php");
+exit;
 
 session_start();
 session_regenerate_id(true);
 
 $_SESSION["cedula"] = $usuario->getCedula();
 $_SESSION["administrador"] = $usuario->esAdministrador();
+$_SESSION["tecnico"] = $usuario->esTecnico();
+$_SESSION["docente"] = $usuario->esDocente();
+$_SESSION["direccion"] = $usuario->esDireccion();
 
 if ($_SESSION["administrador"]) {
     header("Location: panelRoles.php");

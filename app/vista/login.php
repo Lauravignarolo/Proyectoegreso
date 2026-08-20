@@ -32,7 +32,7 @@
     
  <main>
         <Section class="SectionFormularioLogin">
-           <form action="login.php" method="POST">
+           <form action="procesarLogin.php" method="POST">
                 <fieldset>
                     <legend> INICIAR SESION </legend>
 
@@ -88,7 +88,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../public/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../public/assets/js/login.js"></script>
 </body>
 
