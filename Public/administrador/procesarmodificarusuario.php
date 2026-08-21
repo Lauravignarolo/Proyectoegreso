@@ -47,4 +47,4 @@ if (!hash_equals($_SESSION["csrfToken"], $csrfToken)) {
     exit("Solicitud Rechazada...");
 }
 
-require_once RUTA_CONTROLADOR . "/procesarBajaUsuario.php";
+require_once RUTA_CONTROLADOR . "/procesarModificarUsuario.php";
