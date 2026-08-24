@@ -1,14 +1,36 @@
 <?php
 
+/**
+ * Clase encargada de registrar nuevos tickets de incidencia y su aviso de estado inicial.
+ */
 class AltaDatosTickets
 {
     private PDO $conexion;
 
+    /**
+     * Constructor parametrizado que recibe una conexion ya establecida a la base de datos.
+     * @param PDO $conexion La conexion a la base de datos. PRECONDICION: No debe ser NULL.
+     */
     public function __construct(PDO $conexion)
     {
         $this->conexion = $conexion;
     }
 
+    /**
+     * Registra un nuevo ticket de incidencia y su correspondiente aviso de estado,
+     * usando una transaccion para garantizar que ambas inserciones se completen juntas.
+     * @param string $estudianteACargo Nombre del estudiante a cargo del equipo.
+     * @param string $horaDeEntrada Hora de entrada al salon.
+     * @param string $horaDeSalida Hora de salida del salon.
+     * @param string $tipoDeSalon Tipo/urgencia del salon donde ocurre la incidencia.
+     * @param int $numeroDeSalon Numero del salon donde ocurre la incidencia.
+     * @param int $numeroDeEquipo Numero del equipo afectado.
+     * @param string $asignatura Asignatura que se dictaba al momento de la incidencia.
+     * @param string $grupo Grupo correspondiente a la clase.
+     * @param string $turno Turno en que ocurrio la incidencia.
+     * @param string $estado Estado inicial del ticket.
+     * @return bool True si el ticket y su aviso se registraron correctamente.
+     */
     public function registrarTickets(
         string $estudianteACargo,
         string $horaDeEntrada,
@@ -24,7 +46,7 @@ class AltaDatosTickets
 
         try {
 
-            // Iniciar transacción
+            // Iniciar transaccion
             $this->conexion->beginTransaction();
 
 
@@ -66,7 +88,7 @@ class AltaDatosTickets
             ]);
 
 
-            // Obtener el ID del ticket recién creado
+            // Obtener el ID del ticket recien creado
             $idTicket = $this->conexion->lastInsertId();
 
 
@@ -117,3 +139,5 @@ class AltaDatosTickets
         }
     }
 }
+
+?>

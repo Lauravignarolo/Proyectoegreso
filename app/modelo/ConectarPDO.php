@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Clase encargada de establecer y administrar la conexion PDO con la base de datos.
+ * Centraliza los datos de conexion para que no se repitan en otras clases.
+ */
 class ConectorPDO
 {
     private string $servername;
@@ -8,6 +12,13 @@ class ConectorPDO
     private string $dbname;
     private ?PDO $conexion;
 
+    /**
+     * Constructor parametrizado con los datos necesarios para conectar a la base de datos.
+     * @param string $servername Servidor donde corre la base de datos.
+     * @param string $username Usuario de la base de datos.
+     * @param string $password Contrasena del usuario de la base de datos.
+     * @param string $dbname Nombre de la base de datos a utilizar.
+     */
     public function __construct(
         string $servername,
         string $username,
@@ -21,6 +32,10 @@ class ConectorPDO
         $this->conexion = null;
     }
 
+    /**
+     * Abre la conexion PDO con la base de datos configurada.
+     * @return PDO|null La conexion establecida, o null si fallo la conexion.
+     */
     public function establecerConexion(): ?PDO
     {
         try {
@@ -46,8 +61,13 @@ class ConectorPDO
         }
     }
 
+    /**
+     * Cierra la conexion con la base de datos.
+     */
     public function desconectar(): void
     {
         $this->conexion = null;
     }
 }
+
+?>
