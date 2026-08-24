@@ -9,16 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="assets/css/general.css">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/tickets.css">
+    <link rel="stylesheet" href="../../public/assets/css/general.css">
+    <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/assets/css/tickets.css">
 </head>
 
 <body id="inicio">
     <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="tecnico.html">Volver</a>
+        <a href="../vista/tecnico.php">Volver</a>
     </header>
     <nav class="NavBuscar">
         <form class="FormBuscar">
@@ -32,7 +32,7 @@
         <section class="SectionTickets">
             <article class="ArticleTickets">
                 <header>
-                    <h3>Tickets #00001</h3>
+                    <h3>Tickets Actuales</h3>
                 </header>
                 <table class="TableTickets">
                     <thead>
@@ -52,6 +52,77 @@
                         </tr>
                     </thead>
                     <tbody class="TbodyTickets">
+
+    <?php if (empty($tickets)): ?>
+
+        <tr>
+            <td colspan="12">
+                No hay tickets registrados.
+            </td>
+        </tr>
+
+    <?php else: ?>
+
+        <?php foreach ($tickets as $ticket): ?>
+
+            <tr>
+
+                <td>
+                    <?= htmlspecialchars($ticket["estudiante_a_cargo"]) ?>
+                </td>
+
+                <td>
+    <?= htmlspecialchars(
+        $ticket["nombre"] . " " . $ticket["apellido"]
+    ) ?>
+</td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["hora_de_entrada"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["hora_de_salida"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["tipo_de_salon"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["numero_de_salon"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["numero_de_equipo"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["asignatura"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["grupo"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["turno"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["estado"]) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($ticket["urgencia"] ?? "Sin especificar") ?>
+                </td>
+
+            </tr>
+
+        <?php endforeach; ?>
+
+    <?php endif; ?>
+
                     </tbody>
                 </table>
             </article>
@@ -68,8 +139,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/tickets.js"></script>
+    <script src="../../public/assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>

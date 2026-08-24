@@ -12,33 +12,25 @@
     <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../public/assets/css/formularios.css">
     <link rel="stylesheet" href="../../public/assets/css/administrador.css">
+    <link rel="stylesheet" href="../../public/assets/css/users.css">
 </head>
 
 <body id="inicio">
     <header class="HeaderChico">
         <img src="assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="administrador.php">Volver</a>
+        <a href="/app/vista/Administrador.php">Volver</a>
     </header>
     <main>
         
-<section class="seccionTablaEmpleados">
-            <header class="cajaEncabezado">
-                <h2>Datos de empleados</h2>
+<section class="SectionEmpleados">
+            <header class="ClassEncabezado">
+                <h2>Lista de Usuarios</h2>
 
-                <button type="button" class="btnOperacion" id="btnAltaEmpleado">
-                    Alta de empleado
-                </button>
             </header>
 
-            <?php //Mejorar cosméticamente en un futuro este tipo de captura información con GET ?>
-            <?= htmlspecialchars($_GET["error"] ?? "") ?>
-            <?= htmlspecialchars($_GET["resultado"] ?? "") ?>
 
-            <table>
-                <caption>
-                    Listado de empleados registrados
-                </caption>
+            <table class="TableEmpleados">
 
                 <thead>
                     <tr>
@@ -46,32 +38,47 @@
                         <th scope="col">Nombre</th>
                         <th scope="col">Apellido</th>
                         <th scope="col">Rol</th>
-                        <th scope="col">Acciones</th>
+                        <th scope="col">Accion</th>
                     </tr>
                 </thead>
 
-                <tbody id="cuerpoTablaEmpleados">
+                <tbody>
                     <?php foreach ($usuarios as $usuario) { ?>
 
                         <?php
                             $roles = "";
 
-                            if ($usuario["administrador"] == 1) {
-                                $roles = "Administrador";
-                            }
+if ($usuario["administrador"] == 1) {
+    $roles .= "Administrador";
+}
 
-                            if ($usuario["logistica"] == 1) {
-                                if ($roles != "") {
-                                    $roles = $roles . ", ";
-                                }
+if ($usuario["docente"] == 1) {
+    if ($roles != "") {
+        $roles .= ", ";
+    }
 
-                                $roles = $roles . "Logística";
-                            }
+    $roles .= "Docente";
+}
 
-                            if ($roles == "") {
-                                $roles = "Sin rol";
-                            }
-                            /* <?php echo $variable ?> equivalente a <?= $variable ?>*/ 
+if ($usuario["direccion"] == 1) {
+    if ($roles != "") {
+        $roles .= ", ";
+    }
+
+    $roles .= "Dirección";
+}
+
+if ($usuario["tecnico"] == 1) {
+    if ($roles != "") {
+        $roles .= ", ";
+    }
+
+    $roles .= "Técnico";
+}
+
+if ($roles == "") {
+    $roles = "Sin rol";
+}
                         ?>
 
                         <tr>
@@ -81,17 +88,20 @@
                             <td><?= htmlspecialchars($roles) ?></td>
 
                             <td>
-                                <div class="cajaOperaciones">
-                                    <button type="button" class="btnOperacion btnModificar">Modificar</button>
-                                    
-                                    <form action="procesarBajaUsuario.php" method="post" class="formularioEliminarEmpleado">
-                                        <input type="hidden" name="cedula" value="<?=htmlspecialchars($usuario["cedula"])?>">
-                                        <input type="hidden" name="csrfToken" value="<?=htmlspecialchars($_SESSION["csrfToken"])?>">
-                                        <button type="submit" class="btnOperacion btnEliminar">Eliminar</button>
-                                    </form>
-                                    
-                                    
-                                </div>
+                                <form action="../../public/procesarBajaUsuario.php" method="POST">
+
+    <input
+        type="hidden"
+        name="cedula"
+        value="<?= htmlspecialchars($usuario["cedula"]) ?>">
+
+    <button
+        type="submit"
+        class="btnOperacion ButtonEliminar">
+        Eliminar
+    </button>
+
+</form>
                             </td>
                         </tr>
 

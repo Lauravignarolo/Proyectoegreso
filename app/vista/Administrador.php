@@ -27,9 +27,14 @@
         REGISTRAR NUEVO USUARIO
     </a>
 
-    <a class="AOpcion ButtonRegistrarUsuario" href="verusers.php">
+    <a class="AOpcion ButtonRegistrarUsuario" href="../controlador/ProcesarUsuarios.php">
         VER USUARIOS
     </a>
+
+    <a class="AOpcion ButtonSalones" href="salonesver.php">
+        SALONES
+    </a>
+        
 
 </section>
     </main>

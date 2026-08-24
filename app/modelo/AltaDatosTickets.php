@@ -24,19 +24,40 @@ class AltaDatosTickets
 
         try {
 
+            // Iniciar transacción
+            $this->conexion->beginTransaction();
+
+
             // 1. Insertar el ticket
             $sqlTicket = "INSERT INTO TICKETS
-                (numero_de_equipo, numero_de_salon, asignatura,
-                 hora_de_entrada, hora_de_salida, grupo, turno)
+                (
+                    numero_de_equipo,
+                    numero_de_salon,
+                    tipo_de_salon,
+                    asignatura,
+                    hora_de_entrada,
+                    hora_de_salida,
+                    grupo,
+                    turno
+                )
                 VALUES
-                (:numero_de_equipo, :numero_de_salon, :asignatura,
-                 :hora_de_entrada, :hora_de_salida, :grupo, :turno)";
+                (
+                    :numero_de_equipo,
+                    :numero_de_salon,
+                    :tipo_de_salon,
+                    :asignatura,
+                    :hora_de_entrada,
+                    :hora_de_salida,
+                    :grupo,
+                    :turno
+                )";
 
             $consultaTicket = $this->conexion->prepare($sqlTicket);
 
             $consultaTicket->execute([
                 "numero_de_equipo" => $numeroDeEquipo,
                 "numero_de_salon" => $numeroDeSalon,
+                "tipo_de_salon" => $tipoDeSalon,
                 "asignatura" => $asignatura,
                 "hora_de_entrada" => $horaDeEntrada,
                 "hora_de_salida" => $horaDeSalida,
@@ -44,17 +65,28 @@ class AltaDatosTickets
                 "turno" => $turno
             ]);
 
+
             // Obtener el ID del ticket recién creado
             $idTicket = $this->conexion->lastInsertId();
 
 
             // 2. Insertar aviso de estado
             $sqlAviso = "INSERT INTO AVISO_DE_ESTADO
-                (id_ticket, urgencia, numero_de_equipo,
-                 estudiante_a_cargo, estado)
+                (
+                    id_ticket,
+                    urgencia,
+                    numero_de_equipo,
+                    estudiante_a_cargo,
+                    estado
+                )
                 VALUES
-                (:id_ticket, :urgencia, :numero_de_equipo,
-                 :estudiante_a_cargo, :estado)";
+                (
+                    :id_ticket,
+                    :urgencia,
+                    :numero_de_equipo,
+                    :estudiante_a_cargo,
+                    :estado
+                )";
 
             $consultaAviso = $this->conexion->prepare($sqlAviso);
 
@@ -66,9 +98,19 @@ class AltaDatosTickets
                 "estado" => $estado
             ]);
 
+
+            // Confirmar las dos inserciones
+            $this->conexion->commit();
+
             return true;
 
+
         } catch (PDOException $error) {
+
+            // Si algo falla, deshacer los INSERT
+            if ($this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
+            }
 
             echo "ERROR SQL: " . $error->getMessage();
             exit;

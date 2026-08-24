@@ -22,7 +22,7 @@
     </header>
     <main>
         <section class="SectionBotones">
-            <a class="AOpcion ButtonEquipos" href="salonesver.php">
+            <a class="AOpcion ButtonEquipos" href="salonessolover.php">
                 SALONES
             </a>
             <a class="AOpcion ButtonInventario" href="inventario.php">
@@ -31,7 +31,7 @@
             <a class="AOpcion ButtonTickets" href="tickets.php">
                 TICKETS
             </a>
-            <a class="AOpcion ButtonSolicitudes" href="solicitudes.php">
+            <a class="AOpcion ButtonSolicitudes" href="../controlador/ProcesarVerSolicitudes.php">
                 SOLICITUDES
             </a>
         </section>

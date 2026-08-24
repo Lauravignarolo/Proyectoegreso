@@ -8,12 +8,14 @@ CREATE TABLE USUARIO (
         PRIMARY KEY (documento_identidad) 
 ); 
  
+ 
 CREATE TABLE ADMINISTRADOR ( 
     documento_identidad CHAR(8) NOT NULL, 
  
     CONSTRAINT pk_administrador 
         PRIMARY KEY (documento_identidad) 
 ); 
+ 
  
 CREATE TABLE TECNICO ( 
     documento_identidad CHAR(8) NOT NULL, 
@@ -22,12 +24,14 @@ CREATE TABLE TECNICO (
         PRIMARY KEY (documento_identidad) 
 ); 
  
+ 
 CREATE TABLE DOCENTE ( 
     documento_identidad CHAR(8) NOT NULL, 
  
     CONSTRAINT pk_docente 
         PRIMARY KEY (documento_identidad) 
 ); 
+ 
  
 CREATE TABLE DIRECCION ( 
     documento_identidad CHAR(8) NOT NULL, 
@@ -42,10 +46,7 @@ CREATE TABLE SALON (
     tipo_de_salon VARCHAR(50) NOT NULL,
 
     CONSTRAINT pk_salon
-        PRIMARY KEY (numero_de_salon)
-    
-    CONSTRAINT pk_tipo_de_salon
-        PRIMARY KEY (tipo_de_salon)
+        PRIMARY KEY (numero_de_salon, tipo_de_salon)
 );
 
 
@@ -53,6 +54,7 @@ CREATE TABLE TICKETS (
     id_ticket INT NOT NULL, 
     numero_de_equipo INT NOT NULL,
     numero_de_salon INT NOT NULL,
+    tipo_de_salon VARCHAR(50) NOT NULL,
     asignatura VARCHAR(100) NOT NULL, 
     hora_de_entrada TIME NOT NULL, 
     hora_de_salida TIME, 
@@ -156,14 +158,8 @@ ALTER TABLE DIRECCION
 
 ALTER TABLE TICKETS
     ADD CONSTRAINT fk_tickets_salon
-    FOREIGN KEY (numero_de_salon)
-    REFERENCES SALON (numero_de_salon);
-
-ALTER TABLE TICKETS
-    ADD CONSTRAINT fk_tickets_tipo_de_salon
-    FOREIGN KEY (tipo_de_salon)
-    REFERENCES SALON (tipo_de_salon);
-
+    FOREIGN KEY (numero_de_salon, tipo_de_salon)
+    REFERENCES SALON (numero_de_salon, tipo_de_salon);
 
 
 ALTER TABLE AVISO_DE_ESTADO 
@@ -223,5 +219,4 @@ ALTER TABLE CREA
 ALTER TABLE CREA 
     ADD CONSTRAINT fk_crea_usuario 
     FOREIGN KEY (usuario) 
-    REFERENCES USUARIO (documento_identidad); 
-    
+    REFERENCES USUARIO (documento_identidad);

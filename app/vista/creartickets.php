@@ -9,11 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="assets/css/general.css">
-    <link rel="stylesheet" href="assets/css/formularios.css">
-    <link rel="stylesheet" href="assets/css/creartickets.css">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/confirmacion.css">
+    <link rel="stylesheet" href="../../public/assets/css/general.css">
+    <link rel="stylesheet" href="../../public/assets/css/formularios.css">
+    <link rel="stylesheet" href="../../public/assets/css/creartickets.css">
+    <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../public/assets/css/confirmacion.css">
 
 
 </head>
@@ -107,8 +107,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/crearticket.js"></script>
+    <script src="/public/assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>
