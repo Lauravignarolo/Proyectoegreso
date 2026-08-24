@@ -158,15 +158,18 @@ footer {
 }
 .ABotones{
     display: flex;
-    width: 100%;
-    text-decoration: none;
+    width: 8%;
+    margin-top: 2%;
+    margin-right: 52%;
+    border: 1px solid var(--Negro);
+    background-color: var(--Azul);
+    color: var(--Blanco);
 }
 
 
-.ButtonEquipos{
+.ButtonSalones{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px;
     font-size: 2rem;
     border: 1px solid var(--Gris);
@@ -177,7 +180,6 @@ footer {
 .ButtonInventario{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px;
     font-size: 2rem;
     border: 1px solid var(--Gris);
@@ -188,7 +190,6 @@ footer {
 .ButtonTickets{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px;
     font-size: 2rem;
     border: 1px solid var(--Gris);
@@ -199,7 +200,6 @@ footer {
 .ButtonSolicitudes{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px;
     font-size: 2rem;
     border: 1px solid var(--Gris);

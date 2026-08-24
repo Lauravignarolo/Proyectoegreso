@@ -18,7 +18,6 @@
 .ButtonSolicitar{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px 8%;
     font-size: 2rem;
     border: 1px solid var(--Gris);
@@ -28,7 +27,6 @@
 .ButtonRegistrarEquipo{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px 8%;
     font-size: 2rem;
     border: 1px solid var(--Gris);
@@ -40,7 +38,6 @@
 .ButtonRegistroDiario{
     background-color: var(--Blanco);
     color: var(--Azul);
-    width: 100%;
     padding: 18px 8%;
     font-size: 2rem;
     border: 1px solid var(--Gris);

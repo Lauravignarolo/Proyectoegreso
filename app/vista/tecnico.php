@@ -16,18 +16,19 @@
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="assets/img/iti utu.png" alt="" height="100px">
+        <img src="/public/assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
         <a href="/public/cerrarSesion.php">CERRAR SESION</a>
     </header>
     <main>
         <section class="SectionBotones">
-            <a class="AOpcion ButtonEquipos" href="salonessolover.php">
+            <a class="AOpcion ButtonSalones" href="salonessolover.php">
                 SALONES
             </a>
             <a class="AOpcion ButtonInventario" href="inventario.php">
                 INVENTARIO
             </a>
+            <label for="">No implementado</label>
             <a class="AOpcion ButtonTickets" href="tickets.php">
                 TICKETS
             </a>
