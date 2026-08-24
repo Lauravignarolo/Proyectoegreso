@@ -16,9 +16,11 @@ class BajaDatosSalones
 
         try {
 
-            $sql = "DELETE FROM SALON
-                    WHERE numero_de_salon = :numero_de_salon
-                    AND tipo_de_salon = :tipo_de_salon";
+            $sql = "
+                DELETE FROM SALON
+                WHERE numero_de_salon = :numero_de_salon
+                AND tipo_de_salon = :tipo_de_salon
+            ";
 
             $consulta = $this->conexion->prepare($sql);
 
@@ -35,3 +37,4 @@ class BajaDatosSalones
         }
     }
 }
+?>

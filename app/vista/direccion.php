@@ -15,7 +15,7 @@
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="assets/img/iti utu.png" alt="">
+        <img src="/public/assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
         <a href="/public/cerrarSesion.php">CERRAR SESION</a>
     </header>
@@ -24,9 +24,11 @@
             <a class="AOpcion ButtonEquipos" href="equiposver.html">
                 EQUIPOS TOTALES
             </a>
+            <label for="">No implementado</label>
             <a class="AOpcion ButtonInventario" href="inventariover.html">
-                inventario
+                INVENTARIO
             </a>
+            <label for="">No implementado</label>
         </section>
     </main>
     <a href="#inicio" class="ASubir">

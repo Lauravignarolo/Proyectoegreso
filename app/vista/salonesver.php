@@ -67,13 +67,13 @@ $conectorPDO->desconectar();
     <header class="HeaderChico">
 
         <img
-            src="../../public/assets/img/iti utu.png"
+            src="/public/assets/img/iti utu.png"
             alt=""
             height="100px">
 
         <h1>S.G.R.S.I</h1>
 
-        <a href="tecnico.php">Volver</a>
+        <a href="Administrador.php">Volver</a>
 
     </header>
 
@@ -101,6 +101,12 @@ $conectorPDO->desconectar();
 
 
     <main>
+
+        <?php if (($_GET["error"] ?? "") === "salonEnUso"): ?>
+
+    <p>Este salón no se puede eliminar porque tiene tickets asociados.</p>
+
+<?php endif; ?>
 
         <section class="SectionSalones">
 

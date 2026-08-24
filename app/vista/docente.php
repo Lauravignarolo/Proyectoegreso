@@ -15,7 +15,7 @@
 
 <body id="inicio">
     <header class="HeaderInicio">
-        <img src="assets/img/iti utu.png" alt="">
+        <img src="/public/assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
         <a href="/public/cerrarSesion.php">CERRAR SESION</a>
     </header>
@@ -30,6 +30,7 @@
             <a class="AOpcion ButtonRegistroDiario" href="registrodiario.php">
                 REGISTRO DIARIO
             </a>
+            <label for="">No implementado</label>
         </section>
 
     </main>

@@ -62,6 +62,5 @@ if ($eliminado) {
     exit;
 }
 
-
-header("Location: /app/vista/salonesver.php?error=baja");
+header("Location: /app/vista/salonesver.php?error=salonEnUso");
 exit;

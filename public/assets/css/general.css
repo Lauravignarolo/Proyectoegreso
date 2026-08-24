@@ -208,7 +208,7 @@ footer {
 
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .HeaderChico{
         display: flex;
         padding-right: 5%;
