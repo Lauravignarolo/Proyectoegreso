@@ -15,7 +15,7 @@
 
 <body id="inicio">
     <header class="HeaderInicio">
-        <img src="assets/img/iti utu.png" alt="">
+        <img src="/public/assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
         <a href="/public/cerrarSesion.php" class="AInicio">Cerrar Sesión</a>
     

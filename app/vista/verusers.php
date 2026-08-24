@@ -17,7 +17,7 @@
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="assets/img/iti utu.png" alt="" height="100px">
+        <img src="/public/assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
         <a href="/app/vista/Administrador.php">Volver</a>
     </header>

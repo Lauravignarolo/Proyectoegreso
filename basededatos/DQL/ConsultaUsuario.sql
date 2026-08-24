@@ -1,31 +1,45 @@
-/*hacerlos para administrador, tecnico, docente y direccion*/
-/* Selecciona un usuario en base a su cédula, en PHP, donde aparece '00000000' debe ser remplazado por :cedula*/
 SELECT
-    u.cedula,
-    u.claveHash,
-    u.sesionActiva,
+                u.cedula,
+                u.claveHash,
+                u.activo,
 
-    CASE
-        WHEN a.cedula IS NOT NULL THEN 1
-        ELSE 0
-    END AS administrador,
+                CASE
+                    WHEN a.cedula IS NOT NULL THEN 1
+                    ELSE 0
+                END AS administrador,
 
-    CASE
-        WHEN l.cedula IS NOT NULL THEN 1
-        ELSE 0
-    END AS logistica
+                CASE
+                    WHEN d.cedula IS NOT NULL THEN 1
+                    ELSE 0
+                END AS docente,
 
-FROM USUARIO AS u
+                CASE
+                    WHEN di.cedula IS NOT NULL THEN 1
+                    ELSE 0
+                END AS direccion,
 
-    LEFT JOIN ADMINISTRADOR AS a
-    ON a.cedula = u.cedula
+                CASE
+                    WHEN t.cedula IS NOT NULL THEN 1
+                    ELSE 0
+                END AS tecnico,
 
-    LEFT JOIN LOGISTICA AS l
-    ON l.cedula = u.cedula
+            FROM USUARIO AS u
 
-WHERE u.cedula = '00000000';
+            LEFT JOIN ADMINISTRADOR AS a
+                ON a.cedula = u.cedula
 
-/* Selecciona y muestra todos los datos de los usuarios en el sistema, dirigido al administrador */
+            LEFT JOIN DOCENTE AS d
+                ON d.cedula = u.cedula
+
+            LEFT JOIN DIRECCION AS di
+                ON di.cedula = u.cedula
+
+            LEFT JOIN TECNICO AS t
+                ON t.cedula = u.cedula
+
+            WHERE u.cedula = :cedula
+
+
 SELECT
     u.cedula,
     u.nombre,
