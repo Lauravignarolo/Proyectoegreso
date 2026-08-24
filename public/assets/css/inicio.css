@@ -46,7 +46,7 @@
     color: var(--DoradoClaro);
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .SectionImagen{
     width: 550px;
     height: 500px;

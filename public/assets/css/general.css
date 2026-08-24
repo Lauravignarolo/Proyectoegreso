@@ -207,6 +207,16 @@ footer {
     margin-top: 5%;
 
 }
+.ButtonEquipos{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    padding: 18px;
+    font-size: 2rem;
+    border: 1px solid var(--Gris);
+    border-radius: 10px;
+    margin-top: 5%;
+
+}
 
 @media (max-width: 768px) {
     .HeaderChico{

@@ -27,3 +27,4 @@ VALUES ('33333333');
 
 INSERT INTO DIRECCION (documento_identidad)
 VALUES ('44444444');
+

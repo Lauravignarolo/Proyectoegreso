@@ -80,7 +80,7 @@ label {
     color: var(--Azul);
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     fieldset {
     display: flex;
     display: inline;

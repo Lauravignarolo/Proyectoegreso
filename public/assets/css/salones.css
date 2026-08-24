@@ -25,9 +25,6 @@
     
     
 }
-.PAviso{
-    color: red;
-}
 
 .ButtonAgregarSalon{
     width: 8%;
@@ -103,7 +100,7 @@
 }
 
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     
 .TableSalones {
     width: 20%;

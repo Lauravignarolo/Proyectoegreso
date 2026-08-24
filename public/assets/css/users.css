@@ -44,48 +44,18 @@
     flex-direction: column;
     gap: 5px;
 }
-.ButtonEditar, .ButtonEliminar {
+.ButtonEliminar {
     border: 1px solid var(--Negro);
     background-color: var(--Azul);
     color: var(--Blanco);
 }
-.ButtonEditar:hover, .ButtonEliminar:hover {
+.ButtonEliminar:hover {
     color: var(--Negro);
     background-color: var(--AzulClaro);
     border: 1px solid var(--GrisClaro);
 }
 
-.DialogGestionarEmpleados{
-    width: 50%;
-}
 
-.FieldsetEmpleados{
-    width: 100%;
-}
-
-.ButtonCerrarGestionarEmpleados{
-    display: flex;
-    padding: 3px;
-    border: 1px solid var(--Negro);
-    background-color: var(--Azul);
-    color: var(--Blanco);
-
-}
-.ButtonCerrarGestionarEmpleados:hover{
-    background-color: var(--AzulClaro);
-    color: var(--Negro);
-    border: 1px solid var(--GrisClaro);
-}
-.ButtonAceptar {
-    background-color: var(--Azul);
-    color: var(--Blanco);
-    width: 100%;
-    padding: 12px;
-    font-size: 1.2rem;
-    border: none;
-    margin-top: 10px;
-
-}
 
 .TableEmpleados tr,.TableEmpleados th,.TableEmpleados td{
     border: 1px solid var(--Gris);
@@ -99,7 +69,7 @@
 }
 
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     
 .TableEmpleados {
     width: 20%;

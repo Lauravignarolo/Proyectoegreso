@@ -36,7 +36,7 @@
     <header class="HeaderChico">
 
         <img
-            src="../../public/assets/img/iti utu.png"
+            src="/public/assets/img/iti utu.png"
             alt=""
             height="100px">
 

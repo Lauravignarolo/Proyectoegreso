@@ -56,6 +56,7 @@ $conectorPDO->desconectar();
     <link
         rel="stylesheet"
         href="../../public/assets/css/salones.css">
+    
 
 </head>
 
@@ -64,7 +65,7 @@ $conectorPDO->desconectar();
     <header class="HeaderChico">
 
         <img
-            src="../../public/assets/img/iti utu.png"
+            src="/public/assets/img/iti utu.png"
             alt=""
             height="100px">
 

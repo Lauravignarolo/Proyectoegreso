@@ -20,7 +20,7 @@
 <body id="inicio">
 
      <header class="HeaderInicio">
-        <img src="assets/img/iti utu.png" alt="">
+        <img src="/public/assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
         <a href="../../public/index.html">Volver</a>
     </header>

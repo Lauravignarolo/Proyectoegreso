@@ -26,7 +26,7 @@
 }
 .ArticleTickets header{
     
-        display: block;
+    display: block;
     color: var(--Azul);
     width: 100%;
     flex-wrap: wrap;
@@ -46,7 +46,7 @@
 }
 
         
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .TableTickets{
         border-collapse: collapse;
     }

@@ -104,7 +104,7 @@ $conectorPDO->desconectar();
 
         <?php if (($_GET["error"] ?? "") === "salonEnUso"): ?>
 
-    <p>Este salón no se puede eliminar porque tiene tickets asociados.</p>
+    <p class="PAviso">Este salón no se puede eliminar porque tiene tickets asociados.</p>
 
 <?php endif; ?>
 
