@@ -22,7 +22,7 @@
     display: flex;
     justify-content: center;
     box-shadow: 0 4px 10px var(--GrisClaro);
-    margin: 1% 13% 0 13%;
+    margin: 3% 13% 0 13%;
 
 }
 
@@ -31,19 +31,36 @@
     justify-content: center;
     flex-direction: column;
     text-align: justify;
-    background-color: var(--AzulClaro);
-    margin: 8% 5% 0 5%;
-    padding: 1%;
-    border-radius: 12px;
+    margin: 2% 5% 0 5%;
+    padding: 3%;
+    border-radius: 4px;
+    
 }
-.SectionBienvenida p{
+.ArticleBienvenida{
+    display: flex;
+    font-family: Arial, sans-serif;
+    font-weight: 400;
     background-color: var(--GrisClaro);
-    border-radius: 8px;
+    border: 1px solid var(--Gris);
+    border-radius: 4px;
     padding: 12px;
+    flex-direction: row;
+    margin-bottom: 1%;
+    align-items: center;
+    gap: 1%;
+
+}
+.ArticleBienvenida .bi{
+    font-size: 4rem;
 }
 .SectionBienvenida h2{
+    
+    color: var(--Azul);
+    display: flex;
     text-align: center;
-    color: var(--DoradoClaro);
+    margin-bottom: 3%;
+    justify-content: center;
+    
 }
 
 @media (max-width: 768px) {

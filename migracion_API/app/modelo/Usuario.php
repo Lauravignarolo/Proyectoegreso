@@ -2,30 +2,68 @@
 
 class Usuario {
     private string $cedula;
-    private string $claveHash;
+    private string $passwordHash;
+
     private bool $administrador;
-    private bool $logistica;
+    private bool $docente;
+    private bool $direccion;
+    private bool $tecnico;
 
     public function __construct(string $cedula, string $claveHash, bool $sesionActiva, bool $administrador, bool $logistica) {
         $this->cedula = $cedula;
-        $this->claveHash = $claveHash;
+        $this->passwordHash = $passwordHash;
+
         $this->administrador = $administrador;
-        $this->logistica = $logistica;
+        $this->docente = $docente;
+        $this->direccion = $direccion;
+        $this->tecnico = $tecnico;
     }
 
-    public function getCedula(): string {
+    /**
+     * @return string La cedula del usuario.
+     */
+    public function getCedula(): string
+    {
         return $this->cedula;
     }
 
-    public function getClaveHash(): string {
-        return $this->claveHash;
+    /**
+     * @return string El hash de la contrasena del usuario.
+     */
+    public function getClaveHash(): string
+    {
+        return $this->passwordHash;
     }
 
-    public function esAdministrador(): bool {
+    /**
+     * @return bool True si el usuario tiene el rol Administrador.
+     */
+    public function esAdministrador(): bool
+    {
         return $this->administrador;
     }
 
-    public function esLogistica(): bool {
-        return $this->logistica;
+    /**
+     * @return bool True si el usuario tiene el rol Docente.
+     */
+    public function esDocente(): bool
+    {
+        return $this->docente;
+    }
+
+    /**
+     * @return bool True si el usuario tiene el rol Direccion.
+     */
+    public function esDireccion(): bool
+    {
+        return $this->direccion;
+    }
+
+    /**
+     * @return bool True si el usuario tiene el rol Tecnico.
+     */
+    public function esTecnico(): bool
+    {
+        return $this->tecnico;
     }
 }

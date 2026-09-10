@@ -18,22 +18,48 @@
 .ButtonRegistrarUsuario{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-top: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
+}
+
+.ButtonVerUsuario{
+    background-color: var(--Blanco);
+    color: var(--Azul);
+    padding: 10px;
+    font-size: 2rem;
+    border: 1px solid var(--Azul);
+    border-radius: 10px;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
 
 }
 
 .ButtonSalones{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-top: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
 
 }
 

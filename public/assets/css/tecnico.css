@@ -18,51 +18,81 @@
 .ButtonSalones{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-bottom: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
 }
 .ButtonInventario{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-bottom: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
 
 }
 
 .ButtonEquipos{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-bottom: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
 
 }
 
 .ButtonTickets{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-bottom: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
 
 }
 .ButtonSolicitudes{
     background-color: var(--Blanco);
     color: var(--Azul);
-    padding: 18px 8%;
+    padding: 10px;
     font-size: 2rem;
-    border: 1px solid var(--Gris);
+    border: 1px solid var(--Azul);
     border-radius: 10px;
-    margin-bottom: 3%;
+    margin-top: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    text-decoration: none;
+
 
 }

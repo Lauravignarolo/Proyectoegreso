@@ -24,9 +24,7 @@
         <h1> S.G.R.S.I </h1>
         <a href="../../public/index.html">Volver</a>
     </header>
-    <nav>
-        <a class="AInicio" href="index.html"></a>
-    </nav>
+
     <main>
         <Section class="SectionFormularioLogin">
     
