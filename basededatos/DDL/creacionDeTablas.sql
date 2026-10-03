@@ -3,6 +3,7 @@ CREATE TABLE USUARIO (
     contrasena VARCHAR(255) NOT NULL, 
     nombre VARCHAR(50) NOT NULL, 
     apellido VARCHAR(50) NOT NULL, 
+    estado BOOLEAN NOT NULL DEFAULT TRUE,
  
     CONSTRAINT pk_usuario 
         PRIMARY KEY (documento_identidad) 

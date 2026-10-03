@@ -8,6 +8,7 @@ class Usuario
     private string $cedula;
     private string $passwordHash;
 
+    private bool $estado;
     private bool $administrador;
     private bool $docente;
     private bool $direccion;
@@ -17,6 +18,7 @@ class Usuario
      * Constructor parametrizado que arma el objeto Usuario con los datos recuperados de la base.
      * @param string $cedula Documento de identidad del usuario.
      * @param string $passwordHash Contrasena ya cifrada (hash), nunca en texto plano.
+     * @param bool $estado Indica si el usuario esta activo.
      * @param bool $administrador Indica si el usuario tiene el rol Administrador.
      * @param bool $docente Indica si el usuario tiene el rol Docente.
      * @param bool $direccion Indica si el usuario tiene el rol Direccion.
@@ -25,6 +27,7 @@ class Usuario
     public function __construct(
         string $cedula,
         string $passwordHash,
+        bool $estado,
         bool $administrador,
         bool $docente,
         bool $direccion,
@@ -32,6 +35,7 @@ class Usuario
     ) {
         $this->cedula = $cedula;
         $this->passwordHash = $passwordHash;
+        $this->estado = $estado;
 
         $this->administrador = $administrador;
         $this->docente = $docente;
@@ -53,6 +57,14 @@ class Usuario
     public function getClaveHash(): string
     {
         return $this->passwordHash;
+    }
+
+    /**
+     * @return bool True si el usuario esta activo.
+     */
+    public function getEstado(): bool
+    {
+        return $this->estado;
     }
 
     /**
