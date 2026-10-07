@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../../config/config.php";
-require_once RUTA_CONTROLADOR . "/UsuarioController.php";
+require_once RUTA_CONTROLADOR . "/ProcesarUsuario.php";
 
 session_start();
 

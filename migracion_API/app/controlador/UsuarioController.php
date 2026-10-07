@@ -156,8 +156,7 @@ class UsuarioController
         match ($metodo) {
             "GET" => $this->listar(),
             "POST" => $this->alta(),
-            //PONER PUT
-            "PATCH" => $this->modificar(),
+           // "PATCH" => $this->modificar(),
             "DELETE" => $this->baja(),
             default => RespuestaJson::error("Método no permitido", 405),
         };
