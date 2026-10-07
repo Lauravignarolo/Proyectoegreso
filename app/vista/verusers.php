@@ -88,7 +88,7 @@ if ($roles == "") {
                             <td><?= htmlspecialchars($roles) ?></td>
 
                             <td>
-                                <form action="../../public/procesarBajaUsuario.php" method="POST">
+                                <form action="../../public/ProcesarBajaUsuario.php" method="POST">
 
     <input
         type="hidden"
