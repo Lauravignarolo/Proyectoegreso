@@ -10,7 +10,10 @@ class ConectorPDO
     private string $username;
     private string $password;
     private string $dbname;
-    private ?PDO $conexion;
+    private ?PDO $conexion = null;
+
+    private static ?self $instancia = null;
+
 
     /**
      * Constructor parametrizado con los datos necesarios para conectar a la base de datos.
@@ -19,6 +22,7 @@ class ConectorPDO
      * @param string $password Contrasena del usuario de la base de datos.
      * @param string $dbname Nombre de la base de datos a utilizar.
      */
+
     public function __construct(
         string $servername,
         string $username,
@@ -32,42 +36,59 @@ class ConectorPDO
         $this->conexion = null;
     }
 
-    /**
-     * Abre la conexion PDO con la base de datos configurada.
-     * @return PDO|null La conexion establecida, o null si fallo la conexion.
-     */
-    public function establecerConexion(): ?PDO
+    
+  private function __clone(): void {}
+
+    //Se previene la manipulación del objeto para que no pueda ser deserializado mediante convenciones semi despreciadas
+    public function __wakeup(): void
     {
-        try {
-
-            $this->conexion = new PDO(
-                "mysql:host={$this->servername};port=3306;dbname={$this->dbname};charset=utf8mb4",
-                $this->username,
-                $this->password
-            );
-
-            $this->conexion->setAttribute(
-                PDO::ATTR_ERRMODE,
-                PDO::ERRMODE_EXCEPTION
-            );
-
-            return $this->conexion;
-
-        } catch (PDOException $e) {
-
-            echo "ERROR DE CONEXIÓN: " . $e->getMessage();
-
-            return null;
-        }
+        throw new Exception("No se puede deserializar un Singleton.");
     }
 
-    /**
-     * Cierra la conexion con la base de datos.
-     */
+    //Se evita la posibilidad de serializar un objeto
+    public function __serialize(): array
+    {
+        throw new LogicException(
+            "El objeto no puede serializarse."
+        );
+    }
+
+    //Se evita la posibilidad de deserializar un objeto
+    public function __unserialize(array $data): void
+    {
+        throw new LogicException(
+            "El objeto no puede deserializarse."
+        );
+    }
+
+    public static function obtenerInstancia(string $servername, int $port, string $username, string $password, string $dbname): ConectorPDO
+    {
+        if (self::$instancia === null) {
+            self::$instancia = new self ($servername, $port, $username, $password, $dbname);
+        }
+
+        return self::$instancia;
+    }
+
+    public function establecerConexion(): PDO
+    {
+        //Si la conexión está funcionando, se la retorna directamente
+        if ($this->conexion !== null) {
+            return $this->conexion;
+        }
+
+        // Siguiendo la documentación y los parámetros definidos por el constructor de PDO, se crea la variable dsn
+        // Como buena práctica se define el formato charset=utf8mb4 para evitar problemas con caracteres especiales o letras que ocupen un tamaño de más de un byte, ejemplo #3: https://www.php.net/manual/en/mysqlinfo.concepts.charset.php
+        $dsn = "mysql:" . "host={$this->servername};" . "port={$this->port};" . "dbname={$this->dbname};" . "charset=utf8mb4";
+
+        //Se sigue la estructura paramétrica definida por el constructor según la documentación
+        $this->conexion = new PDO($dsn, $this->username, $this->password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+
+        return $this->conexion;
+    }
+
     public function desconectar(): void
     {
         $this->conexion = null;
     }
 }
-
-?>
