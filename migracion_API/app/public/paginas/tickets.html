@@ -52,77 +52,6 @@
                         </tr>
                     </thead>
                     <tbody class="TbodyTickets">
-
-    <?php if (empty($tickets)): ?>
-
-        <tr>
-            <td colspan="12">
-                No hay tickets registrados.
-            </td>
-        </tr>
-
-    <?php else: ?>
-
-        <?php foreach ($tickets as $ticket): ?>
-
-            <tr>
-
-                <td>
-                    <?= htmlspecialchars($ticket["estudiante_a_cargo"]) ?>
-                </td>
-
-                <td>
-    <?= htmlspecialchars(
-        $ticket["nombre"] . " " . $ticket["apellido"]
-    ) ?>
-</td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["hora_de_entrada"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["hora_de_salida"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["tipo_de_salon"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["numero_de_salon"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["numero_de_equipo"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["asignatura"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["grupo"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["turno"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["estado"]) ?>
-                </td>
-
-                <td>
-                    <?= htmlspecialchars($ticket["urgencia"] ?? "Sin especificar") ?>
-                </td>
-
-            </tr>
-
-        <?php endforeach; ?>
-
-    <?php endif; ?>
-
                     </tbody>
                 </table>
             </article>
@@ -141,5 +70,5 @@
     </footer>
     <script src="../../public/assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
-
+<script src="../../public/assets/js/tickets.js"></script>
 </html>

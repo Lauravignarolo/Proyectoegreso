@@ -52,7 +52,7 @@ CREATE TABLE SALON (
 
 
 CREATE TABLE TICKETS ( 
-    id_ticket INT NOT NULL, 
+    id_ticket INT NOT NULL AUTO_INCREMENT, 
     numero_de_equipo INT NOT NULL,
     numero_de_salon INT NOT NULL,
     tipo_de_salon VARCHAR(50) NOT NULL,
@@ -71,11 +71,11 @@ CREATE TABLE AVISO_DE_ESTADO (
     id_ticket INT NOT NULL, 
     urgencia VARCHAR(20) NOT NULL, 
     numero_de_equipo INT NOT NULL,
-    estudiante_a_cargo CHAR(8) NOT NULL, 
+    estudiante_a_cargo VARCHAR(100) NOT NULL, 
     estado VARCHAR(50) NOT NULL, 
  
     CONSTRAINT pk_aviso_estado 
-        PRIMARY KEY (id_ticket) 
+        PRIMARY KEY (id_ticket)
 ); 
 
 
