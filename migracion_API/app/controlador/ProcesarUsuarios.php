@@ -1,35 +1,41 @@
+
 <?php
 
-require_once "../modelo/ConectarPDO.php";
-require_once "../modelo/AccesoDatosUsuario.php";
-require_once "../modelo/users.php";
+require_once RUTA_MODELO . "/ConectarPDO.php";
+require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
+require_once RUTA_VISTA . "/RespuestaJSON.php";
 
-// Datos de conexión
-$servidor = "localhost";
-$usuario = "root";
-$contrasena = "";
-$baseDatos = "proyectoegreso";
+class ProcesarUsuarios
+{
+    public function listarUsuarios(string $metodo): void
+    {
+        if ($metodo !== "GET") {
+            RespuestaJSON::error("Método no permitido", 405);
+        }
 
-// Crear el conector
-$conector = new ConectorPDO(
-    $servidor,
-    $usuario,
-    $contrasena,
-    $baseDatos
-);
+        if (empty($_SESSION["cedula"])) {
+            RespuestaJSON::error("Sesión no iniciada", 401);
+        }
 
-// Establecer conexión
-$conexion = $conector->establecerConexion();
+        if (empty($_SESSION["administrador"])) {
+            RespuestaJSON::error("Acceso denegado", 403);
+        }
 
-if ($conexion === null) {
-    die("No se pudo conectar a la base de datos.");
+        $conectorPDO = new ConectorPDO(
+            $_ENV["DB_HOST"],
+            $_ENV["DB_USUARIO"],
+            $_ENV["DB_CLAVE"],
+            $_ENV["DB_NOMBRE"]
+        );
+
+        $conexion = $conectorPDO->establecerConexion();
+
+        $accesoDatosUsuario = new AccesoDatosUsuario($conexion);
+
+        $usuarios = $accesoDatosUsuario->listarUsuarios();
+
+        $conectorPDO->desconectar();
+
+        RespuestaJSON::exito($usuarios);
+    }
 }
-
-// Crear acceso a datos
-$accesoDatosUsuario = new AccesoDatosUsuario($conexion);
-
-// Obtener usuarios
-$usuarios = $accesoDatosUsuario->listarUsuarios();
-
-// Cargar vista
-require_once "../vista/verusers.php";

@@ -1,105 +1,118 @@
+
 <?php
 
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once RUTA_MODELO . "/ConectarPDO.php";
+require_once RUTA_MODELO . "/Usuario.php";
+require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
+require_once RUTA_MODELO . "/Login.php";
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
-$dotenv->load();
+class ProcesarLogin
+{
+    public function autenticar(string $metodo): void
+    {
+        if ($metodo !== "POST") {
+            header("Allow: POST");
+            RespuestaJson::error("Método no permitido", 405);
+        }
 
-require_once __DIR__ . "/../modelo/ConectarPDO.php";
-require_once __DIR__ . "/../modelo/AccesoDatosUsuario.php";
-require_once __DIR__ . "/../modelo/users.php";
-require_once __DIR__ . "/../modelo/Login.php";
+        $datos = json_decode(file_get_contents("php://input"), true);
 
+        if (!is_array($datos)) {
+            RespuestaJson::error("JSON inválido", 400);
+        }
 
-// Comprueba que el formulario haya sido enviado mediante POST
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    $mensaje = "Acceso Denegado: Petición incorrecta";
-    header("Location: /public/login.php?error=" . urlencode($mensaje));
-    exit;
+        $cedula = trim($datos["cedula"] ?? "");
+        $clave = $datos["clave"] ?? "";
+
+        if (!preg_match("/^[1-9][0-9]{7}$/", $cedula) ||
+            !is_string($clave) || $clave === "") {
+            RespuestaJson::error("Credenciales inválidas", 422);
+        }
+
+        $conector = new ConectorPDO(
+            $_ENV["DB_HOST"],
+            $_ENV["DB_USUARIO"],
+            $_ENV["DB_CLAVE"],
+            $_ENV["DB_NOMBRE"],
+            (int) ($_ENV["DB_PUERTO"] ?? 3306)
+        );
+
+        $conexion = $conector->establecerConexion();
+        $dao = new AccesoDatosUsuario($conexion);
+        $login = new Login($dao);
+
+        $usuario = $login->autenticar($cedula, $clave);
+
+        $conector->desconectar();
+
+        if ($usuario === null) {
+            RespuestaJson::error("Cédula o contraseña incorrecta", 401);
+        }
+
+        session_regenerate_id(true);
+
+        $_SESSION["cedula"] = $usuario->getCedula();
+        $_SESSION["administrador"] = $usuario->esAdministrador();
+        $_SESSION["docente"] = $usuario->esDocente();
+        $_SESSION["direccion"] = $usuario->esDireccion();
+        $_SESSION["tecnico"] = $usuario->esTecnico();
+
+        $_SESSION["csrfToken"] = bin2hex(random_bytes(32));
+        
+
+        $rol = match (true) {
+            $usuario->esAdministrador() => "administrador",
+            $usuario->esDocente() => "docente",
+            $usuario->esTecnico() => "tecnico",
+            $usuario->esDireccion() => "direccion",
+            default => null
+        };
+
+        if ($rol === null) {
+            $_SESSION = [];
+            session_destroy();
+            RespuestaJson::error("Usuario sin rol autorizado", 403);
+        }
+
+        RespuestaJson::exito([
+            "cedula" => $usuario->getCedula(),
+            "rol" => $rol,
+            "csrfToken" => $_SESSION["csrfToken"]
+        ]);
+    }
+
+    public function cerrarSesion(string $metodo): void
+    {
+        if ($metodo !== "POST") {
+            header("Allow: POST");
+            RespuestaJson::error("Método no permitido", 405);
+        }
+
+        $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
+
+        if (!isset($_SESSION["cedula"]) ||
+            !isset($_SESSION["csrfToken"]) ||
+            !is_string($token) ||
+            !hash_equals($_SESSION["csrfToken"], $token)) {
+            RespuestaJson::error("Sesión o token inválido", 403);
+        }
+
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), "", [
+                "expires" => time() - 3600,
+                "path" => $params["path"],
+                "domain" => $params["domain"],
+                "secure" => $params["secure"],
+                "httponly" => $params["httponly"],
+                "samesite" => $params["samesite"] ?? "Lax"
+            ]);
+        }
+
+        session_destroy();
+
+        RespuestaJson::exito(["mensaje" => "Sesión cerrada"]);
+    }
 }
-
-
-// Recupera las credenciales provenientes del formulario
-$cedula = trim($_POST["cedula"] ?? "");
-$clave = $_POST["clave"] ?? "";
-
-
-// Conexión a la base de datos
-$conectorPDO = new ConectorPDO(
-    $_ENV["DB_HOST"],
-    $_ENV["DB_USUARIO"],
-    $_ENV["DB_CLAVE"],
-    $_ENV["DB_NOMBRE"]
-);
-
-$conexion = $conectorPDO->establecerConexion();
-
-
-if ($conexion === null) {
-    $mensaje = "Acceso Denegado: Problemas con la conexión.";
-    header("Location: /public/login.php?error=" . urlencode($mensaje));
-    exit;
-}
-
-
-// Crea los objetos para realizar la autenticación
-$accesoDatosUsuario = new AccesoDatosUsuario($conexion);
-$login = new Login($accesoDatosUsuario);
-
-
-// Autentica al usuario
-$usuario = $login->autenticar($cedula, $clave);
-
-
-// Cierra la conexión
-$conectorPDO->desconectar();
-
-
-// Si las credenciales no coinciden
-if ($usuario === null) {
-    $mensaje = "Acceso Denegado: La cédula o la contraseña son incorrectas.";
-    header("Location: /public/login.php?error=" . urlencode($mensaje));
-    exit;
-}
-
-
-// Inicia la sesión
-session_start();
-session_regenerate_id(true);
-
-
-// Guarda los datos del usuario en la sesión
-$_SESSION["cedula"] = $usuario->getCedula();
-$_SESSION["administrador"] = $usuario->esAdministrador();
-$_SESSION["tecnico"] = $usuario->esTecnico();
-$_SESSION["docente"] = $usuario->esDocente();
-$_SESSION["direccion"] = $usuario->esDireccion();
-
-
-// Redirección según el rol
-if ($usuario->esAdministrador()) {
-    header("Location: /app/vista/administrador.php");
-    exit;
-}
-
-if ($usuario->esDocente()) {
-    header("Location: /app/vista/docente.php");
-    exit;
-}
-
-if ($usuario->esTecnico()) {
-    header("Location: /app/vista/tecnico.php");
-    exit;
-}
-
-if ($usuario->esDireccion()) {
-    header("Location: /app/vista/direccion.php");
-    exit;
-}
-
-
-// Si no tiene ningún rol
-header("Location: /public/login.php");
-exit;
-
-?>

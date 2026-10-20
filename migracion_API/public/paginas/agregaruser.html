@@ -8,27 +8,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../public/assets/css/general.css">
-    <link rel="stylesheet" href="../../public/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../public/assets/css/formularios.css">
-    <link rel="stylesheet" href="../../public/assets/css/administrador.css">
+    <link rel="stylesheet" href="../assets/css/general.css">
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/formularios.css">
+    <link rel="stylesheet" href="../assets/css/administrador.css">
 </head>
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="/public/assets/img/iti utu.png" alt="" height="100px">
+        <img src="../assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="administrador.php">Volver</a>
+        <a href="administrador.html">Volver</a>
     </header>
     <main>
         <Section class="SectionFormularioUsuarios">
-            <form action="/public/procesarRegistroUsuario.php" method="POST">
+            <form id="formularioRegistroUsuario">
                 <fieldset>
                     <legend> REGISTRAR NUEVO USUARIO </legend>
 
-                    <label for="">Cedula o Pasaporte</label>
-                    <input class="Inputllenar" type="number" name="cedula" required pattern="[1-9][0-9]{7}"
-                        placeholder="Ingresar Cedula">
+                    <label for="">Cedula</label>
+                    <input class="Inputllenar" type="text" name="cedula" required pattern="[1-9][0-9]{7}" maxlength="8" placeholder="Ingresar Cédula">
 
                     <label for="">Nombre</label>
                     <input class="Inputllenar" type="text" name="nombre" required placeholder="Ingresar Nombre">
@@ -38,9 +37,15 @@
                     <input class="Inputllenar" type="text" name="apellido" required placeholder="Ingresar Apellido">
 
 
-                        <label for="">Contraseña</label>
-                    <input class="Inputllenar" type="text" name="clave" required placeholder="Ingresar Contrasena">
+                    <label for="">Contraseña</label>
+                    <input class="Inputllenar" type="password" id="clave"
+                        name="clave" required minlength="12"
+                        placeholder="Ingresar contraseña">
 
+                    <label for="confirmarClave">Confirmar contraseña</label>
+                    <input class="Inputllenar" type="password" id="confirmarClave"
+                        name="confirmarClave" required minlength="12"
+                        placeholder="Repetir contraseña">
 
                     <label for="">Tipo de Usuario</label>
                     <select id="turno" name="rol">
@@ -72,7 +77,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>

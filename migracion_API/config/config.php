@@ -2,7 +2,6 @@
 <?php
 
 define("RUTA_RAIZ", dirname(__DIR__));
-
 define("RUTA_APP", RUTA_RAIZ . "/app");
 define("RUTA_MODELO", RUTA_APP . "/modelo");
 define("RUTA_CONTROLADOR", RUTA_APP . "/controlador");

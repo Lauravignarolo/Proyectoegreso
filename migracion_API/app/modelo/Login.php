@@ -24,6 +24,7 @@ class Login
      * @param string $clave Contrasena ingresada por el usuario, en texto plano.
      * @return Usuario|null El usuario autenticado si las credenciales son correctas, null en caso contrario.
      */
+    
     public function autenticar(string $cedula, string $clave): ?Usuario
     {
         $usuario = $this->accesoDatosUsuario->buscarUsuario($cedula);
@@ -38,6 +39,7 @@ class Login
 
         return $usuario;
     }
+
 }
 
 ?>

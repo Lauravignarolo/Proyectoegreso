@@ -30,7 +30,7 @@
     
  <main>
         <Section class="SectionFormularioLogin">
-           <form action="../app/controlador/procesarLogin.php" method="POST">
+           <form id="formularioLogin" method="POST">
                 <fieldset>
                     <legend> INICIAR SESION </legend>
 
@@ -54,7 +54,7 @@
                     
                         <label for="">Contraseña</label>
                     <div Class="DivPassword">
-                        <label class="LabelIconoPassword" for="Clave" >
+                        <label class="LabelIconoPassword" for="clave" >
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                 fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
@@ -70,9 +70,9 @@
 
                     </div>
 
-                    <a class="AIngresar"
-                       ><button type="submit" class="ButtonIngresar">INGRESAR</button>
-                    </a>
+                    <button type="submit" class="ButtonIngresar AIngresar">
+                        INGRESAR
+                    </button>
 
                 </fieldset>
 
@@ -89,8 +89,8 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="../../public/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/public/assets/js/login.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/js/login.js"></script>
 </body>
 
 </html>

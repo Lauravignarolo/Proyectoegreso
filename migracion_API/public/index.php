@@ -10,8 +10,8 @@ try {
     $ruta = $_GET["ruta"] ?? "";
     $metodo = $_SERVER["REQUEST_METHOD"] ?? "GET";
 
-    if ($ruta === "") {
-        RespuestaJSON::error("Falta indicar la ruta", 400);
+    if (!is_string($ruta) || trim($ruta) === "") {
+        RespuestaJson::error("Falta indicar la ruta", 400);
     }
 
     if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -22,5 +22,11 @@ try {
 
 } catch (Throwable $error) {
     error_log((string) $error);
-    RespuestaJSON::error("Error interno del servidor", 500);
+
+    RespuestaJson::error(
+        "Error: " . $error->getMessage() .
+        " | Archivo: " . $error->getFile() .
+        " | Línea: " . $error->getLine(),
+        500
+    );
 }

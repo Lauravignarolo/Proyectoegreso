@@ -29,7 +29,7 @@ class BajaDatosSalones
                 "tipo_de_salon" => $tipoSalon
             ]);
 
-            return true;
+            return $consulta->rowCount() > 0;
 
         } catch (PDOException $error) {
 
