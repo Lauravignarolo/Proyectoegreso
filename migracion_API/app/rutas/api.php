@@ -1,6 +1,5 @@
 <?php
 require_once RUTA_CONTROLADOR . "/ProcesarLogin.php";
-require_once RUTA_CONTROLADOR . "/UsuarioController.php";
 require_once RUTA_CONTROLADOR . "/TicketController.php";
 require_once RUTA_CONTROLADOR . "/ProcesarAltaUsuario.php";
 require_once RUTA_CONTROLADOR . "/ProcesarSalones.php";
@@ -22,11 +21,6 @@ switch ($ruta) {
     } else {
         RespuestaJSON::error("Método no permitido", 405);
     }
-    break;
-    
-    case "salones":
-    $controlador = new ProcesarSalones();
-    $controlador->listarSalones($metodo);
     break;
 
     case "login":

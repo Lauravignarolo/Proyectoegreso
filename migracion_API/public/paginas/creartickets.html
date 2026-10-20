@@ -26,7 +26,7 @@
     </header>
     <main>
         <Section class="SectionFormularioTickets">
-            <form action="/public/procesarCrearTickets.html" class="FormCrearTickets" id="FormCrearTickets" method="POST">
+            <form class="FormCrearTickets" id="FormCrearTickets">
                 <fieldset>
                     <legend> REGISTRAR ESTADO DEL EQUIPO </legend>
 
@@ -71,16 +71,21 @@
                         <option value="N">Nocturno</option>
                     </select>
 
+                   <label>Urgencia</label>
+                   <select id="Urgencia" name="urgencia">
+                        <option value="" disabled selected>Seleccione la urgencia</option>
+                        <option value="Nula">Nula</option>
+                        <option value="Poca">Poca</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+
                     <label>Estado del Equipo</label>
-                    <input class="Inputllenar" name="estado" type="text" id="EstadoDelEquipo" required
-                        placeholder="Ingresar Estado del Equipo">
-
-                    <a href="confirmacionticket.html" class="AEnviar" id="AEnviar">
+                    <input class="Inputllenar" name="estado" type="text" id="EstadoDelEquipo" required placeholder="Ingresar Estado del Equipo">
                         <button class="ButtonEnviar" id="ButtonEnviar" type="submit">Enviar</button>
-                    </a>
-
                 </fieldset>
             </form>
+        <p id="MensajeTicket"></p>
         </section>
         <dialog class="DialogConfirmacion">
             <button class="ButtonCerrarConfirmacion" id="ButtonCerrarConfirmacion" type="button">
@@ -107,7 +112,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="/public/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
-
+<script src="../assets/js/creartickets.js"></script>
 </html>
