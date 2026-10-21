@@ -18,7 +18,7 @@
     <header class="HeaderChico">
         <img src="../assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
-        <a href="administrador.html">Volver</a>
+        <a href="Administrador.html">Volver</a>
     </header>
     <main>
         <Section class="SectionFormularioUsuarios">
@@ -48,18 +48,15 @@
                         placeholder="Repetir contraseña">
 
                     <label for="">Tipo de Usuario</label>
-                    <select id="turno" name="rol">
-                        <option disabled selected>Seleccione un tipo de Usuario</option>
+                    <select id="rol" name="rol" required>
+                        <option value="" disabled selected>Seleccione un tipo de usuario</option>
                         <option value="Docente">Docente</option>
                         <option value="Administrador">Administrador</option>
-                        <option value="Tecnico">Tecnico</option>
-                        <option value="Direccion">Direccion</option>
-
+                        <option value="Tecnico">Técnico</option>
+                        <option value="Direccion">Dirección</option>
                     </select>
 
-                    <a href="/public/confirmacionuser.html" class="AEnviar">
-                        <button class="ButtonEnviar" type="submit">Enviar</button>
-                    </a>
+                    <button class="ButtonEnviar" type="submit">Enviar</button>
 
                 </fieldset>
             </form>
@@ -77,6 +74,7 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
+    <script src="../assets/js/registroUsuario.js"></script>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 

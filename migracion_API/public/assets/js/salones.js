@@ -175,13 +175,74 @@ function confirmarEliminacionSalon(evento) {
 
 
 // Antes de enviar el formulario de alta
-function gestionarSalon(evento) {
 
-    // Evita enviar a la ruta antigua de PHP.
+async function gestionarSalon(evento) {
+
     evento.preventDefault();
 
-    alert("El registro de salones todavía debe conectarse a la API.");
+    const formulario = new FormData(FormGestionarSalones);
+
+    const datos = {
+        tipo_de_salon: formulario.get("tipo_de_salon"),
+        numero_de_salon: formulario.get("numero_de_salon")
+    };
+
+    if (
+        !datos.tipo_de_salon ||
+        !datos.numero_de_salon
+    ) {
+        alert("Completá todos los campos.");
+        return;
+    }
+
+    const botonEnviar = FormGestionarSalones.querySelector(
+        'button[type="submit"]'
+    );
+
+    if (botonEnviar) {
+        botonEnviar.disabled = true;
+    }
+
+    try {
+
+        const respuesta = await fetch(API_SALONES, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token":
+                    sessionStorage.getItem("csrfToken") ?? ""
+            },
+            body: JSON.stringify(datos)
+        });
+
+        const json = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                json.mensaje ?? "No se pudo registrar el salón."
+            );
+        }
+
+        alert("Salón registrado correctamente.");
+
+        CerrarGestionarSalones();
+
+        await cargarSalones();
+
+    } catch (error) {
+
+        alert(error.message);
+        console.error("Error al registrar salón:", error);
+
+    } finally {
+
+        if (botonEnviar) {
+            botonEnviar.disabled = false;
+        }
+    }
 }
+
 
 
 // Eventos
