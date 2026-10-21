@@ -1,80 +1,77 @@
 
+const FormCrearSolicitud =
+    document.getElementById("FormCrearSolicitud");
 
-//Tomar datos del formulario gestionar Inventario
-const FormCrearSolicitud = document.getElementById("FormCrearSolicitud");
+const DialogConfirmacion =
+    document.querySelector(".DialogConfirmacion");
 
-//Tomar datos de los campos del formulario
-const EntradaFechaSoliditada = document.getElementById("FechaSoliditada");
-const EntradaDescripcion = document.getElementById("Descripcion");
+const ButtonCerrarConfirmacion =
+    document.getElementById("ButtonCerrarConfirmacion");
 
+FormCrearSolicitud.addEventListener(
+    "submit",
+    async function (evento) {
+        evento.preventDefault();
 
-//Dialog de confirmacion
+        const botonEnviar =
+            document.getElementById("ButtonEnviar");
 
-const ButtonCerrarConfirmacion = document.getElementById("ButtonCerrarConfirmacion");
-const DialogConfirmacion = document.querySelector(".DialogConfirmacion");
+        const fechaSolicitada =
+            document.getElementById("FechaSoliditada").value;
 
-//Confirmar
-function Confirmar(){
-    
-    DialogConfirmacion.showModal();
+        const descripcion =
+            document.getElementById("Descripcion").value.trim();
 
-}
-function CerrarConfirmar(){
-    
-    DialogConfirmacion.close();
+        botonEnviar.disabled = true;
 
-}
+        try {
+            const respuesta = await fetch(
+                "../index.php?ruta=solicitudes",
+                {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-Token":
+                            sessionStorage.getItem("csrfToken") ?? ""
+                    },
+                    body: JSON.stringify({
+                        fechaSolicitada,
+                        descripcion
+                    })
+                }
+            );
 
+            const json = await respuesta.json();
 
-function LimpiarForm(){
-    FormCrearSolicitud.reset();
-}
+            if (!respuesta.ok) {
+                throw new Error(
+                    json.mensaje ??
+                    "No se pudo registrar la solicitud"
+                );
+            }
 
-function GuardarSolicitudLocal() {
+            FormCrearSolicitud.reset();
 
-    let Solicitudes = JSON.parse(localStorage.getItem("Solicitudes")) || [];
+            if (DialogConfirmacion) {
+                DialogConfirmacion.showModal();
+            } else {
+                alert("Solicitud registrada correctamente");
+            }
 
-    const Solicitud = {
-        fechaSoliditada: EntradaFechaSoliditada.value,
-        descripcion: EntradaDescripcion.value
-    };
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
 
-        Solicitudes.push(Solicitud);
+        } finally {
+            botonEnviar.disabled = false;
+        }
+    }
+);
 
-
-    localStorage.setItem("Solicitudes", JSON.stringify(Solicitudes));
-};
-
-function ObtenerDatosSolicitud() {
-
-
-    const NuevoSolicitud = {
-
-        fechaSoliditada: EntradaFechaSoliditada.value,
-
-        descripcion: EntradaDescripcion.value
-
-    };
-
-    return NuevoSolicitud;
-}
-
-
-
-function CrearSolicitud(eventoForm){
-    eventoForm.preventDefault();
-
-    GuardarSolicitudLocal();
-
-    LimpiarForm();
-
-    Confirmar()
-
-}
-
-FormCrearSolicitud.addEventListener("submit", CrearSolicitud);
-
-
-// Aviso de confirmacion
-ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
-DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
+ButtonCerrarConfirmacion?.addEventListener(
+    "click",
+    function () {
+        DialogConfirmacion.close();
+    }
+);
