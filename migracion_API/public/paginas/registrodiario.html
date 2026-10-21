@@ -20,7 +20,7 @@
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="assets/img/iti utu.png" alt="" height="100px">
+        <img src="../assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
         <a href="docente.html">Volver</a>
     </header>
@@ -38,7 +38,7 @@
                     <input class="Inputllenar" type="time" id="HoraSalida" required placeholder="Ingresar Hora">
 
                     <label>Tipo de salon</label>
-                    <select id="TipoDeSalon" name="salon">
+                    <select id="TipoDeSalon" name="salon" required>
                         <option disabled selected>Seleccione un tipo de salon</option>
                         <option value="Taller">Taller</option>
                         <option value="Laboratorio">Laboratorio</option>
@@ -57,7 +57,7 @@
 
 
                     <label>Turno</label>
-                    <select id="Turno" name="turno">
+                    <select id="Turno" name="turno" required>
                         <option disabled selected>Seleccione un turno</option>
                         <option value="M">Matutino</option>
                         <option value="V">Vespertino</option>
@@ -95,8 +95,8 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/registrodiario.js"></script>
+<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../assets/js/registrodiario.js"></script>
 </body>
 
 </html>

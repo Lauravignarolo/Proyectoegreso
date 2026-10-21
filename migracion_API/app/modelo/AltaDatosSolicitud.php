@@ -1,53 +1,68 @@
+
 <?php
 
-/**
- * Clase encargada de registrar nuevas solicitudes de servicio en la base de datos.
- */
 class AltaDatosSolicitud
 {
     private PDO $conexion;
 
-    /**
-     * Constructor parametrizado que recibe una conexion ya establecida a la base de datos.
-     * @param PDO $conexion La conexion a la base de datos. PRECONDICION: No debe ser NULL.
-     */
     public function __construct(PDO $conexion)
     {
         $this->conexion = $conexion;
     }
 
-    /**
-     * Registra una nueva solicitud de servicio en la base de datos.
-     * @param string $fechaSolicitada Fecha para la cual se solicita el servicio.
-     * @param string $descripcion Descripcion de la solicitud realizada.
-     * @return bool True si la solicitud se registro correctamente.
-     */
     public function registrarSolicitud(
         string $fechaSolicitada,
-        string $descripcion
+        string $descripcion,
+        string $cedulaDocente
     ): bool {
-
         try {
+            $this->conexion->beginTransaction();
 
-            $sql = "INSERT INTO SOLICITUD 
-                    (fecha_Solicitada, descripcion)
-                    VALUES 
-                    (:fecha_Solicitada, :descripcion)";
+            $sql = "
+                INSERT INTO SOLICITUD
+                    (fecha_solicitada, descripcion)
+                VALUES
+                    (:fecha, :descripcion)
+            ";
 
             $consulta = $this->conexion->prepare($sql);
 
             $consulta->execute([
-                "fecha_Solicitada" => $fechaSolicitada,
+                "fecha" => $fechaSolicitada,
                 "descripcion" => $descripcion
             ]);
 
+            $idSolicitud = $this->conexion->lastInsertId();
+
+            $sqlPide = "
+                INSERT INTO PIDE
+                    (id_solicitud, documento_identidad)
+                VALUES
+                    (:idSolicitud, :cedula)
+            ";
+
+            $consultaPide = $this->conexion->prepare($sqlPide);
+
+            $consultaPide->execute([
+                "idSolicitud" => $idSolicitud,
+                "cedula" => $cedulaDocente
+            ]);
+
+            $this->conexion->commit();
+
             return true;
 
-        } catch (PDOException $error) {
-    error_log($error->getMessage());
-    return false;
-}
+        } catch (Throwable $error) {
+            if ($this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
+            }
+
+            error_log(
+                "Error al registrar solicitud: " .
+                $error->getMessage()
+            );
+
+            return false;
+        }
     }
 }
-
-?>

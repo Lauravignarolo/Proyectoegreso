@@ -1,84 +1,148 @@
-// Pide los tickets a la API y dibuja la tabla.
-// Antes la tabla la armaba PHP; ahora PHP solo entrega los datos (JSON)
-// y este archivo los dibuja.
 
-const RUTA_API_TICKETS = "../index.php?ruta=tickets";
-const RUTA_LOGIN = "login.html";
-const TbodyTickets = document.querySelector(".TbodyTickets");
-const COLUMNAS_TICKETS = 12;
+const API_TICKETS = "../index.php?ruta=tickets";
 
-function MostrarMensajeTickets(texto) {
-    TbodyTickets.textContent = "";
+const tablaTickets = document.getElementById("TbodyTickets");
+const mensajeTickets = document.getElementById("mensajeTickets");
 
-    const fila = document.createElement("tr");
-    const columna = document.createElement("td");
-    columna.colSpan = COLUMNAS_TICKETS;
-    columna.textContent = texto;
+function mostrarMensaje(texto) {
+    tablaTickets.replaceChildren();
 
-    fila.appendChild(columna);
-    TbodyTickets.appendChild(fila);
+    if (mensajeTickets) {
+        mensajeTickets.textContent = texto;
+    }
 }
 
-function AgregarFilaTicket(Ticket) {
-    const fila = document.createElement("tr");
+function mostrarTickets(tickets) {
+    tablaTickets.replaceChildren();
 
-    const docente = Ticket.nombre ? Ticket.nombre + " " + Ticket.apellido : "Sin registrar";
+    if (tickets.length === 0) {
+        mostrarMensaje("No hay tickets pendientes.");
+        return;
+    }
 
-    const valores = [
-        Ticket.estudiante_a_cargo,
-        docente,
-        Ticket.hora_de_entrada,
-        Ticket.hora_de_salida,
-        Ticket.tipo_de_salon,
-        Ticket.numero_de_salon,
-        Ticket.numero_de_equipo,
-        Ticket.asignatura,
-        Ticket.grupo,
-        Ticket.turno,
-        Ticket.estado,
-        Ticket.urgencia ?? "Sin especificar"
-    ];
+    if (mensajeTickets) {
+        mensajeTickets.textContent = "";
+    }
 
-    valores.forEach(valor => {
-        const columna = document.createElement("td");
-        columna.textContent = valor ?? "";
-        fila.appendChild(columna);
+    tickets.forEach((ticket) => {
+        const fila = document.createElement("tr");
+
+        const docente = [
+            ticket.nombre,
+            ticket.apellido
+        ].filter(Boolean).join(" ") || "Sin registrar";
+
+        const columnas = [
+            ticket.id_ticket,
+            ticket.estudiante_a_cargo,
+            docente,
+            ticket.hora_de_entrada,
+            ticket.hora_de_salida,
+            ticket.tipo_de_salon,
+            ticket.numero_de_salon,
+            ticket.numero_de_equipo,
+            ticket.asignatura,
+            ticket.grupo,
+            ticket.turno,
+            ticket.estado
+        ];
+
+        columnas.forEach((valor) => {
+            const celda = document.createElement("td");
+            celda.textContent = valor ?? "";
+            fila.appendChild(celda);
+        });
+
+        const celdaAccion = document.createElement("td");
+
+        const botonReparar = document.createElement("button");
+        botonReparar.type = "button";
+        botonReparar.className = "ButtonReparar";
+        botonReparar.textContent = "Reparar";
+
+        botonReparar.addEventListener("click", async () => {
+            await repararTicket(ticket.id_ticket, botonReparar);
+        });
+
+        celdaAccion.appendChild(botonReparar);
+        fila.appendChild(celdaAccion);
+
+        tablaTickets.appendChild(fila);
     });
-
-    TbodyTickets.appendChild(fila);
 }
 
-async function CargarTickets() {
+async function cargarTickets() {
+    mostrarMensaje("Cargando tickets...");
 
     try {
-        const respuesta = await fetch(RUTA_API_TICKETS, {
+        const respuesta = await fetch(API_TICKETS, {
             method: "GET",
             credentials: "same-origin"
         });
 
-        if (respuesta.status === 401) {
-            window.location.href = RUTA_LOGIN;
-            return;
-        }
-
-        const resultado = await respuesta.json();
+        const json = await respuesta.json();
 
         if (!respuesta.ok) {
-            MostrarMensajeTickets(resultado.mensaje ?? "No se pudieron cargar los tickets.");
-            return;
+            throw new Error(
+                json.mensaje ?? "No se pudieron cargar los tickets."
+            );
         }
 
-        if (resultado.datos.length === 0) {
-            MostrarMensajeTickets("No hay tickets registrados.");
-            return;
+        if (!Array.isArray(json.datos)) {
+            throw new Error("La API no devolvió una lista de tickets.");
         }
 
-        TbodyTickets.textContent = "";
-        resultado.datos.forEach(AgregarFilaTicket);
+        mostrarTickets(json.datos);
 
     } catch (error) {
-        MostrarMensajeTickets("No se pudo conectar con el servidor.");
+        console.error("Error al cargar tickets:", error);
+        mostrarMensaje(error.message);
     }
 }
 
-CargarTickets();
+async function repararTicket(idTicket, boton) {
+    const confirmar = confirm(
+        `¿Querés marcar el ticket ${idTicket} como reparado?`
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    boton.disabled = true;
+    boton.textContent = "Reparando...";
+
+    try {
+        const respuesta = await fetch(API_TICKETS, {
+            method: "PATCH",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token":
+                    sessionStorage.getItem("csrfToken") ?? ""
+            },
+            body: JSON.stringify({
+                id_ticket: idTicket
+            })
+        });
+
+        const json = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                json.mensaje ?? "No se pudo reparar el ticket."
+            );
+        }
+
+        await cargarTickets();
+
+    } catch (error) {
+        console.error("Error al reparar ticket:", error);
+        alert(error.message);
+
+        boton.disabled = false;
+        boton.textContent = "Reparar";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", cargarTickets);

@@ -1,26 +1,58 @@
+
 <?php
 
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once RUTA_MODELO . "/ConectarPDO.php";
+require_once RUTA_MODELO . "/AccesoDatosSolicitudes.php";
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../..");
-$dotenv->load();
+class ProcesarVerSolicitudes
+{
+    public function listarSolicitudes(string $metodo): void
+    {
+        if ($metodo !== "GET") {
+            header("Allow: GET");
+            RespuestaJson::error("Método no permitido", 405);
+        }
 
-require_once __DIR__ . "/../modelo/ConectarPDO.php";
-require_once __DIR__ . "/../modelo/AccesoDatosSolicitudes.php";
+        if (empty($_SESSION["cedula"])) {
+            RespuestaJson::error("Sesión no iniciada", 401);
+        }
 
-$conectorPDO = new ConectorPDO(
-    $_ENV["DB_HOST"],
-    $_ENV["DB_USUARIO"],
-    $_ENV["DB_CLAVE"],
-    $_ENV["DB_NOMBRE"]
-);
+        if (
+            empty($_SESSION["tecnico"]) &&
+            empty($_SESSION["direccion"]) &&
+            empty($_SESSION["administrador"])
+        ) {
+            RespuestaJson::error("No tenés permiso para ver solicitudes", 403);
+        }
 
-$conexion = $conectorPDO->establecerConexion();
+        try {
+            $conector = new ConectorPDO(
+                $_ENV["DB_HOST"],
+                $_ENV["DB_USUARIO"],
+                $_ENV["DB_CLAVE"],
+                $_ENV["DB_NOMBRE"],
+                (int) ($_ENV["DB_PUERTO"] ?? 3306)
+            );
 
-$accesoDatosSolicitudes = new AccesoDatosSolicitudes($conexion);
+            $conexion = $conector->establecerConexion();
 
-$solicitudes = $accesoDatosSolicitudes->listarSolicitudes();
+            $modelo = new AccesoDatosSolicitudes($conexion);
+            $solicitudes = $modelo->listarSolicitudes();
 
-$conectorPDO->desconectar();
+            $conector->desconectar();
 
-require_once __DIR__ . "/../vista/solicitudes.php";
+            RespuestaJson::exito($solicitudes);
+
+        } catch (Throwable $error) {
+            error_log(
+                "Error al consultar solicitudes: " .
+                $error->getMessage()
+            );
+
+            RespuestaJson::error(
+                "No se pudieron obtener las solicitudes",
+                500
+            );
+        }
+    }
+}
