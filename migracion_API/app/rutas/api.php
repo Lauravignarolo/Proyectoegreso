@@ -29,15 +29,6 @@ switch ($ruta) {
         }
         break;
 
-    if ($metodo === "GET") {
-        $controlador->listarSalones($metodo);
-    } elseif ($metodo === "DELETE") {
-        $controlador->eliminarSalon($metodo);
-    } else {
-        RespuestaJSON::error("Método no permitido", 405);
-    }
-    break;
-
     case "login":
         $controlador = new ProcesarLogin();
         $controlador->autenticar($metodo);
