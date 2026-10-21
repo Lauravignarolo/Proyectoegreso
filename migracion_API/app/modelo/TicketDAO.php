@@ -53,6 +53,7 @@ class TicketDAO
             LEFT JOIN USUARIO AS u
                 ON u.documento_identidad = h.documento_identidad
 
+            WHERE a.estado IS NULL OR a.estado <> 'Resuelto'
             ORDER BY t.id_ticket DESC
         ";
 
@@ -182,4 +183,66 @@ class TicketDAO
             return false;
         }
     }
+    
+public function repararTicket(int $idTicket, string $cedulaTecnico): bool
+{
+    try {
+        $this->conexion->beginTransaction();
+
+        $consulta = $this->conexion->prepare("
+            SELECT a.estado
+            FROM AVISO_DE_ESTADO AS a
+            WHERE a.id_ticket = :id_ticket
+            FOR UPDATE
+        ");
+
+        $consulta->execute([
+            "id_ticket" => $idTicket
+        ]);
+
+        $estado = $consulta->fetchColumn();
+
+        if ($estado === false || $estado === "Resuelto") {
+            $this->conexion->rollBack();
+            return false;
+        }
+
+        $actualizar = $this->conexion->prepare("
+            UPDATE AVISO_DE_ESTADO
+            SET estado = 'Resuelto'
+            WHERE id_ticket = :id_ticket
+        ");
+
+        $actualizar->execute([
+            "id_ticket" => $idTicket
+        ]);
+
+        $registrar = $this->conexion->prepare("
+            INSERT INTO SOLUCIONA
+                (id_ticket, documento_identidad)
+            VALUES
+                (:id_ticket, :cedula)
+        ");
+
+        $registrar->execute([
+            "id_ticket" => $idTicket,
+            "cedula" => $cedulaTecnico
+        ]);
+
+        $this->conexion->commit();
+        return true;
+
+    } catch (Throwable $error) {
+        if ($this->conexion->inTransaction()) {
+            $this->conexion->rollBack();
+        }
+
+        error_log(
+            "Error al reparar ticket: " . $error->getMessage()
+        );
+
+        return false;
+    }
+}
+
 }

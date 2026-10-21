@@ -23,10 +23,11 @@ class TicketController
         
         //https://www.w3schools.com/php/php_match.asp
         match ($metodo) {
-            "GET" => $this->listar(),
-            "POST" => $this->alta(),
-            default => RespuestaJson::error("Método no permitido", 405),
-        };
+    "GET" => $this->listar(),
+    "POST" => $this->alta(),
+    "PATCH" => $this->reparar(),
+    default => RespuestaJson::error("Método no permitido", 405),
+};
     }
 
     // Ver los tickets: solo el técnico
@@ -128,6 +129,61 @@ class TicketController
 
         RespuestaJson::exito(["mensaje" => "Ticket registrado correctamente"], 201);
     }
+    
+private function reparar(): void
+{
+    if (!($_SESSION["tecnico"] ?? false)) {
+        RespuestaJson::error(
+            "Solo un técnico puede reparar tickets",
+            403
+        );
+        return;
+    }
+
+    $this->verificarCsrf();
+
+    $datos = json_decode(
+        file_get_contents("php://input"),
+        true
+    );
+
+    if (!is_array($datos)) {
+        RespuestaJson::error("JSON inválido", 400);
+        return;
+    }
+
+    $idTicket = filter_var(
+        $datos["id_ticket"] ?? null,
+        FILTER_VALIDATE_INT,
+        ["options" => ["min_range" => 1]]
+    );
+
+    if ($idTicket === false || $idTicket === null) {
+        RespuestaJson::error("ID de ticket inválido", 422);
+        return;
+    }
+
+    $conexion = $this->conectar();
+    $modelo = new TicketDAO($conexion);
+
+    $resultado = $modelo->repararTicket(
+        (int) $idTicket,
+        (string) $_SESSION["cedula"]
+    );
+
+    if (!$resultado) {
+        RespuestaJson::error(
+            "El ticket no existe, ya fue resuelto o no pudo actualizarse",
+            409
+        );
+        return;
+    }
+
+    RespuestaJson::exito([
+        "mensaje" => "Ticket reparado correctamente"
+    ]);
+}
+
 
     private function verificarCsrf (): void
     {

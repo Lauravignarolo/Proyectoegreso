@@ -12,6 +12,20 @@ require_once RUTA_CONTROLADOR . "/ProcesarSolicitud.php";
 
 switch ($ruta) {
 
+    case "salones":
+    $controlador = new ProcesarSalones();
+
+    if ($metodo === "GET") {
+        $controlador->listarSalones($metodo);
+    } elseif ($metodo === "POST") {
+        $controlador->agregarSalon($metodo);
+    } elseif ($metodo === "DELETE") {
+        $controlador->eliminarSalon($metodo);
+    } else {
+        RespuestaJSON::error("Método no permitido", 405);
+    }
+    break;
+
     case "altaUsuario":
         $controlador = new ProcesarAltaUsuario();
         $controlador->registrarUsuario($metodo);
