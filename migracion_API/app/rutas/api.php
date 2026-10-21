@@ -1,9 +1,8 @@
-
 <?php
-
+require_once RUTA_CONTROLADOR . "/ProcesarLogin.php";
+require_once RUTA_CONTROLADOR . "/TicketController.php";
 require_once RUTA_CONTROLADOR . "/ProcesarAltaUsuario.php";
 require_once RUTA_CONTROLADOR . "/ProcesarSalones.php";
-require_once RUTA_CONTROLADOR . "/ProcesarLogin.php";
 require_once RUTA_CONTROLADOR . "/ProcesarUsuarios.php";
 
 switch ($ruta) {
@@ -30,6 +29,15 @@ switch ($ruta) {
         }
         break;
 
+    if ($metodo === "GET") {
+        $controlador->listarSalones($metodo);
+    } elseif ($metodo === "DELETE") {
+        $controlador->eliminarSalon($metodo);
+    } else {
+        RespuestaJSON::error("Método no permitido", 405);
+    }
+    break;
+
     case "login":
         $controlador = new ProcesarLogin();
         $controlador->autenticar($metodo);
@@ -43,6 +51,10 @@ switch ($ruta) {
     case "usuarios":
         $controlador = new ProcesarUsuarios();
         $controlador->gestionarUsuarios($metodo);
+        break;
+    case "tickets":                                    
+        $controlador = new TicketController();
+        $controlador->gestionar($metodo);
         break;
 
     default:

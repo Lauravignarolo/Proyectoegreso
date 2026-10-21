@@ -44,10 +44,9 @@ class AltaDatosSolicitud
             return true;
 
         } catch (PDOException $error) {
-
-            echo "ERROR SQL: " . $error->getMessage();
-            exit;
-        }
+    error_log($error->getMessage());
+    return false;
+}
     }
 }
 
