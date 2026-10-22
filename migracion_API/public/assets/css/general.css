@@ -18,6 +18,7 @@
 body {
     margin: 0;
     font-size: 18px;
+    background-color: var(--Blanco);
 
 }
 main{
@@ -138,16 +139,33 @@ footer {
     font-family: 'Inter', sans-serif;
 }
 
+/* Botón "volver arriba": igual en todas las páginas.
+   El tamaño y la separación del borde se definen acá y en ningún otro lado. */
 .ASubir {
     position: fixed;
-    right: 1rem;
-    bottom: 1rem;
+    right: 2rem;
+    bottom: 2rem;
     z-index: 99;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 2.5rem;
+    line-height: 1;
+    text-align: center;
     text-decoration: none;
     color: var(--Negro);
+}
+
+/* El ícono llena la caja, sea un <svg> o un <i> de Bootstrap Icons. */
+.ASubir > svg,
+.ASubir > i {
+    width: 100%;
+    height: 100%;
+    display: block;
+    font-size: inherit;
+    line-height: 1;
 }
 
 .ASubir:hover{
@@ -173,6 +191,15 @@ footer {
 
 
 @media (max-width: 768px) {
+    /* El botón de subir un poco más cerca en celular, pero sin pegarse al borde. */
+    .ASubir {
+        right: 1.25rem;
+        bottom: 1.25rem;
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 2.25rem;
+    }
+
     .HeaderChico{
         display: flex;
         padding-right: 5%;
