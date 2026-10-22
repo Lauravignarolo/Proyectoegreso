@@ -1,4 +1,3 @@
-
 // Formulario del registro diario
 const FormCrearRegistroDiario = document.getElementById("FormCrearRegistroDiario");
 
@@ -11,23 +10,34 @@ const EntradaAsignatura = document.getElementById("Asignatura");
 const EntradaGrupo = document.getElementById("Grupo");
 const EntradaTurno = document.getElementById("Turno");
 
-// Dialog de confirmacion
+// Mensaje de error o aviso
+const MensajeRegistroDiario = document.getElementById("MensajeRegistroDiario");
+
+// Diálogo de confirmación
 const ButtonCerrarConfirmacion = document.getElementById("ButtonCerrarConfirmacion");
 const DialogConfirmacion = document.querySelector(".DialogConfirmacion");
 
-//Confirmar
-function Confirmar(){
-
-    DialogConfirmacion.showModal();
-
-}
-function CerrarConfirmar(){
-
-    DialogConfirmacion.close();
-
+function MostrarMensaje(texto) {
+    if (MensajeRegistroDiario) {
+        MensajeRegistroDiario.textContent = texto;
+    } else {
+        alert(texto);
+    }
 }
 
-function LimpiarForm(){
+function Confirmar() {
+    if (DialogConfirmacion) {
+        DialogConfirmacion.showModal();
+    }
+}
+
+function CerrarConfirmar() {
+    if (DialogConfirmacion) {
+        DialogConfirmacion.close();
+    }
+}
+
+function LimpiarForm() {
     FormCrearRegistroDiario.reset();
 }
 
@@ -35,7 +45,6 @@ function LimpiarForm(){
  * Arma el cuerpo de la petición con los valores del formulario.
  */
 function ObtenerDatosRegistroDiario() {
-
     return {
         hora_de_entrada: EntradaHoraEntrada.value,
         hora_de_salida: EntradaHoraSalida.value,
@@ -47,7 +56,7 @@ function ObtenerDatosRegistroDiario() {
     };
 }
 
-async function CrearRegistroDiario(eventoForm){
+async function CrearRegistroDiario(eventoForm) {
     eventoForm.preventDefault();
 
     const datos = ObtenerDatosRegistroDiario();
@@ -62,9 +71,20 @@ async function CrearRegistroDiario(eventoForm){
         !datos.grupo ||
         !datos.turno
     ) {
-        alert("Completá todos los campos del registro diario.");
+        MostrarMensaje("Completá todos los campos del registro diario.");
         return;
     }
+
+    // Las horas vienen como "HH:MM", así que se pueden comparar como texto.
+    if (datos.hora_de_salida <= datos.hora_de_entrada) {
+        MostrarMensaje(
+            "La hora de salida debe ser posterior a la hora de entrada."
+        );
+        EntradaHoraSalida.focus();
+        return;
+    }
+
+    MostrarMensaje("");
 
     const botonEnviar = document.getElementById("ButtonEnviar");
 
@@ -77,20 +97,25 @@ async function CrearRegistroDiario(eventoForm){
         });
 
         LimpiarForm();
-
         Confirmar();
 
     } catch (error) {
         console.error("Error al guardar el registro diario:", error);
-        alert(error.message);
+        MostrarMensaje(error.message);
 
     } finally {
         botonEnviar.disabled = false;
     }
 }
 
-FormCrearRegistroDiario.addEventListener("submit", CrearRegistroDiario);
+if (FormCrearRegistroDiario) {
+    FormCrearRegistroDiario.addEventListener("submit", CrearRegistroDiario);
+}
 
-// Aviso de confirmacion
-ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
-DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
+if (ButtonCerrarConfirmacion) {
+    ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
+}
+
+if (DialogConfirmacion) {
+    DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
+}

@@ -20,3 +20,10 @@
     margin-top: 2%;
     background-color: var(--Blanco);
 }
+
+#MensajeTicket {
+    color: #dc3545;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+}

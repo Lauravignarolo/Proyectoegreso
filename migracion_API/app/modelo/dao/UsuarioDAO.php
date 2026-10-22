@@ -335,6 +335,37 @@ class UsuarioDAO
     }
 
     /**
+     * Activa o desactiva una cuenta sin borrar el registro.
+     *
+     * Se prefiere esto a eliminar: el usuario puede tener tickets,
+     * solicitudes o registros asociados que no deben perderse.
+     */
+    public function cambiarEstado(string $cedula, bool $estado): bool
+    {
+        $sql = "
+            UPDATE USUARIO
+            SET estado = :estado
+            WHERE documento_identidad = :cedula
+        ";
+
+        $consulta = $this->conexion->prepare($sql);
+        $consulta->execute([
+            "estado" => (int) $estado,
+            "cedula" => $cedula
+        ]);
+
+        if ($consulta->rowCount() > 0) {
+            return true;
+        }
+
+        // Si el estado ya era el pedido, rowCount() da 0: hay que
+        // comprobar aparte que el usuario exista.
+        $consulta = null;
+
+        return $this->existe($cedula);
+    }
+
+    /**
      * ¿Existe un usuario con esa cédula?
      */
     public function existe(string $cedula): bool

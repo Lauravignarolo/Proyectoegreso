@@ -219,6 +219,7 @@ $jarDocente = tempnam(sys_get_temp_dir(), "sgksi-jar-");
 $jarAdmin = tempnam(sys_get_temp_dir(), "sgksi-jar-");
 $jarTecnico = tempnam(sys_get_temp_dir(), "sgksi-jar-");
 $jarDireccion = tempnam(sys_get_temp_dir(), "sgksi-jar-");
+$jarDesactivado = tempnam(sys_get_temp_dir(), "sgksi-jar-");
 
 $respuesta = comprobar(
     "credenciales incorrectas -> 401",
@@ -486,6 +487,66 @@ comprobar(
         $jarAdmin
     ),
     422
+);
+
+comprobar(
+    "admin desactiva usuario -> 200",
+    pedir(
+        $base . "?ruta=usuarios",
+        "PATCH",
+        ["cedula" => "87654321", "estado" => false],
+        ["Content-Type: application/json", "X-CSRF-Token: " . $tokenAdmin],
+        $jarAdmin
+    ),
+    200
+);
+
+comprobar(
+    "usuario desactivado no puede entrar -> 401",
+    pedir(
+        $base . "?ruta=login",
+        "POST",
+        ["cedula" => "87654321", "clave" => "clave1234567"],
+        ["Content-Type: application/json"],
+        $jarDesactivado
+    ),
+    401
+);
+
+comprobar(
+    "admin activa usuario -> 200",
+    pedir(
+        $base . "?ruta=usuarios",
+        "PATCH",
+        ["cedula" => "87654321", "estado" => true],
+        ["Content-Type: application/json", "X-CSRF-Token: " . $tokenAdmin],
+        $jarAdmin
+    ),
+    200
+);
+
+comprobar(
+    "PATCH sin estado -> 422",
+    pedir(
+        $base . "?ruta=usuarios",
+        "PATCH",
+        ["cedula" => "87654321"],
+        ["Content-Type: application/json", "X-CSRF-Token: " . $tokenAdmin],
+        $jarAdmin
+    ),
+    422
+);
+
+comprobar(
+    "admin no puede desactivarse a sí mismo -> 403",
+    pedir(
+        $base . "?ruta=usuarios",
+        "PATCH",
+        ["cedula" => "22222222", "estado" => false],
+        ["Content-Type: application/json", "X-CSRF-Token: " . $tokenAdmin],
+        $jarAdmin
+    ),
+    403
 );
 
 comprobar(

@@ -9,7 +9,7 @@ require_once RUTA_DAO . "/UsuarioDAO.php";
 /**
  * Controlador del recurso "usuarios".
  *
- * Controla GET, POST, PUT y DELETE sobre /index.php?ruta=usuarios
+ * Controla GET, POST, PUT, PATCH y DELETE sobre /index.php?ruta=usuarios
  * Solo el administrador puede operar sobre este recurso.
  */
 class ProcesarUsuarios
@@ -28,8 +28,9 @@ class ProcesarUsuarios
             "GET" => $this->listar(),
             "POST" => $this->alta(),
             "PUT" => $this->modificar(),
+            "PATCH" => $this->cambiarEstado(),
             "DELETE" => $this->baja(),
-            default => RespuestaJSON::metodoNoPermitido("GET, POST, PUT, DELETE")
+            default => RespuestaJSON::metodoNoPermitido("GET, POST, PUT, PATCH, DELETE")
         };
     }
 
@@ -174,6 +175,49 @@ class ProcesarUsuarios
 
         RespuestaJSON::exito([
             "mensaje" => "Empleado modificado exitosamente"
+        ]);
+    }
+
+    /**
+     * PATCH /usuarios -> activa o desactiva una cuenta.
+     *
+     * No se elimina el registro: se cambia la columna `estado`, para no
+     * romper las claves foráneas de tickets, solicitudes, etc.
+     */
+    private function cambiarEstado(): void
+    {
+        Token::verificar();
+
+        $datos = $this->cuerpo();
+
+        $cedula = Validacion::cedula($datos["cedula"] ?? null);
+
+        if ($cedula === null || !is_bool($datos["estado"] ?? null)) {
+            RespuestaJSON::error("Cédula o estado inválido", 422);
+        }
+
+        $estado = $datos["estado"];
+
+        // El administrador no puede desactivarse a sí mismo.
+        if ($cedula === Sesion::cedula() && !$estado) {
+            RespuestaJSON::error(
+                "No podés desactivar tu propio usuario",
+                403
+            );
+        }
+
+        $dao = new UsuarioDAO(Conexion::conectar());
+
+        if (!$dao->cambiarEstado($cedula, $estado)) {
+            RespuestaJSON::error("El usuario no existe", 404);
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => $estado
+                ? "Usuario activado correctamente"
+                : "Usuario desactivado correctamente",
+            "cedula" => $cedula,
+            "estado" => $estado
         ]);
     }
 

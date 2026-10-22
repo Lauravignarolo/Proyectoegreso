@@ -58,7 +58,7 @@
 @media (max-width: 768px) {
     .ArticleTablaSolicitudes {
         width: 100%;
-        /* En celular la tabla no entra: ahÃ­ sÃ­ se permite desplazar. */
+        /* En celular la tabla no entra: solo ahi se permite desplazar. */
         overflow-x: auto;
     }
 

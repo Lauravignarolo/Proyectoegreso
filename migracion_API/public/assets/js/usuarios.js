@@ -19,7 +19,7 @@ async function cargarUsuarios() {
         celda.colSpan = 5;
         celda.textContent = error.message;
 
-        console.error(error);
+        console.error("Error al cargar usuarios:", error);
     }
 }
 
@@ -48,10 +48,14 @@ function obtenerRoles(usuario) {
         : "Sin rol";
 }
 
-// Eliminar un usuario
-async function eliminarUsuario(cedula, boton) {
+// Activar o desactivar un usuario
+async function cambiarEstadoUsuario(cedula, estadoActual, boton) {
+    const nuevoEstado = !estadoActual;
+
+    const accion = nuevoEstado ? "activar" : "desactivar";
+
     const confirmar = confirm(
-        `¿Estás seguro de que querés eliminar al usuario con cédula ${cedula}?\n\nEsta acción no se puede deshacer.`
+        `¿Estás seguro de que querés ${accion} al usuario con cédula ${cedula}?`
     );
 
     if (!confirmar) {
@@ -59,27 +63,30 @@ async function eliminarUsuario(cedula, boton) {
     }
 
     boton.disabled = true;
-    boton.textContent = "Eliminando...";
+    boton.textContent = nuevoEstado ? "Activando..." : "Desactivando...";
 
     try {
-        await peticionAPI(API_USUARIOS, {
-            metodo: "DELETE",
+        const respuesta = await peticionAPI(API_USUARIOS, {
+            metodo: "PATCH",
             datos: {
-                cedula: cedula
+                cedula: cedula,
+                estado: nuevoEstado
             }
         });
 
-        alert("Usuario eliminado correctamente");
+        alert(
+            respuesta?.mensaje ??
+            `Usuario ${nuevoEstado ? "activado" : "desactivado"} correctamente`
+        );
 
         await cargarUsuarios();
 
     } catch (error) {
         alert(error.message);
-        console.error("Error al eliminar usuario:", error);
+        console.error(`Error al ${accion} usuario:`, error);
 
     } finally {
         boton.disabled = false;
-        boton.textContent = "Eliminar";
     }
 }
 
@@ -88,9 +95,7 @@ function mostrarUsuarios(usuarios) {
     tablaUsuarios.innerHTML = "";
 
     if (!Array.isArray(usuarios)) {
-        throw new Error(
-            "La API no devolvió una lista de usuarios"
-        );
+        throw new Error("La API no devolvió una lista de usuarios");
     }
 
     if (usuarios.length === 0) {
@@ -119,13 +124,24 @@ function mostrarUsuarios(usuarios) {
 
         const accion = fila.insertCell();
 
+        const estadoActual =
+            usuario.estado === true ||
+            usuario.estado === 1 ||
+            usuario.estado === "1";
+
+        const estadoTexto = document.createElement("span");
+        estadoTexto.textContent = estadoActual ? "Activo" : "Desactivado";
+        accion.appendChild(estadoTexto);
+
+        accion.appendChild(document.createElement("br"));
+
         const boton = document.createElement("button");
         boton.type = "button";
         boton.className = "btnOperacion ButtonEliminar";
-        boton.textContent = "Eliminar";
+        boton.textContent = estadoActual ? "Desactivar" : "Activar";
 
         boton.addEventListener("click", () => {
-            eliminarUsuario(usuario.cedula, boton);
+            cambiarEstadoUsuario(usuario.cedula, estadoActual, boton);
         });
 
         accion.appendChild(boton);

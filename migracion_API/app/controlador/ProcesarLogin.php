@@ -42,6 +42,10 @@ class ProcesarLogin
             RespuestaJSON::error("Cédula o contraseña incorrecta", 401);
         }
 
+        if (!$usuario->getEstado()) {
+            RespuestaJSON::error("La cuenta está desactivada", 403);
+        }
+
         $rol = $autenticacion->rolDe($usuario);
 
         if ($rol === null) {
