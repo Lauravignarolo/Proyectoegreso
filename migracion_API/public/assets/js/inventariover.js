@@ -1,50 +1,66 @@
-//Tomar tbody de la tabla
-const TbodyInventario = document.getElementById("TbodyInventario");
 
-//Cargar inventario desde Local Storage
-function CargarInventarioLocal() {
+const API_INVENTARIO = "../index.php?ruta=inventario";
 
-    const InventarioGuardado = localStorage.getItem("inventario");
+const tablaInventario = document.getElementById("TbodyInventario");
+const mensajeInventario = document.getElementById("mensajeInventario");
 
-    if (InventarioGuardado === null) {
-        return [];
+async function cargarInventario() {
+    tablaInventario.replaceChildren();
+
+    if (mensajeInventario) {
+        mensajeInventario.textContent = "Cargando inventario...";
     }
 
-    return JSON.parse(InventarioGuardado);
+    try {
+        const respuesta = await fetch(API_INVENTARIO, {
+            method: "GET",
+            credentials: "same-origin"
+        });
+
+        const json = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                json.mensaje ?? "No se pudo cargar el inventario."
+            );
+        }
+
+        if (!Array.isArray(json.datos)) {
+            throw new Error("La API no devolvió una lista válida.");
+        }
+
+        if (mensajeInventario) {
+            mensajeInventario.textContent =
+                json.datos.length === 0
+                    ? "No hay componentes registrados."
+                    : "";
+        }
+
+        json.datos.forEach((item) => {
+            const fila = document.createElement("tr");
+
+            const columnas = [
+                item.componente,
+                item.marca,
+                item.cantidad
+            ];
+
+            columnas.forEach((valor) => {
+                const celda = document.createElement("td");
+                celda.textContent = valor ?? "";
+                fila.appendChild(celda);
+            });
+
+            tablaInventario.appendChild(fila);
+        });
+
+    } catch (error) {
+        console.error("Error al cargar inventario:", error);
+
+        if (mensajeInventario) {
+            mensajeInventario.textContent = error.message;
+        }
+    }
 }
 
-//Agregar fila a la tabla
-function AgregarFilaItemInventario(ItemInventario){
-
-    const fila = document.createElement('tr');
-
-    const columnaComponente = document.createElement('td');
-    columnaComponente.textContent = ItemInventario.componente;
-
-    const columnaMarca = document.createElement('td');
-    columnaMarca.textContent = ItemInventario.marca;
-
-    const columnaCantidad = document.createElement('td');
-    columnaCantidad.textContent = ItemInventario.cantidad;
-
-    fila.appendChild(columnaComponente);
-    fila.appendChild(columnaMarca);
-    fila.appendChild(columnaCantidad);
-
-    TbodyInventario.appendChild(fila);
-}
-
-//Cargar todos los datos en la tabla
-function CargarTablaInventario() {
-
-    const Inventario = CargarInventarioLocal();
-
-    Inventario.forEach(ItemInventario => {
-
-        AgregarFilaItemInventario(ItemInventario);
-
-    });
-}
-
-//Ejecutar al abrir la página
-CargarTablaInventario();
+document.addEventListener("DOMContentLoaded", cargarInventario);

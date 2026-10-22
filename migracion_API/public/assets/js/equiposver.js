@@ -1,49 +1,74 @@
-const TbodyEquipos = document.getElementById("TbodyEquipos");
 
-function CargarEquiposLocal() {
+const API_EQUIPOS = "../index.php?ruta=equipos";
 
-    const EquiposGuardados = localStorage.getItem("equipos");
+const tablaEquipos = document.getElementById("TbodyEquipos");
+const mensajeEquipos = document.getElementById("mensajeEquipos");
 
-    if (EquiposGuardados === null) {
-        return [];
+function mostrarMensaje(texto) {
+    mensajeEquipos.textContent = texto;
+}
+
+function agregarCelda(fila, valor) {
+    const celda = document.createElement("td");
+
+    celda.textContent = valor ?? "";
+
+    fila.appendChild(celda);
+}
+
+function mostrarEquipos(equipos) {
+    tablaEquipos.replaceChildren();
+
+    if (equipos.length === 0) {
+        mostrarMensaje("No hay computadoras registradas.");
+        return;
     }
 
-    return JSON.parse(EquiposGuardados);
-}
+    mostrarMensaje("");
 
-function AgregarFilaItemEquipos(ItemEquipos){
+    equipos.forEach((equipo) => {
+        const fila = document.createElement("tr");
 
-    const fila = document.createElement('tr');
+        agregarCelda(fila, equipo.numero_de_equipo);
+        agregarCelda(fila, equipo.tipo_de_salon);
+        agregarCelda(fila, equipo.numero_de_salon);
 
-    const columnaPc = document.createElement('td');
-    columnaPc.textContent = ItemEquipos.pc;
-
-    const columnaSalon = document.createElement('td');
-    columnaSalon.textContent = ItemEquipos.salon;
-
-    const columnaEstado = document.createElement('td');
-    columnaEstado.textContent = ItemEquipos.estado;
-
-    const columnaUrgencia = document.createElement('td');
-    columnaUrgencia.textContent = ItemEquipos.urgencia;
-
-    fila.appendChild(columnaPc);
-    fila.appendChild(columnaSalon);
-    fila.appendChild(columnaEstado);
-    fila.appendChild(columnaUrgencia);
-
-    TbodyEquipos.appendChild(fila);
-}
-
-function CargarTablaEquipos() {
-
-    const Equipos = CargarEquiposLocal();
-
-    Equipos.forEach(ItemEquipos => {
-
-        AgregarFilaItemEquipos(ItemEquipos);
-
+        tablaEquipos.appendChild(fila);
     });
 }
 
-CargarTablaEquipos();
+async function cargarEquipos() {
+    tablaEquipos.replaceChildren();
+
+    mostrarMensaje("Cargando equipos...");
+
+    try {
+        const respuesta = await fetch(API_EQUIPOS, {
+            method: "GET",
+            credentials: "same-origin"
+        });
+
+        const json = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(
+                json.mensaje ?? "No se pudieron cargar los equipos."
+            );
+        }
+
+        if (!Array.isArray(json.datos)) {
+            throw new Error(
+                "La API no devolvió una lista válida de equipos."
+            );
+        }
+
+        mostrarEquipos(json.datos);
+
+    } catch (error) {
+        console.error("Error al cargar equipos:", error);
+
+        mostrarMensaje(error.message);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", cargarEquipos);

@@ -8,24 +8,26 @@ require_once RUTA_VISTA . "/RespuestaJSON.php";
 class ProcesarInventario
 {
     public function gestionarInventario(string $metodo): void
-    {
-        if (empty($_SESSION["cedula"])) {
-            RespuestaJSON::error("Sesión no iniciada", 401);
-            return;
-        }
+{
+    if (empty($_SESSION["cedula"])) {
+        RespuestaJSON::error("Sesión no iniciada", 401);
+        return;
+    }
 
-        if ($metodo === "GET") {
-            $this->listarInventario();
-            return;
-        }
+    // Dirección y técnico pueden consultar el inventario.
+    if ($metodo === "GET") {
+        $this->listarInventario();
+        return;
+    }
 
-        if (empty($_SESSION["tecnico"])) {
-            RespuestaJSON::error(
-                "Solo el técnico puede modificar el inventario",
-                403
-            );
-            return;
-        }
+    // Solamente el técnico puede agregar, editar o eliminar.
+    if (empty($_SESSION["tecnico"])) {
+        RespuestaJSON::error(
+            "Solo el técnico puede modificar el inventario",
+            403
+        );
+        return;
+    }
 
         if (!in_array($metodo, ["POST", "PUT", "DELETE"], true)) {
             header("Allow: GET, POST, PUT, DELETE");
@@ -151,19 +153,19 @@ class ProcesarInventario
     private function listarInventario(): void
     {
         try {
-            $modelo = new InventarioDAO($this->conectar());
+            $modelo = new AccesoDatosInventario($this->conectar());
 
             RespuestaJSON::exito(
                 $modelo->listarInventario()
             );
 
         } catch (Throwable $error) {
-            error_log($error->getMessage());
+    error_log("ERROR INVENTARIO GET: " . $error->getMessage());
 
-            RespuestaJSON::error(
-                "No se pudo cargar el inventario",
-                500
-            );
+    RespuestaJSON::error(
+        "Error al listar inventario: " . $error->getMessage(),
+        500
+    );
         }
     }
 
@@ -173,7 +175,7 @@ class ProcesarInventario
         int $cantidad
     ): void {
         try {
-            $modelo = new InventarioDAO($this->conectar());
+            $modelo = new AccesoDatosInventario($this->conectar());
 
             $resultado = $modelo->agregarInventario(
                 $componente,
@@ -194,13 +196,13 @@ class ProcesarInventario
             ], 201);
 
         } catch (Throwable $error) {
-            error_log($error->getMessage());
+    error_log("ERROR INVENTARIO: " . $error->getMessage());
 
-            RespuestaJSON::error(
-                "Error al agregar el componente",
-                500
-            );
-        }
+    RespuestaJSON::error(
+        "Error al agregar el componente: " . $error->getMessage(),
+        500
+    );
+}
     }
 
     private function editarInventario(
@@ -210,7 +212,7 @@ class ProcesarInventario
         int $cantidad
     ): void {
         try {
-            $modelo = new InventarioDAO($this->conectar());
+            $modelo = new AccesoDatosInventario($this->conectar());
 
             $resultado = $modelo->editarInventario(
                 $id,
@@ -256,7 +258,7 @@ class ProcesarInventario
         }
 
         try {
-            $modelo = new InventarioDAO($this->conectar());
+            $modelo = new AccesoDatosInventario($this->conectar());
 
             $resultado = $modelo->eliminarInventario($id);
 

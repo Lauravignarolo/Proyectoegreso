@@ -171,6 +171,37 @@ CREATE TABLE INVENTARIO (
         CHECK (cantidad >= 0)
 );
 
+CREATE TABLE EQUIPO (
+    numero_de_equipo INT NOT NULL,
+    numero_de_salon INT NOT NULL,
+    tipo_de_salon VARCHAR(50) NOT NULL,
+
+    CONSTRAINT pk_equipo
+        PRIMARY KEY (numero_de_equipo),
+
+    CONSTRAINT fk_equipo_salon
+        FOREIGN KEY (numero_de_salon, tipo_de_salon)
+        REFERENCES SALON (numero_de_salon, tipo_de_salon)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE SOLICITUD_CUMPLIDA (
+    id_solicitud INT NOT NULL,
+    documento_identidad_tecnico CHAR(8) NOT NULL,
+    fecha_cumplimiento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_solicitud_cumplida
+        PRIMARY KEY (id_solicitud),
+
+    CONSTRAINT fk_solicitud_cumplida_solicitud
+        FOREIGN KEY (id_solicitud)
+        REFERENCES SOLICITUD (id_solicitud),
+CONSTRAINT fk_solicitud_cumplida_tecnico
+    FOREIGN KEY (documento_identidad_tecnico)
+    REFERENCES TECNICO (documento_identidad)
+);
+
 
 ALTER TABLE ADMINISTRADOR 
     ADD CONSTRAINT fk_administrador_usuario 

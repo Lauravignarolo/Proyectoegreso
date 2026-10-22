@@ -7,7 +7,6 @@ require_once RUTA_MODELO . "/ConectarPDO.php";
 require_once RUTA_MODELO . "/AccesoDatosSalones.php";
 require_once RUTA_VISTA . "/RespuestaJSON.php";
 
-error_log("AGREGAR SALON - Método recibido: " . $metodo);
 
 class ProcesarSalones
 {
