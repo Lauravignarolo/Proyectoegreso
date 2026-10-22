@@ -49,6 +49,7 @@ function LimpiarForm() {
 }
 
 async function CrearRegistroDiario(eventoForm) {
+    console.log("SE EJECUTÓ CrearRegistroDiario");
     eventoForm.preventDefault();
 
     const entrada = EntradaHoraEntrada.value;
