@@ -15,6 +15,7 @@ class AccesoDatosUsuario
             SELECT
                 u.documento_identidad,
                 u.contrasena,
+                u.estado,
 
                 CASE
                     WHEN a.documento_identidad IS NOT NULL THEN 1
@@ -70,6 +71,7 @@ class AccesoDatosUsuario
         return new Usuario(
             $datos["documento_identidad"],
             $datos["contrasena"],
+            (bool) $datos["estado"],
             (bool) $datos["administrador"],
             (bool) $datos["docente"],
             (bool) $datos["direccion"],
@@ -84,6 +86,7 @@ class AccesoDatosUsuario
             u.documento_identidad AS cedula,
             u.nombre,
             u.apellido,
+            u.estado,
 
             CASE
                 WHEN a.documento_identidad IS NOT NULL THEN 1
@@ -203,6 +206,39 @@ public function eliminarUsuario(string $cedula): void
         throw $e;
     }
 }
+
+public function cambiarEstado(string $cedula, bool $estado): bool
+{
+    $sql = "
+        UPDATE USUARIO
+        SET estado = :estado
+        WHERE documento_identidad = :cedula
+    ";
+
+    $consulta = $this->conexion->prepare($sql);
+
+    $consulta->execute([
+        "estado" => (int) $estado,
+        "cedula" => $cedula
+    ]);
+
+    if ($consulta->rowCount() > 0) {
+        return true;
+    }
+
+    // Si el estado ya era el solicitado, comprobar que el usuario exista.
+    $sql = "
+        SELECT estado
+        FROM USUARIO
+        WHERE documento_identidad = :cedula
+    ";
+
+    $consulta = $this->conexion->prepare($sql);
+    $consulta->execute(["cedula" => $cedula]);
+
+    return $consulta->fetchColumn() !== false;
+}
+
 }
 
 ?>

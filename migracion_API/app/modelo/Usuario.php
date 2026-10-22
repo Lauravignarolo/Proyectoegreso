@@ -1,4 +1,3 @@
-
 <?php
 
 class Usuario
@@ -6,6 +5,7 @@ class Usuario
     public function __construct(
         private string $cedula,
         private string $passwordHash,
+        private bool $estado,
         private bool $administrador,
         private bool $docente,
         private bool $direccion,

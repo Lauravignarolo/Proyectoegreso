@@ -1,17 +1,15 @@
-
 <?php
 
-require_once RUTA_MODELO . "/AltaDatosSalones.php";
 require_once RUTA_MODELO . "/ConectarPDO.php";
 require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
-require_once RUTA_MODELO . "/BajaDatosUsuarios.php";
 require_once RUTA_VISTA . "/RespuestaJSON.php";
 
 class ProcesarUsuarios
 {
     public function gestionarUsuarios(string $metodo): void
     {
-        if ($metodo !== "GET" && $metodo !== "DELETE") {
+        if ($metodo !== "GET" && $metodo !== "PATCH") {
+            header("Allow: GET, PATCH");
             RespuestaJSON::error("Método no permitido", 405);
             return;
         }
@@ -43,64 +41,87 @@ class ProcesarUsuarios
             return;
         }
 
+        $modelo = new AccesoDatosUsuario($conexion);
+
         if ($metodo === "GET") {
-            $modelo = new AccesoDatosUsuario($conexion);
             $usuarios = $modelo->listarUsuarios();
 
             $conectorPDO->desconectar();
+
             RespuestaJSON::exito($usuarios);
             return;
         }
 
-        // Verificar token CSRF para DELETE
+        // Verificar el token CSRF.
         $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
 
         if (
             empty($_SESSION["csrfToken"]) ||
+            !is_string($token) ||
             !hash_equals($_SESSION["csrfToken"], $token)
         ) {
+            $conectorPDO->desconectar();
             RespuestaJSON::error("Token CSRF inválido", 403);
             return;
         }
 
+        // Leer los datos enviados en formato JSON.
         $datos = json_decode(file_get_contents("php://input"), true);
 
         if (!is_array($datos)) {
+            $conectorPDO->desconectar();
             RespuestaJSON::error("JSON inválido", 400);
             return;
         }
 
         $cedula = trim((string) ($datos["cedula"] ?? ""));
 
-        if ($cedula === "") {
-            RespuestaJSON::error("Falta la cédula", 400);
+        if (
+            !preg_match("/^[1-9][0-9]{7}$/", $cedula) ||
+            !array_key_exists("estado", $datos) ||
+            !is_bool($datos["estado"])
+        ) {
+            $conectorPDO->desconectar();
+            RespuestaJSON::error(
+                "Cédula o estado inválido",
+                422
+            );
             return;
         }
 
-        // Evitar que el administrador elimine su cuenta
-        if ($cedula === (string) $_SESSION["cedula"]) {
+        $estado = $datos["estado"];
+
+        // No permitir que el administrador desactive su propia cuenta.
+        if (
+            $cedula === (string) $_SESSION["cedula"] &&
+            !$estado
+        ) {
+            $conectorPDO->desconectar();
             RespuestaJSON::error(
-                "No podés eliminar tu propio usuario",
+                "No podés desactivar tu propio usuario",
                 403
             );
             return;
         }
 
-        $modelo = new BajaDatosUsuario($conexion);
-        $resultado = $modelo->eliminarUsuario($cedula);
+        $resultado = $modelo->cambiarEstado($cedula, $estado);
 
         $conectorPDO->desconectar();
 
         if (!$resultado) {
             RespuestaJSON::error(
-                "No se pudo eliminar el usuario. Puede tener registros relacionados.",
-                409
+                "El usuario no existe",
+                404
             );
             return;
         }
 
         RespuestaJSON::exito([
-            "mensaje" => "Usuario eliminado correctamente"
+            "mensaje" => $estado
+                ? "Usuario activado correctamente"
+                : "Usuario desactivado correctamente",
+            "cedula" => $cedula,
+            "estado" => $estado
         ]);
     }
 }

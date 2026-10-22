@@ -45,8 +45,12 @@ class ProcesarLogin
 
         $conector->desconectar();
 
-        if ($usuario === null) {
-            RespuestaJson::error("Cédula o contraseña incorrecta", 401);
+        if ($usuario === null) { 
+            RespuestaJson::error("Cédula o contraseña incorrecta", 401); 
+        } 
+        
+        if (!$usuario->getEstado()) { 
+            RespuestaJson::error("La cuenta está desactivada", 403); 
         }
 
         session_regenerate_id(true);
