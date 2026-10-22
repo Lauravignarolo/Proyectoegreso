@@ -15,11 +15,22 @@
 }
 
 
+html {
+    background-color: var(--Blanco);
+}
+
 body {
     margin: 0;
     font-size: 18px;
     background-color: var(--Blanco);
 
+}
+
+/* Bootstrap se carga después que este archivo en varias páginas y pisaba el
+   fondo del body con #fff. Con más especificidad el fondo de toda la página
+   queda siempre en var(--Blanco), igual en todas las pantallas. */
+html body {
+    background-color: var(--Blanco);
 }
 main{
     
