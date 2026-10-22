@@ -4,6 +4,20 @@ const RUTA_LOGIN = "login.html";
 const FormCrearTickets = document.getElementById("FormCrearTickets");
 const MensajeTicket = document.getElementById("MensajeTicket");
 const NombreEstudiante = document.getElementById("NombreEstudiante");
+
+// Mostrar un mensaje cuando el nombre sea obligatorio y esté vacío
+if (NombreEstudiante) {
+    NombreEstudiante.addEventListener("invalid", () => {
+        MostrarMensajeTicket("Debe ingresar el nombre del estudiante.");
+    });
+
+    NombreEstudiante.addEventListener("input", () => {
+        if (NombreEstudiante.value.trim() !== "") {
+            MostrarMensajeTicket("");
+        }
+    });
+}
+
 const dialogConfirmacion = document.getElementById("dialogConfirmacion");
 const cerrarConfirmacion = document.getElementById("cerrarConfirmacion");
 
