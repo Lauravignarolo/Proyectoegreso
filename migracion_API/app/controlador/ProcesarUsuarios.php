@@ -1,7 +1,7 @@
 
 <?php
 
-require_once RUTA_MODELO . "/AltaDatosSalones.php";
+
 require_once RUTA_MODELO . "/ConectarPDO.php";
 require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
 require_once RUTA_MODELO . "/BajaDatosUsuarios.php";

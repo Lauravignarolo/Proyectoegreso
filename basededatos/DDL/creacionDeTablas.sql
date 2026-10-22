@@ -132,6 +132,45 @@ CREATE TABLE CREA (
         PRIMARY KEY (administrador, usuario) 
 ); 
 
+CREATE TABLE IF NOT EXISTS REGISTRO_DIARIO_DOCENTE (
+    id INT NOT NULL AUTO_INCREMENT,
+    documento_identidad CHAR(8) NOT NULL,
+    hora_de_entrada TIME NOT NULL,
+    hora_de_salida TIME NOT NULL,
+    tipo_de_salon VARCHAR(50) NOT NULL,
+    numero_de_salon INT NOT NULL,
+    asignatura VARCHAR(100) NOT NULL,
+    grupo VARCHAR(50) NOT NULL,
+    turno VARCHAR(50) NOT NULL,
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_registro_diario_docente
+        PRIMARY KEY (id),
+
+    CONSTRAINT fk_registro_docente
+        FOREIGN KEY (documento_identidad)
+        REFERENCES DOCENTE(documento_identidad),
+
+    CONSTRAINT fk_registro_salon
+        FOREIGN KEY (numero_de_salon, tipo_de_salon)
+        REFERENCES SALON(numero_de_salon, tipo_de_salon)
+);
+
+
+
+CREATE TABLE INVENTARIO (
+    id_inventario INT NOT NULL AUTO_INCREMENT,
+    componente VARCHAR(100) NOT NULL,
+    marca VARCHAR(100) NOT NULL,
+    cantidad INT NOT NULL DEFAULT 0,
+
+    CONSTRAINT pk_inventario
+        PRIMARY KEY (id_inventario),
+
+    CONSTRAINT chk_inventario_cantidad
+        CHECK (cantidad >= 0)
+);
+
 
 ALTER TABLE ADMINISTRADOR 
     ADD CONSTRAINT fk_administrador_usuario 
@@ -223,26 +262,3 @@ ALTER TABLE CREA
     REFERENCES USUARIO (documento_identidad);
 
 
-CREATE TABLE IF NOT EXISTS REGISTRO_DIARIO_DOCENTE (
-    id INT NOT NULL AUTO_INCREMENT,
-    documento_identidad CHAR(8) NOT NULL,
-    hora_de_entrada TIME NOT NULL,
-    hora_de_salida TIME NOT NULL,
-    tipo_de_salon VARCHAR(50) NOT NULL,
-    numero_de_salon INT NOT NULL,
-    asignatura VARCHAR(100) NOT NULL,
-    grupo VARCHAR(50) NOT NULL,
-    turno VARCHAR(50) NOT NULL,
-    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT pk_registro_diario_docente
-        PRIMARY KEY (id),
-
-    CONSTRAINT fk_registro_docente
-        FOREIGN KEY (documento_identidad)
-        REFERENCES DOCENTE(documento_identidad),
-
-    CONSTRAINT fk_registro_salon
-        FOREIGN KEY (numero_de_salon, tipo_de_salon)
-        REFERENCES SALON(numero_de_salon, tipo_de_salon)
-);

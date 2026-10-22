@@ -1,247 +1,259 @@
-//Tomar datos para el cuadro de dialog
+
+const API_INVENTARIO = "../index.php?ruta=inventario";
+
 const ButtonAgregar = document.getElementById("ButtonAgregarComponente");
 const ButtonCerrarGestionarInventario = document.getElementById("ButtonCerrarGestionarInventario");
 const DialogGestionarInventario = document.querySelector(".DialogGestionarInventario");
 
-//tomar datos de la tabla del inventario
 const TbodyInventario = document.getElementById("TbodyInventario");
-
-//Tomar datos del formulario gestionar Inventario
 const FormGestionarInventario = document.getElementById("FormGestionarInventario");
 
-//Tomar datos de los campos del formulario
 const EntradaComponente = document.getElementById("Componente");
 const EntradaMarca = document.getElementById("Marca");
 const EntradaCantidad = document.getElementById("Cantidad");
 
-//Auxiliar para guardar datos vinculados a la modificacion de un componente
+const mensajeInventario = document.getElementById("mensajeInventario");
+
 let InventarioEnEdicion = null;
 
-
-//LocalStorage
-
-function GuardarInventarioLocal() {
-
-    const filas = TbodyInventario.querySelectorAll("tr");
-
-    const Inventario = [];
-
-    filas.forEach(fila => {
-
-        const ItemInventario = {
-            componente: fila.cells[0].textContent,
-            marca: fila.cells[1].textContent,
-            cantidad: fila.cells[2].textContent
-        };
-
-        Inventario.push(ItemInventario);
-
-    });
-
-    localStorage.setItem("inventario", JSON.stringify(Inventario));
+function mostrarMensajeInventario(mensaje) {
+    if (mensajeInventario) {
+        mensajeInventario.textContent = mensaje;
+    }
 }
 
-function CargarInventarioLocal() {
+async function peticionInventario(metodo, datos = null) {
+    const opciones = {
+        method: metodo,
+        credentials: "same-origin",
+        headers: {}
+    };
 
-    const InventarioGuardado = localStorage.getItem("inventario");
+    if (datos !== null) {
+        opciones.headers["Content-Type"] = "application/json";
+        opciones.headers["X-CSRF-Token"] =
+            sessionStorage.getItem("csrfToken") ?? "";
 
-    if (InventarioGuardado === null) {
-        return [];
+        opciones.body = JSON.stringify(datos);
     }
 
-    return JSON.parse(InventarioGuardado);
+    const respuesta = await fetch(API_INVENTARIO, opciones);
+
+    const texto = await respuesta.text();
+    let json;
+
+   try {
+    json = JSON.parse(texto);
+} catch {
+    console.error("Estado HTTP:", respuesta.status);
+    console.error("Respuesta completa de PHP:", texto);
+
+    throw new Error(
+        "Error de la API (" + respuesta.status +
+        "). Abrí F12 → Consola para ver la respuesta."
+    );
 }
 
-function CargarTablaInventario() {
-
-    const Inventario = CargarInventarioLocal();
-
-    Inventario.forEach(ItemInventario => {
-
-        AgregarFilaItemInventario(ItemInventario);
-
-    });
-}
-
-//Gestion del estado del formulario
-
-function RecuperarDatosItemInventario(filaItemInventario){
-    const componente = filaItemInventario.cells[0].textContent;
-    const marca = filaItemInventario.cells[1].textContent;
-    const cantidad = filaItemInventario.cells[2].textContent;
-
-    const ItemInventario = {
-        componente: componente,
-        marca: marca,
-        cantidad: cantidad
+    if (!respuesta.ok) {
+        throw new Error(
+            json.mensaje ?? "Error al gestionar el inventario"
+        );
     }
 
-    return ItemInventario;
+    return json.datos;
 }
 
+async function CargarTablaInventario() {
+    mostrarMensajeInventario("Cargando inventario...");
+    TbodyInventario.replaceChildren();
 
-function ActualizarItemInventario(filaItemInventario, ItemInventario){
-    filaItemInventario.cells[0].textContent = ItemInventario.componente;
-    filaItemInventario.cells[1].textContent = ItemInventario.marca;
-    filaItemInventario.cells[2].textContent = ItemInventario.cantidad;
+    try {
+        const inventario = await peticionInventario("GET");
+
+        if (!Array.isArray(inventario)) {
+            throw new Error("La API no devolvió una lista válida.");
+        }
+
+        inventario.forEach(AgregarFilaItemInventario);
+
+        mostrarMensajeInventario(
+            inventario.length === 0
+                ? "No hay componentes registrados."
+                : ""
+        );
+
+    } catch (error) {
+        console.error(error);
+        mostrarMensajeInventario(error.message);
+    }
 }
 
-function AbrirEditarItemInventario(ItemInventario){
-    EntradaComponente.value = ItemInventario.componente;
-    EntradaMarca.value = ItemInventario.marca;
-    EntradaCantidad.value = ItemInventario.cantidad;
-
-    EntradaComponente.readOnly = true;
-    EntradaMarca.readOnly =true;
-
-    DialogGestionarInventario.showModal();
-}
-
-function EditarItemInventario(EventoEditarIteam) {
-    const botonPresionado = EventoEditarIteam.currentTarget;
-
-    const filaItemInventario = botonPresionado.closest('tr');
-
-    InventarioEnEdicion = filaItemInventario;
-
-    const ItemInventario = RecuperarDatosItemInventario(filaItemInventario);
-
-    AbrirEditarItemInventario(ItemInventario);
-}
-
-function EliminarItemInventario(EventoEliminarIteam) {
-    const botonPresionado = EventoEliminarIteam.currentTarget;
-
-    const filaItemInventario = botonPresionado.closest('tr');
-    
-
-    filaItemInventario.remove();
-
-    GuardarInventarioLocal();
-}
-//
-//Limpia todos los campos del formulario
 function limpiarEstadoGestionarInventario() {
     InventarioEnEdicion = null;
+    FormGestionarInventario.reset();
+
     EntradaComponente.readOnly = false;
     EntradaMarca.readOnly = false;
-    FormGestionarInventario.reset();
 }
-
 
 function AbrirAgregarInventario() {
     limpiarEstadoGestionarInventario();
-
-    //Muestra el diálogo 
     DialogGestionarInventario.showModal();
 }
 
+function AbrirEditarItemInventario(item) {
+    InventarioEnEdicion = item.id_inventario;
+
+    EntradaComponente.value = item.componente;
+    EntradaMarca.value = item.marca;
+    EntradaCantidad.value = item.cantidad;
+
+    DialogGestionarInventario.showModal();
+}
 
 function CerrarGestionarInventario() {
-    limpiarEstadoGestionarInventario();
-
-    //Cierra el dialog
     DialogGestionarInventario.close();
+    limpiarEstadoGestionarInventario();
 }
 
+function AgregarFilaItemInventario(item) {
+    const fila = document.createElement("tr");
 
-//Obtener datos del componente
-function ObtenerDatosComponente() {
+    const columnas = [
+        item.componente,
+        item.marca,
+        item.cantidad
+    ];
 
+    columnas.forEach((valor) => {
+        const celda = document.createElement("td");
+        celda.textContent = valor ?? "";
+        fila.appendChild(celda);
+    });
 
-    const NuevoItemInventario = {
+    const columnaAccion = document.createElement("td");
 
-        componente: EntradaComponente.value,
-
-        marca: EntradaMarca.value,
-
-        cantidad: EntradaCantidad.value
-
-    };
-
-    return NuevoItemInventario;
-}
-//Agregar fila iteam inventario 
-function AgregarFilaItemInventario(ItemInventario){
-
-    const fila = document.createElement('tr');
-
-    const columnaComponente = document.createElement('td');
-    columnaComponente.textContent = ItemInventario.componente;
-
-
-    const columnaMarca = document.createElement('td');
-    columnaMarca.textContent = ItemInventario.marca;
-
-
-    const columnaCantidad = document.createElement('td');
-    columnaCantidad.textContent = ItemInventario.cantidad;
-
-
-    const columnaAccion = document.createElement('td');
-    const DivAccion = document.createElement('div');
+    const DivAccion = document.createElement("div");
     DivAccion.classList.add("DivAccion");
 
-    //Boton Editar
-
-    const botonEditar = document.createElement('button');
-    botonEditar.textContent = "Editar";
+    const botonEditar = document.createElement("button");
     botonEditar.type = "button";
     botonEditar.classList.add("ButtonEditar");
+    botonEditar.textContent = "Editar";
 
-    //Evento editar iteam
-    botonEditar.addEventListener("click", EditarItemInventario);
+    botonEditar.addEventListener("click", () => {
+        AbrirEditarItemInventario(item);
+    });
 
-    //Boton Eliminar
-
-    const botonEliminar = document.createElement('button');
-    botonEliminar.textContent = "Eliminar";
+    const botonEliminar = document.createElement("button");
     botonEliminar.type = "button";
     botonEliminar.classList.add("ButtonEliminar");
+    botonEliminar.textContent = "Eliminar";
 
-    //Evento eliminar item
-    botonEliminar.addEventListener("click", EliminarItemInventario);
+    botonEliminar.addEventListener("click", async () => {
+        await EliminarItemInventario(item, botonEliminar);
+    });
 
     DivAccion.appendChild(botonEditar);
     DivAccion.appendChild(botonEliminar);
 
-    
     columnaAccion.appendChild(DivAccion);
-
-
-    fila.appendChild(columnaComponente);
-    fila.appendChild(columnaMarca);
-    fila.appendChild(columnaCantidad);
     fila.appendChild(columnaAccion);
 
     TbodyInventario.appendChild(fila);
-
 }
-//Ingresar nuevo item al inventario
-function IngresarItemInventario(eventoForm){
-    eventoForm.preventDefault();
 
-    const ItemInventario = ObtenerDatosComponente();
+async function IngresarItemInventario(evento) {
+    evento.preventDefault();
 
-    if (InventarioEnEdicion === null){
-        AgregarFilaItemInventario(ItemInventario);
-    } else {
-        ActualizarItemInventario(InventarioEnEdicion, ItemInventario);
+    const datos = {
+        componente: EntradaComponente.value.trim(),
+        marca: EntradaMarca.value.trim(),
+        cantidad: Number(EntradaCantidad.value)
+    };
+
+    if (
+        datos.componente === "" ||
+        datos.marca === "" ||
+        !Number.isInteger(datos.cantidad) ||
+        datos.cantidad < 0
+    ) {
+        alert("Ingresá datos válidos.");
+        return;
     }
 
-    GuardarInventarioLocal();
+    const botonAceptar = FormGestionarInventario.querySelector(
+        'button[type="submit"]'
+    );
 
-    CerrarGestionarInventario();
+    botonAceptar.disabled = true;
 
+    try {
+        if (InventarioEnEdicion === null) {
+            await peticionInventario("POST", datos);
+        } else {
+            datos.id_inventario = InventarioEnEdicion;
+            await peticionInventario("PUT", datos);
+        }
+
+        CerrarGestionarInventario();
+        await CargarTablaInventario();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+    } finally {
+        botonAceptar.disabled = false;
+    }
 }
 
+async function EliminarItemInventario(item, boton) {
+    const confirmar = confirm(
+        `¿Querés eliminar ${item.componente} (${item.marca})?`
+    );
 
+    if (!confirmar) {
+        return;
+    }
 
-//EVENTOS BOTONES MODAL
+    boton.disabled = true;
 
-FormGestionarInventario.addEventListener("submit", IngresarItemInventario);
-ButtonAgregar.addEventListener("click", AbrirAgregarInventario);
-ButtonCerrarGestionarInventario.addEventListener("click", CerrarGestionarInventario);
-DialogGestionarInventario.addEventListener("cancel", limpiarEstadoGestionarInventario);
+    try {
+        await peticionInventario("DELETE", {
+            id_inventario: item.id_inventario
+        });
 
-CargarTablaInventario();
+        await CargarTablaInventario();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+        boton.disabled = false;
+    }
+}
+
+FormGestionarInventario.addEventListener(
+    "submit",
+    IngresarItemInventario
+);
+
+ButtonAgregar.addEventListener(
+    "click",
+    AbrirAgregarInventario
+);
+
+ButtonCerrarGestionarInventario.addEventListener(
+    "click",
+    CerrarGestionarInventario
+);
+
+DialogGestionarInventario.addEventListener(
+    "cancel",
+    limpiarEstadoGestionarInventario
+);
+
+document.addEventListener(
+    "DOMContentLoaded",
+    CargarTablaInventario
+);

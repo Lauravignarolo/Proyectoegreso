@@ -1,5 +1,5 @@
 <?php
-class RespuestaJson {
+class RespuestaJSON {
     public static function exito($datos, int $status = 200): void {
         http_response_code($status);
         header("Content-Type: application/json");
@@ -14,4 +14,3 @@ class RespuestaJson {
         exit;
     }
 }
-

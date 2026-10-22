@@ -9,24 +9,22 @@ class BajaDatosTickets
         $this->conexion = $conexion;
     }
 
-    public function eliminarSalon(
-        int $numeroSalon,
-        string $tipoSalon
+    public function eliminarTicket(
+        int $id_ticket,
+        
     ): bool {
 
         try {
 
             $sql = "
-                DELETE FROM SALON
-                WHERE numero_de_salon = :numero_de_salon
-                AND tipo_de_salon = :tipo_de_salon
+                DELETE FROM Ticket
+                WHERE id_ticket = :id_Ticket
             ";
 
             $consulta = $this->conexion->prepare($sql);
 
             $consulta->execute([
-                "numero_de_salon" => $numeroSalon,
-                "tipo_de_salon" => $tipoSalon
+                "id_ticket" => $idTicket
             ]);
 
             return true;
