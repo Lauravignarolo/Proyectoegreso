@@ -25,6 +25,8 @@
     background-color: var(--Azul);
     color: var(--Blanco);
     width: 100%;
+    /* Un poco de aire entre el campo de contraseña y el botón. */
+    margin-top: 1.5rem;
     padding: 12px;
     font-size: 1.2rem;
     border: none;
@@ -43,22 +45,36 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    /* Los iconos se ubican respecto del campo, no de la ventana. */
+    position: relative;
 }
-.LabelIconoUser{
-    z-index: 1;
-    position: absolute;
-    left: 31%;
-}
+.LabelIconoUser,
 .LabelIconoPassword{
     z-index: 1;
     position: absolute;
-    left: 31%;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.LabelIconoUser svg,
+.LabelIconoPassword svg{
+    display: block;
 }
 .LabelCerradoIcon{
-    z-index: 1;
+    z-index: 2;
     position: absolute;
-    right: 31%;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 2rem;
+    line-height: 1;
     cursor: pointer;
     user-select: none;
 }
@@ -70,23 +86,3 @@
     border-radius: 4px;
 }
 
-@media (max-width: 576px) {
-    
-.LabelIconoUser{
-    z-index: 1;
-    position: absolute;
-    left: 22%;
-}
-.LabelIconoPassword{
-    z-index: 1;
-    position: absolute;
-    left: 23%;
-}
-.LabelCerradoIcon{
-    z-index: 1;
-    position: absolute;
-    right: 23%;
-    font-size: 2rem;
-}
-
-}
