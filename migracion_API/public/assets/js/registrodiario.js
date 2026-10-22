@@ -1,8 +1,10 @@
+const RUTA_API_REGISTRO_DIARIO = "../index.php?ruta=registroDiario";
+const RUTA_LOGIN = "login.html";
 
-//Tomar datos del formulario gestionar Inventario
+// Formulario
 const FormCrearRegistroDiario = document.getElementById("FormCrearRegistroDiario");
 
-//Tomar datos de los campos del formulario
+// Campos
 const EntradaHoraEntrada = document.getElementById("HoraEntrada");
 const EntradaHoraSalida = document.getElementById("HoraSalida");
 const EntradaTipoDeSalon = document.getElementById("TipoDeSalon");
@@ -11,88 +13,110 @@ const EntradaAsignatura = document.getElementById("Asignatura");
 const EntradaGrupo = document.getElementById("Grupo");
 const EntradaTurno = document.getElementById("Turno");
 
-//Dialog de confirmacion
+// Mensaje
+const MensajeRegistroDiario = document.getElementById("MensajeRegistroDiario");
 
+// Diálogo de confirmación
 const ButtonCerrarConfirmacion = document.getElementById("ButtonCerrarConfirmacion");
 const DialogConfirmacion = document.querySelector(".DialogConfirmacion");
 
-//Confirmar
-function Confirmar(){
-    
-    DialogConfirmacion.showModal();
-
-}
-function CerrarConfirmar(){
-    
-    DialogConfirmacion.close();
-
+function MostrarMensaje(texto) {
+    if (MensajeRegistroDiario) {
+        MensajeRegistroDiario.textContent = texto;
+    } else {
+        alert(texto);
+    }
 }
 
-function LimpiarForm(){
+function ObtenerTokenCsrf() {
+    return sessionStorage.getItem("csrfToken") ?? "";
+}
+
+function Confirmar() {
+    if (DialogConfirmacion) {
+        DialogConfirmacion.showModal();
+    }
+}
+
+function CerrarConfirmar() {
+    if (DialogConfirmacion) {
+        DialogConfirmacion.close();
+    }
+}
+
+function LimpiarForm() {
     FormCrearRegistroDiario.reset();
 }
 
-function GuardarRegistroDiarioLocal() {
-
-    let RegistrosDiarios = JSON.parse(localStorage.getItem("RegistrosDiarios")) || [];
-
-    const RegistroDiario = {
-        horaEntrada: EntradaHoraEntrada.value,
-        horaSalida: EntradaHoraSalida.value,
-        tipoDeSalon: EntradaTipoDeSalon.value,
-        numeroDelSalon: EntradaNumeroDelSalon.value,
-        asignatura: EntradaAsignatura.value,
-        grupo: EntradaGrupo.value,
-        turno: EntradaTurno.value,
-    };
-
-        RegistrosDiarios.push(RegistroDiario);
-
-
-    localStorage.setItem("RegistrosDiarios", JSON.stringify(RegistrosDiarios));
-};
-
-function ObtenerDatosRegistroDiario() {
-
-
-    const NuevoRegistroDiario = {
-
-
-        horaEntrada: EntradaHoraEntrada.value,
-
-        horaSalida: EntradaHoraSalida.value,
-
-        tipoDeSalon: EntradaTipoDeSalon.value,
-
-        numeroDelSalon: EntradaNumeroDelSalon.value,
-
-        asignatura: EntradaAsignatura.value,
-
-        grupo: EntradaGrupo.value,
-
-        turno: EntradaTurno.value
-
-
-    };
-
-    return NuevoRegistroDiario;
-}
-
-
-
-function CrearRegistroDiario(eventoForm){
+async function CrearRegistroDiario(eventoForm) {
     eventoForm.preventDefault();
 
-    GuardarRegistroDiarioLocal();
+    const entrada = EntradaHoraEntrada.value;
+    const salida = EntradaHoraSalida.value;
 
-    LimpiarForm();
+    // Validación inmediata del horario
+    if (entrada && salida && salida <= entrada) {
+        MostrarMensaje(
+            "La hora de salida debe ser posterior a la hora de entrada."
+        );
+        EntradaHoraSalida.focus();
+        return;
+    }
 
-    Confirmar()
+    MostrarMensaje("");
 
+    const datos = {
+        hora_de_entrada: entrada,
+        hora_de_salida: salida,
+        tipo_de_salon: EntradaTipoDeSalon.value,
+        numero_de_salon: EntradaNumeroDelSalon.value,
+        asignatura: EntradaAsignatura.value.trim(),
+        grupo: EntradaGrupo.value.trim(),
+        turno: EntradaTurno.value
+    };
+
+    try {
+        const respuesta = await fetch(RUTA_API_REGISTRO_DIARIO, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": ObtenerTokenCsrf()
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (respuesta.status === 401) {
+            window.location.href = RUTA_LOGIN;
+            return;
+        }
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            MostrarMensaje(
+                resultado.mensaje ?? "No se pudo registrar el registro diario."
+            );
+            return;
+        }
+
+        LimpiarForm();
+        Confirmar();
+
+    } catch (error) {
+        console.error("Error al registrar el registro diario:", error);
+        MostrarMensaje("No se pudo conectar con el servidor.");
+    }
 }
 
-FormCrearRegistroDiario.addEventListener("submit", CrearRegistroDiario);
+if (FormCrearRegistroDiario) {
+    FormCrearRegistroDiario.addEventListener("submit", CrearRegistroDiario);
+}
 
-// Aviso de confirmacion
-ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
-DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
+if (ButtonCerrarConfirmacion) {
+    ButtonCerrarConfirmacion.addEventListener("click", CerrarConfirmar);
+}
+
+if (DialogConfirmacion) {
+    DialogConfirmacion.addEventListener("cancel", CerrarConfirmar);
+}
