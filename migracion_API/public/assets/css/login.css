@@ -59,6 +59,15 @@
     position: absolute;
     right: 31%;
     font-size: 2rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Para que se vea cuándo el botón tiene el foco con el teclado. */
+.LabelCerradoIcon:focus-visible {
+    outline: 2px solid var(--Azul);
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 
 @media (max-width: 576px) {

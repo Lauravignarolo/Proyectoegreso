@@ -22,13 +22,10 @@
      <header class="HeaderInicio">
         <img src="../assets/img/iti utu.png" alt="">
         <h1> S.G.R.S.I </h1>
-        <a href="../../public/index.html">Volver</a>
+        <a href="../index.html">Volver</a>
     </header>
 
     <main>
-        <Section class="SectionFormularioLogin">
-    
- <main>
         <Section class="SectionFormularioLogin">
            <form id="formularioLogin" method="POST">
                 <fieldset>
@@ -64,8 +61,9 @@
                         <input class="Inputllenar password" id="clave" name="clave" type="password" minlength="8" autocomplete="current-password"
                             title="Ingrese mas de 8 caracteres" required placeholder="Contraseña">
 
-                        <label class="LabelCerradoIcon">
-                            <i id="ojo" class="bi bi-eye-slash"></i>
+                        <label class="LabelCerradoIcon" id="botonOjo" role="button" tabindex="0"
+                            title="Mostrar contraseña" aria-label="Mostrar contraseña">
+                            <i id="ojo" class="bi bi-eye-slash" aria-hidden="true"></i>
                         </label>
 
                     </div>
