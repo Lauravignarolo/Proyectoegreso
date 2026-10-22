@@ -1,106 +1,232 @@
-
 <?php
 
+require_once RUTA_NUCLEO . "/Conexion.php";
+require_once RUTA_NUCLEO . "/Sesion.php";
+require_once RUTA_NUCLEO . "/Token.php";
+require_once RUTA_NUCLEO . "/Validacion.php";
+require_once RUTA_DAO . "/UsuarioDAO.php";
 
-require_once RUTA_MODELO . "/ConectarPDO.php";
-require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
-require_once RUTA_MODELO . "/BajaDatosUsuarios.php";
-require_once RUTA_VISTA . "/RespuestaJSON.php";
-
+/**
+ * Controlador del recurso "usuarios".
+ *
+ * Controla GET, POST, PUT y DELETE sobre /index.php?ruta=usuarios
+ * Solo el administrador puede operar sobre este recurso.
+ */
 class ProcesarUsuarios
 {
-    public function gestionarUsuarios(string $metodo): void
+    /**
+     * Roles que se pueden asignar a un usuario.
+     * Coinciden con las tablas de roles del DDL.
+     */
+    private const ROLES = ["administrador", "docente", "tecnico", "direccion"];
+
+    public function gestionar(string $metodo): void
     {
-        if ($metodo !== "GET" && $metodo !== "DELETE") {
-            RespuestaJSON::error("Método no permitido", 405);
-            return;
+        Sesion::exigirRol("administrador");
+
+        match ($metodo) {
+            "GET" => $this->listar(),
+            "POST" => $this->alta(),
+            "PUT" => $this->modificar(),
+            "DELETE" => $this->baja(),
+            default => RespuestaJSON::metodoNoPermitido("GET, POST, PUT, DELETE")
+        };
+    }
+
+    /**
+     * GET /usuarios            -> lista todos los usuarios
+     * GET /usuarios?cedula=... -> lista un usuario
+     */
+    private function listar(): void
+    {
+        $dao = new UsuarioDAO(Conexion::conectar());
+
+        if (isset($_GET["cedula"])) {
+            $cedula = Validacion::cedula($_GET["cedula"]);
+
+            if ($cedula === null) {
+                RespuestaJSON::error("Cédula incorrecta", 422);
+            }
+
+            $usuario = $dao->listarPorCedula($cedula);
+
+            if ($usuario === null) {
+                RespuestaJSON::error("El usuario no existe", 404);
+            }
+
+            RespuestaJSON::exito($usuario);
         }
 
-        if (empty($_SESSION["cedula"])) {
-            RespuestaJSON::error("Sesión no iniciada", 401);
-            return;
-        }
+        RespuestaJSON::exito($dao->listar());
+    }
 
-        if (empty($_SESSION["administrador"])) {
-            RespuestaJSON::error("Acceso denegado", 403);
-            return;
-        }
+    /**
+     * POST /usuarios -> da de alta un usuario con su rol.
+     */
+    private function alta(): void
+    {
+        Token::verificar();
 
-        $conectorPDO = new ConectorPDO(
-            $_ENV["DB_HOST"],
-            $_ENV["DB_USUARIO"],
-            $_ENV["DB_CLAVE"],
-            $_ENV["DB_NOMBRE"]
-        );
+        $datos = $this->cuerpo();
 
-        $conexion = $conectorPDO->establecerConexion();
+        $cedula = Validacion::cedula($datos["cedula"] ?? null);
+        $nombre = Validacion::texto($datos["nombre"] ?? null, 50);
+        $apellido = Validacion::texto($datos["apellido"] ?? null, 50);
+        $rol = Validacion::enLista($datos["rol"] ?? null, self::ROLES);
 
-        if ($conexion === null) {
-            RespuestaJSON::error(
-                "No se pudo conectar con la base de datos",
-                500
-            );
-            return;
-        }
-
-        if ($metodo === "GET") {
-            $modelo = new AccesoDatosUsuario($conexion);
-            $usuarios = $modelo->listarUsuarios();
-
-            $conectorPDO->desconectar();
-            RespuestaJSON::exito($usuarios);
-            return;
-        }
-
-        // Verificar token CSRF para DELETE
-        $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
+        $clave = $datos["clave"] ?? null;
+        $confirmarClave = $datos["confirmarClave"] ?? null;
 
         if (
-            empty($_SESSION["csrfToken"]) ||
-            !hash_equals($_SESSION["csrfToken"], $token)
+            $cedula === null ||
+            $nombre === null ||
+            $apellido === null ||
+            $rol === null ||
+            !is_string($clave) ||
+            !is_string($confirmarClave)
         ) {
-            RespuestaJSON::error("Token CSRF inválido", 403);
-            return;
+            RespuestaJSON::error("Existen campos vacíos o inválidos", 422);
         }
 
-        $datos = json_decode(file_get_contents("php://input"), true);
-
-        if (!is_array($datos)) {
-            RespuestaJSON::error("JSON inválido", 400);
-            return;
+        if (strlen($clave) < 12) {
+            RespuestaJSON::error(
+                "La contraseña debe contener al menos 12 caracteres",
+                422
+            );
         }
 
-        $cedula = trim((string) ($datos["cedula"] ?? ""));
-
-        if ($cedula === "") {
-            RespuestaJSON::error("Falta la cédula", 400);
-            return;
+        if ($clave !== $confirmarClave) {
+            RespuestaJSON::error(
+                "Las contraseñas ingresadas no coinciden",
+                422
+            );
         }
 
-        // Evitar que el administrador elimine su cuenta
-        if ($cedula === (string) $_SESSION["cedula"]) {
+        $dao = new UsuarioDAO(Conexion::conectar());
+
+        $resultado = $dao->registrar(
+            $cedula,
+            $nombre,
+            $apellido,
+            password_hash($clave, PASSWORD_DEFAULT),
+            $rol
+        );
+
+        if (!$resultado) {
+            RespuestaJSON::error(
+                "No se pudo registrar el empleado (la cédula ya existe)",
+                409
+            );
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Empleado ingresado exitosamente"
+        ], 201);
+    }
+
+    /**
+     * PUT /usuarios -> modifica los datos de un usuario.
+     */
+    private function modificar(): void
+    {
+        Token::verificar();
+
+        $datos = $this->cuerpo();
+
+        $cedula = Validacion::cedula($datos["cedula"] ?? null);
+        $nombre = Validacion::texto($datos["nombre"] ?? null, 50);
+        $apellido = Validacion::texto($datos["apellido"] ?? null, 50);
+        $rol = Validacion::enLista($datos["rol"] ?? null, self::ROLES);
+
+        $clave = $datos["clave"] ?? null;
+
+        if (
+            $cedula === null ||
+            $nombre === null ||
+            $apellido === null ||
+            $rol === null ||
+            !is_string($clave) ||
+            $clave === ""
+        ) {
+            RespuestaJSON::error("Existen campos vacíos o inválidos", 422);
+        }
+
+        if (strlen($clave) < 12) {
+            RespuestaJSON::error(
+                "La contraseña debe contener al menos 12 caracteres",
+                422
+            );
+        }
+
+        $dao = new UsuarioDAO(Conexion::conectar());
+
+        $resultado = $dao->actualizar(
+            $cedula,
+            $nombre,
+            $apellido,
+            password_hash($clave, PASSWORD_DEFAULT),
+            $rol
+        );
+
+        if (!$resultado) {
+            RespuestaJSON::error("El usuario no existe", 404);
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Empleado modificado exitosamente"
+        ]);
+    }
+
+    /**
+     * DELETE /usuarios -> elimina un usuario.
+     */
+    private function baja(): void
+    {
+        Token::verificar();
+
+        $datos = $this->cuerpo();
+
+        $cedula = Validacion::cedula($datos["cedula"] ?? null);
+
+        if ($cedula === null) {
+            RespuestaJSON::error("Falta la cédula del empleado", 422);
+        }
+
+        // El administrador no puede eliminarse a sí mismo.
+        if ($cedula === Sesion::cedula()) {
             RespuestaJSON::error(
                 "No podés eliminar tu propio usuario",
                 403
             );
-            return;
         }
 
-        $modelo = new BajaDatosUsuario($conexion);
-        $resultado = $modelo->eliminarUsuario($cedula);
+        $dao = new UsuarioDAO(Conexion::conectar());
 
-        $conectorPDO->desconectar();
+        $resultado = $dao->eliminar($cedula);
 
         if (!$resultado) {
             RespuestaJSON::error(
                 "No se pudo eliminar el usuario. Puede tener registros relacionados.",
                 409
             );
-            return;
         }
 
         RespuestaJSON::exito([
-            "mensaje" => "Usuario eliminado correctamente"
+            "mensaje" => "Empleado eliminado exitosamente"
         ]);
+    }
+
+    /**
+     * Lee y valida el cuerpo JSON de la petición.
+     */
+    private function cuerpo(): array
+    {
+        $datos = json_decode(file_get_contents("php://input"), true);
+
+        if (!is_array($datos)) {
+            RespuestaJSON::error("JSON inválido", 400);
+        }
+
+        return $datos;
     }
 }

@@ -1,6 +1,3 @@
-console.log("El archivo login.js se cargó correctamente");
-
-const API_LOGIN = "../index.php?ruta=login";
 
 const formularioLogin = document.getElementById("formularioLogin");
 
@@ -14,27 +11,12 @@ async function loguear(cedula, clave) {
         clave: clave
     };
 
-    const respuesta = await fetch(API_LOGIN, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        credentials: "same-origin",
-        body: JSON.stringify(credenciales)
+    const datos = await peticionAPI(API_LOGIN, {
+        metodo: "POST",
+        datos: credenciales
     });
 
-    const json = await respuesta.json();
-
-    if (!respuesta.ok) {
-        throw new Error(
-            json.mensaje ?? "No se pudo iniciar sesión."
-        );
-    }
-
-    
-sessionStorage.setItem("csrfToken", json.csrfToken);
-
-    return json.datos;
+    return datos;
 }
 
 async function gestionarLogin(eventoFormulario) {
@@ -48,17 +30,17 @@ async function gestionarLogin(eventoFormulario) {
             entradaClave.value
         );
 
-        if (!sesion.csrfToken) {
+        if (!sesion || !sesion.csrfToken) {
             throw new Error("La API no devolvió el token CSRF.");
         }
 
-        sessionStorage.setItem("csrfToken", sesion.csrfToken);
+        guardarTokenCsrf(sesion.csrfToken);
 
         // Redirección según el rol del usuario
         switch (sesion.rol) {
 
             case "administrador":
-                window.location.replace("./Administrador.html");
+                window.location.replace("./administrador.html");
                 break;
 
             case "docente":

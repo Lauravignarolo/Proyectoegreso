@@ -1,6 +1,4 @@
 
-const API_INVENTARIO = "../index.php?ruta=inventario";
-
 const ButtonAgregar = document.getElementById("ButtonAgregarComponente");
 const ButtonCerrarGestionarInventario = document.getElementById("ButtonCerrarGestionarInventario");
 const DialogGestionarInventario = document.querySelector(".DialogGestionarInventario");
@@ -22,53 +20,14 @@ function mostrarMensajeInventario(mensaje) {
     }
 }
 
-async function peticionInventario(metodo, datos = null) {
-    const opciones = {
-        method: metodo,
-        credentials: "same-origin",
-        headers: {}
-    };
-
-    if (datos !== null) {
-        opciones.headers["Content-Type"] = "application/json";
-        opciones.headers["X-CSRF-Token"] =
-            sessionStorage.getItem("csrfToken") ?? "";
-
-        opciones.body = JSON.stringify(datos);
-    }
-
-    const respuesta = await fetch(API_INVENTARIO, opciones);
-
-    const texto = await respuesta.text();
-    let json;
-
-   try {
-    json = JSON.parse(texto);
-} catch {
-    console.error("Estado HTTP:", respuesta.status);
-    console.error("Respuesta completa de PHP:", texto);
-
-    throw new Error(
-        "Error de la API (" + respuesta.status +
-        "). Abrí F12 → Consola para ver la respuesta."
-    );
-}
-
-    if (!respuesta.ok) {
-        throw new Error(
-            json.mensaje ?? "Error al gestionar el inventario"
-        );
-    }
-
-    return json.datos;
-}
-
 async function CargarTablaInventario() {
     mostrarMensajeInventario("Cargando inventario...");
     TbodyInventario.replaceChildren();
 
     try {
-        const inventario = await peticionInventario("GET");
+        const inventario = await peticionAPI(API_INVENTARIO, {
+            metodo: "GET"
+        });
 
         if (!Array.isArray(inventario)) {
             throw new Error("La API no devolvió una lista válida.");
@@ -112,8 +71,8 @@ function AbrirEditarItemInventario(item) {
 }
 
 function CerrarGestionarInventario() {
-    DialogGestionarInventario.close();
     limpiarEstadoGestionarInventario();
+    DialogGestionarInventario.close();
 }
 
 function AgregarFilaItemInventario(item) {
@@ -190,10 +149,17 @@ async function IngresarItemInventario(evento) {
 
     try {
         if (InventarioEnEdicion === null) {
-            await peticionInventario("POST", datos);
+            await peticionAPI(API_INVENTARIO, {
+                metodo: "POST",
+                datos: datos
+            });
         } else {
             datos.id_inventario = InventarioEnEdicion;
-            await peticionInventario("PUT", datos);
+
+            await peticionAPI(API_INVENTARIO, {
+                metodo: "PUT",
+                datos: datos
+            });
         }
 
         CerrarGestionarInventario();
@@ -220,8 +186,11 @@ async function EliminarItemInventario(item, boton) {
     boton.disabled = true;
 
     try {
-        await peticionInventario("DELETE", {
-            id_inventario: item.id_inventario
+        await peticionAPI(API_INVENTARIO, {
+            metodo: "DELETE",
+            datos: {
+                id_inventario: item.id_inventario
+            }
         });
 
         await CargarTablaInventario();

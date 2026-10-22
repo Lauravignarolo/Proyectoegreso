@@ -14,124 +14,58 @@
     --Negro: #101010;
 }
 .TableSolicitudes {
-    width: 60%;
-}
-.SectionSolicitudes{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 2%;
-    flex-direction: column;
-    
-    
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.ArticleSolicitudes{
+.SectionSolicitudes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2%;
+}
+
+/* Contenedor de la tabla: centrado y con ancho propio.
+   (Antes la clase no coincidia con el HTML: .ArticleSolicitudes vs
+   .ArticleTablaSolicitudes, asi que no se aplicaba ningun estilo.)
+   Sin scroll horizontal: la tabla se ajusta al contenedor. El scroll
+   queda solo para celular (ver @media), donde no entra completa. */
+.ArticleTablaSolicitudes {
     background-color: var(--GrisClaro);
     border: 1px solid var(--Gris);
     padding: 8px;
-    width: 60%;
-}
-.ArticleSolicitudes header{
-    display: block;
-    color: var(--Azul);
-    width: 100%;
-    flex-wrap: wrap;
+    width: 70%;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
-.FieldsetSolicitudes{
-    width: 100%;
-}
-
-.TableSolicitudes tr,.TableSolicitudes th,.TableSolicitudes td{
+.TableSolicitudes tr,
+.TableSolicitudes th,
+.TableSolicitudes td {
     border: 1px solid var(--Gris);
-    padding: 5px 15px 5px 15px;
+    padding: 5px 15px;
     text-align: center;
     font-size: 1.2rem;
+    /* Parte las palabras largas en vez de ensanchar la tabla. */
+    overflow-wrap: anywhere;
 }
-.TableSolicitudes thead{
+
+.TableSolicitudes thead {
     background-color: var(--Azul);
     color: var(--Blanco);
 }
 
-
 @media (max-width: 768px) {
-    
-.TableSolicitudes {
-    width: 20%;
-}
-
-.TableSolicitudes, tr, th, td{
-    font-size: 1.1rem;
-}
-
-    .ArticleSolicitudes{
-    width: 100%;
-    overflow-x: auto;
+    .ArticleTablaSolicitudes {
+        width: 100%;
+        /* En celular la tabla no entra: ahÃ­ sÃ­ se permite desplazar. */
+        overflow-x: auto;
     }
 
-}
-/*
-* {
-    box-sizing: border-box;
-}
-
-:root {
-    --Azul: #4A4C91;
-    --AzulClaro: #6d6fa3;
-    --AzulOscuro: #343576;
-    --DoradoClaro: #DFD398;
-    --GrisClaro: #eeeeee;
-    --Gris: #999999;
-    --GrisOscuro: #757575;
-    --Blanco: #f8f8fa;
-    --Negro: #101010;
-}
-
-.SectionSolicitudes{
-    margin: 2%;
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-}
-.ArticleSolicitudes{
-    background-color: var(--GrisClaro);
-    border: 1px solid var(--Gris);
-    padding: 8px;
-    width: 60%;
-}
-.ArticleSolicitudes header{
-    display: block;
-    color: var(--Azul);
-    width: 100%;
-    flex-wrap: wrap;
-}
-.TableSolicitudes{
-    padding: 2px;
-    text-align: center;
-    color: var(--Azul)
-    ;
-    width: 100%;
-    flex-wrap: wrap;
-}
-.TableSolicitudes th{
-    color: var(--Gris);
-    text-decoration: none;
-    font-weight: normal;
-    padding: 2px;
-}
-
-
-
-
-        
-@media (max-width: 768px) {
-    .TableSolicitudes{
-        border-collapse: collapse;
-    }
-    .ArticleSolicitudes{
-    width: 100%;
-    overflow-x: auto;
+    .TableSolicitudes tr,
+    .TableSolicitudes th,
+    .TableSolicitudes td {
+        font-size: 1.1rem;
+        padding: 4px 8px;
     }
 }
-    */

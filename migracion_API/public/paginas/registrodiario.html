@@ -31,29 +31,29 @@
                     <legend> REGISTRO DIARIO </legend>
 
                     <label>Hora de Entrada</label>
-                    <input class="Inputllenar" type="time" id="HoraEntrada" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" id="HoraEntrada" name="hora_de_entrada" required placeholder="Ingresar Hora">
 
 
                     <label>Hora de Salida</label>
-                    <input class="Inputllenar" type="time" id="HoraSalida" required placeholder="Ingresar Hora">
+                    <input class="Inputllenar" type="time" id="HoraSalida" name="hora_de_salida" required placeholder="Ingresar Hora">
 
                     <label>Tipo de salon</label>
-                    <select id="TipoDeSalon" name="salon" required>
+                    <select id="TipoDeSalon" name="tipo_de_salon" required>
                         <option disabled selected>Seleccione un tipo de salon</option>
                         <option value="Taller">Taller</option>
                         <option value="Laboratorio">Laboratorio</option>
                     </select>
 
                     <label>Numero del Salon</label>
-                    <input class="Inputllenar" type="number" id="NumeroDelSalon" required placeholder="Ingresar Numero">
+                    <input class="Inputllenar" type="number" id="NumeroDelSalon" name="numero_de_salon" required placeholder="Ingresar Numero">
 
 
                     <label>Asignatura</label>
-                    <input class="Inputllenar" type="text" id="Asignatura" required placeholder="Ingresar Asignatura">
+                    <input class="Inputllenar" type="text" id="Asignatura" name="asignatura" required placeholder="Ingresar Asignatura">
 
 
                     <label>Grupo</label>
-                    <input class="Inputllenar" type="text" id="Grupo" required placeholder="Ingresar Grupo">
+                    <input class="Inputllenar" type="text" id="Grupo" name="grupo" required placeholder="Ingresar Grupo">
 
 
                     <label>Turno</label>
@@ -96,6 +96,7 @@
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
 <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../assets/js/constantes.js"></script>
 <script src="../assets/js/registrodiario.js"></script>
 </body>
 

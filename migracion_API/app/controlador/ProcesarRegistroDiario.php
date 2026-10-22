@@ -1,173 +1,167 @@
-
 <?php
 
-require_once RUTA_MODELO . "/ConectarPDO.php";
-require_once RUTA_MODELO . "/AltaDatosRegistroDiario.php";
+require_once RUTA_NUCLEO . "/Conexion.php";
+require_once RUTA_NUCLEO . "/Sesion.php";
+require_once RUTA_NUCLEO . "/Token.php";
+require_once RUTA_NUCLEO . "/Validacion.php";
+require_once RUTA_DAO . "/RegistroDiarioDAO.php";
 
+/**
+ * Controlador del recurso "registroDiario" (clases registradas por los
+ * docentes).
+ *
+ * Controla GET, POST y DELETE sobre /index.php?ruta=registroDiario
+ */
 class ProcesarRegistroDiario
 {
-    public function registrar(string $metodo): void
+    private const TIPOS_DE_SALON = ["Taller", "Laboratorio"];
+    private const TURNOS = ["M", "V", "N"];
+
+    public function gestionar(string $metodo): void
     {
-        if ($metodo !== "POST") {
-            header("Allow: POST");
-            RespuestaJSON::error("Método no permitido", 405);
-            return;
+        Sesion::exigirSesion();
+
+        match ($metodo) {
+            "GET" => $this->listar(),
+            "POST" => $this->registrar(),
+            "DELETE" => $this->eliminar(),
+            default => RespuestaJSON::metodoNoPermitido("GET, POST, DELETE")
+        };
+    }
+
+    /**
+     * GET /registroDiario -> lista los registros.
+     * El docente ve los suyos; dirección y administración ven todos.
+     */
+    private function listar(): void
+    {
+        Sesion::exigirRol("docente", "direccion", "administrador");
+
+        $dao = new RegistroDiarioDAO(Conexion::conectar());
+
+        if (Sesion::rol() === "docente") {
+            RespuestaJSON::exito(
+                $dao->listarPorDocente((string) Sesion::cedula())
+            );
         }
 
-        if (empty($_SESSION["cedula"])) {
-            RespuestaJSON::error("Sesión no iniciada", 401);
-            return;
-        }
+        RespuestaJSON::exito($dao->listar());
+    }
 
-        if (empty($_SESSION["docente"])) {
-            RespuestaJSON::error("Acceso denegado", 403);
-            return;
-        }
+    /**
+     * POST /registroDiario -> registra una clase. Solo el docente.
+     */
+    private function registrar(): void
+    {
+        Sesion::exigirRol("docente");
+        Token::verificar();
 
-        $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
+        $datos = $this->cuerpo();
+
+        $entrada = Validacion::hora($datos["hora_de_entrada"] ?? null);
+        $salida = Validacion::hora($datos["hora_de_salida"] ?? null);
+        $tipo = Validacion::enLista(
+            $datos["tipo_de_salon"] ?? null,
+            self::TIPOS_DE_SALON
+        );
+        $numero = Validacion::entero($datos["numero_de_salon"] ?? null, 1);
+        $asignatura = Validacion::texto($datos["asignatura"] ?? null, 100);
+        $grupo = Validacion::texto($datos["grupo"] ?? null, 50);
+        $turno = Validacion::enLista($datos["turno"] ?? null, self::TURNOS);
 
         if (
-            empty($_SESSION["csrfToken"]) ||
-            !hash_equals($_SESSION["csrfToken"], $token)
+            $entrada === null ||
+            $salida === null ||
+            $tipo === null ||
+            $numero === null ||
+            $asignatura === null ||
+            $grupo === null ||
+            $turno === null
         ) {
-            RespuestaJSON::error("Token CSRF inválido", 403);
-            return;
+            RespuestaJSON::error("Faltan campos obligatorios o son inválidos", 422);
         }
 
-        $datos = json_decode(
-            file_get_contents("php://input"),
-            true
+        if ($salida <= $entrada) {
+            RespuestaJSON::error("Horario inválido", 422);
+        }
+
+        $dao = new RegistroDiarioDAO(Conexion::conectar());
+
+        $resultado = $dao->registrar(
+            (string) Sesion::cedula(),
+            $entrada,
+            $salida,
+            $tipo,
+            $numero,
+            $asignatura,
+            $grupo,
+            $turno
         );
+
+        if (!$resultado) {
+            RespuestaJSON::error("No se pudo guardar el registro diario", 409);
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Registro diario guardado"
+        ], 201);
+    }
+
+    /**
+     * DELETE /registroDiario -> elimina un registro.
+     * El docente solo puede borrar los propios.
+     */
+    private function eliminar(): void
+    {
+        Sesion::exigirRol("docente", "administrador");
+        Token::verificar();
+
+        $datos = $this->cuerpo();
+
+        $id = Validacion::entero($datos["id"] ?? null, 1);
+
+        if ($id === null) {
+            RespuestaJSON::error("ID de registro inválido", 422);
+        }
+
+        $dao = new RegistroDiarioDAO(Conexion::conectar());
+
+        $registro = $dao->buscarPorId($id);
+
+        if ($registro === null) {
+            RespuestaJSON::error("El registro no existe", 404);
+        }
+
+        if (
+            Sesion::rol() === "docente" &&
+            $registro["documento_identidad"] !== Sesion::cedula()
+        ) {
+            RespuestaJSON::error(
+                "Solo podés eliminar tus propios registros",
+                403
+            );
+        }
+
+        if (!$dao->eliminar($id)) {
+            RespuestaJSON::error("No se pudo eliminar el registro", 409);
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Registro diario eliminado"
+        ]);
+    }
+
+    /**
+     * Lee y valida el cuerpo JSON de la petición.
+     */
+    private function cuerpo(): array
+    {
+        $datos = json_decode(file_get_contents("php://input"), true);
 
         if (!is_array($datos)) {
             RespuestaJSON::error("JSON inválido", 400);
-            return;
         }
 
-        $campos = [
-            "hora_de_entrada",
-            "hora_de_salida",
-            "tipo_de_salon",
-            "numero_de_salon",
-            "asignatura",
-            "grupo",
-            "turno"
-        ];
-
-        foreach ($campos as $campo) {
-            if (
-                !isset($datos[$campo]) ||
-                !is_scalar($datos[$campo]) ||
-                trim((string) $datos[$campo]) === ""
-            ) {
-                RespuestaJSON::error(
-                    "Falta o es inválido: " . $campo,
-                    422
-                );
-                return;
-            }
-        }
-
-        $entrada = (string) $datos["hora_de_entrada"];
-        $salida = (string) $datos["hora_de_salida"];
-
-        $patronHora = '/^(?:[01]\d|2[0-3]):[0-5]\d$/';
-
-        if (
-            !preg_match($patronHora, $entrada) ||
-            !preg_match($patronHora, $salida) ||
-            $salida <= $entrada
-        ) {
-            RespuestaJSON::error("Horario inválido", 422);
-            return;
-        }
-
-        $tipo = (string) $datos["tipo_de_salon"];
-        $turno = (string) $datos["turno"];
-
-        if (
-            !in_array($tipo, ["Taller", "Laboratorio"], true) ||
-            !in_array($turno, ["M", "V", "N"], true)
-        ) {
-            RespuestaJSON::error(
-                "Tipo de salón o turno inválido",
-                422
-            );
-            return;
-        }
-
-        $numero = filter_var(
-            $datos["numero_de_salon"],
-            FILTER_VALIDATE_INT,
-            ["options" => ["min_range" => 1]]
-        );
-
-        if ($numero === false) {
-            RespuestaJSON::error(
-                "Número de salón inválido",
-                422
-            );
-            return;
-        }
-
-        $asignatura = trim((string) $datos["asignatura"]);
-        $grupo = trim((string) $datos["grupo"]);
-
-        if (
-            mb_strlen($asignatura) > 100 ||
-            mb_strlen($grupo) > 50
-        ) {
-            RespuestaJSON::error(
-                "Asignatura o grupo demasiado largo",
-                422
-            );
-            return;
-        }
-
-        try {
-            $conector = new ConectorPDO(
-                $_ENV["DB_HOST"],
-                $_ENV["DB_USUARIO"],
-                $_ENV["DB_CLAVE"],
-                $_ENV["DB_NOMBRE"]
-            );
-
-            $conexion = $conector->establecerConexion();
-
-            $modelo = new AltaDatosRegistroDiario($conexion);
-
-            $guardado = $modelo->registrar(
-                (string) $_SESSION["cedula"],
-                $entrada,
-                $salida,
-                $tipo,
-                (int) $numero,
-                $asignatura,
-                $grupo,
-                $turno
-            );
-
-            $conector->desconectar();
-
-            if (!$guardado) {
-                RespuestaJSON::error(
-                    "No se pudo guardar el registro diario",
-                    409
-                );
-                return;
-            }
-
-            RespuestaJSON::exito([
-                "mensaje" => "Registro diario guardado"
-            ], 201);
-
-        } catch (Throwable $error) {
-            error_log($error->getMessage());
-
-            RespuestaJSON::error(
-                "Error interno al registrar el diario",
-                500
-            );
-        }
+        return $datos;
     }
 }

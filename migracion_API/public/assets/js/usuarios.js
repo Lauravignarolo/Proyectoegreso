@@ -1,25 +1,14 @@
 
-const API_USUARIOS = "../index.php?ruta=usuarios";
-
 const tablaUsuarios = document.getElementById("tablaUsuarios");
 
 // Obtener usuarios desde la API
 async function cargarUsuarios() {
     try {
-        const respuesta = await fetch(API_USUARIOS, {
-            method: "GET",
-            credentials: "same-origin"
+        const usuarios = await peticionAPI(API_USUARIOS, {
+            metodo: "GET"
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudieron cargar los usuarios"
-            );
-        }
-
-        mostrarUsuarios(json.datos);
+        mostrarUsuarios(usuarios);
 
     } catch (error) {
         tablaUsuarios.innerHTML = "";
@@ -73,31 +62,14 @@ async function eliminarUsuario(cedula, boton) {
     boton.textContent = "Eliminando...";
 
     try {
-        const respuesta = await fetch(API_USUARIOS, {
-            method: "DELETE",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify({
+        await peticionAPI(API_USUARIOS, {
+            metodo: "DELETE",
+            datos: {
                 cedula: cedula
-            })
+            }
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo eliminar el usuario"
-            );
-        }
-
-        alert(
-            json.datos?.mensaje ??
-            "Usuario eliminado correctamente"
-        );
+        alert("Usuario eliminado correctamente");
 
         await cargarUsuarios();
 

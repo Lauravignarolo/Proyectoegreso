@@ -1,6 +1,4 @@
 
-const API_ALTA_USUARIO = "../index.php?ruta=altaUsuario";
-
 const formularioRegistroUsuario =
     document.getElementById("formularioRegistroUsuario");
 
@@ -33,33 +31,16 @@ async function registrarUsuario(evento) {
 
     try {
 
-        const respuesta = await fetch(API_ALTA_USUARIO, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify(datos)
+        await peticionAPI(API_USUARIOS, {
+            metodo: "POST",
+            datos: datos
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo registrar el usuario."
-            );
-        }
-
-        alert(
-            json.datos?.mensaje ??
-            "Usuario registrado correctamente."
-        );
+        alert("Usuario registrado correctamente.");
 
         formularioRegistroUsuario.reset();
 
-        window.location.href = "Administrador.html";
+        window.location.href = "administrador.html";
 
     } catch (error) {
 

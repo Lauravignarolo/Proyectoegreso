@@ -25,7 +25,7 @@
     <nav class="NavBuscar">
         <form class="FormBuscar">
             <fieldset class="FieldsetBuscar">
-                <input type="search" placeholder="Buscar...">
+                <input type="search" name="buscar" placeholder="Buscar...">
                 <button type="submit"><i class="bi bi-search"></i></button>
             </fieldset>
         </form>
@@ -46,6 +46,7 @@
 
                 </tbody>
             </table>
+            <p id="mensajeInventario" role="status"></p>
             <button class="ButtonAgregarComponente" id="ButtonAgregarComponente">Agregar</button>
 
         </section>
@@ -60,6 +61,7 @@
 <input
     class="Inputllenar"
     id="Componente"
+    name="componente"
     type="text"
     maxlength="100"
     required
@@ -69,6 +71,7 @@
 <input
     class="Inputllenar"
     id="Marca"
+    name="marca"
     type="text"
     maxlength="100"
     required
@@ -78,6 +81,7 @@
 <input
     class="Inputllenar"
     id="Cantidad"
+    name="cantidad"
     type="number"
     min="0"
     step="1"
@@ -100,6 +104,7 @@
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../assets/js/constantes.js"></script>
 <script src="../assets/js/inventario.js"></script>
 </body>
 

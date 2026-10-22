@@ -1,286 +1,146 @@
-
 <?php
 
-require_once RUTA_MODELO . "/AccesoDatosInventario.php";
-require_once RUTA_MODELO . "/ConectarPDO.php";
-require_once RUTA_VISTA . "/RespuestaJSON.php";
+require_once RUTA_NUCLEO . "/Conexion.php";
+require_once RUTA_NUCLEO . "/Sesion.php";
+require_once RUTA_NUCLEO . "/Token.php";
+require_once RUTA_NUCLEO . "/Validacion.php";
+require_once RUTA_DAO . "/InventarioDAO.php";
 
+/**
+ * Controlador del recurso "inventario".
+ *
+ * Controla GET, POST, PUT y DELETE sobre /index.php?ruta=inventario
+ * Cualquier usuario autenticado puede consultar; solo el técnico puede
+ * modificar el inventario.
+ */
 class ProcesarInventario
 {
-    public function gestionarInventario(string $metodo): void
-{
-    if (empty($_SESSION["cedula"])) {
-        RespuestaJSON::error("Sesión no iniciada", 401);
-        return;
+    public function gestionar(string $metodo): void
+    {
+        Sesion::exigirSesion();
+
+        match ($metodo) {
+            "GET" => $this->listar(),
+            "POST" => $this->agregar(),
+            "PUT" => $this->editar(),
+            "DELETE" => $this->eliminar(),
+            default => RespuestaJSON::metodoNoPermitido("GET, POST, PUT, DELETE")
+        };
     }
 
-    // Dirección y técnico pueden consultar el inventario.
-    if ($metodo === "GET") {
-        $this->listarInventario();
-        return;
+    /**
+     * GET /inventario -> lista el inventario.
+     */
+    private function listar(): void
+    {
+        $dao = new InventarioDAO(Conexion::conectar());
+
+        RespuestaJSON::exito($dao->listar());
     }
 
-    // Solamente el técnico puede agregar, editar o eliminar.
-    if (empty($_SESSION["tecnico"])) {
-        RespuestaJSON::error(
-            "Solo el técnico puede modificar el inventario",
-            403
-        );
-        return;
-    }
+    /**
+     * POST /inventario -> agrega un componente.
+     */
+    private function agregar(): void
+    {
+        Sesion::exigirRol("tecnico");
+        Token::verificar();
 
-        if (!in_array($metodo, ["POST", "PUT", "DELETE"], true)) {
-            header("Allow: GET, POST, PUT, DELETE");
-            RespuestaJSON::error("Método no permitido", 405);
-            return;
-        }
+        $datos = $this->cuerpo();
 
-        $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
+        $componente = Validacion::texto($datos["componente"] ?? null, 100);
+        $marca = Validacion::texto($datos["marca"] ?? null, 100);
+        $cantidad = Validacion::entero($datos["cantidad"] ?? null, 0);
 
-        if (
-            empty($_SESSION["csrfToken"]) ||
-            !hash_equals($_SESSION["csrfToken"], $token)
-        ) {
-            RespuestaJSON::error("Token CSRF inválido", 403);
-            return;
-        }
-
-        $datos = json_decode(
-            file_get_contents("php://input"),
-            true
-        );
-
-        if (!is_array($datos)) {
-            RespuestaJSON::error("JSON inválido", 400);
-            return;
-        }
-
-        if ($metodo === "DELETE") {
-            $this->eliminarInventario($datos);
-            return;
-        }
-
-        $componente = $datos["componente"] ?? null;
-        $marca = $datos["marca"] ?? null;
-        $cantidadOriginal = $datos["cantidad"] ?? null;
-
-        if (
-            !is_string($componente) ||
-            !is_string($marca) ||
-            !is_scalar($cantidadOriginal)
-        ) {
-            RespuestaJSON::error("Datos inválidos", 422);
-            return;
-        }
-
-        $componente = trim($componente);
-        $marca = trim($marca);
-
-        $cantidad = filter_var(
-            $cantidadOriginal,
-            FILTER_VALIDATE_INT,
-            ["options" => ["min_range" => 0]]
-        );
-
-        if (
-            $componente === "" ||
-            $marca === "" ||
-            mb_strlen($componente) > 100 ||
-            mb_strlen($marca) > 100 ||
-            $cantidad === false
-        ) {
+        if ($componente === null || $marca === null || $cantidad === null) {
             RespuestaJSON::error(
                 "Componente, marca o cantidad inválidos",
                 422
             );
-            return;
         }
 
-        if ($metodo === "POST") {
-            $this->agregarInventario(
-                $componente,
-                $marca,
-                (int) $cantidad
-            );
-            return;
+        $dao = new InventarioDAO(Conexion::conectar());
+
+        if (!$dao->registrar($componente, $marca, $cantidad)) {
+            RespuestaJSON::error("No se pudo agregar el componente", 409);
         }
 
-        $id = $this->validarId($datos["id_inventario"] ?? null);
+        RespuestaJSON::exito([
+            "mensaje" => "Componente agregado correctamente"
+        ], 201);
+    }
 
-        if ($id === null) {
+    /**
+     * PUT /inventario -> actualiza un componente.
+     */
+    private function editar(): void
+    {
+        Sesion::exigirRol("tecnico");
+        Token::verificar();
+
+        $datos = $this->cuerpo();
+
+        $id = Validacion::entero($datos["id_inventario"] ?? null, 1);
+        $componente = Validacion::texto($datos["componente"] ?? null, 100);
+        $marca = Validacion::texto($datos["marca"] ?? null, 100);
+        $cantidad = Validacion::entero($datos["cantidad"] ?? null, 0);
+
+        if ($id === null || $componente === null || $marca === null || $cantidad === null) {
             RespuestaJSON::error(
-                "ID de inventario inválido",
+                "ID, componente, marca o cantidad inválidos",
                 422
             );
-            return;
         }
 
-        $this->editarInventario(
-            $id,
-            $componente,
-            $marca,
-            (int) $cantidad
-        );
+        $dao = new InventarioDAO(Conexion::conectar());
+
+        if (!$dao->editar($id, $componente, $marca, $cantidad)) {
+            RespuestaJSON::error("El componente no existe", 404);
+        }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Componente actualizado correctamente"
+        ]);
     }
 
-    private function conectar(): PDO
-{
-    $conector = new ConectorPDO(
-        $_ENV["DB_HOST"],
-        $_ENV["DB_USUARIO"],
-        $_ENV["DB_CLAVE"],
-        $_ENV["DB_NOMBRE"]
-    );
-
-    return $conector->establecerConexion();
-}
-
-    private function validarId($valor): ?int
+    /**
+     * DELETE /inventario -> elimina un componente.
+     */
+    private function eliminar(): void
     {
-        if (!is_int($valor) && !is_string($valor)) {
-            return null;
-        }
+        Sesion::exigirRol("tecnico");
+        Token::verificar();
 
-        $id = filter_var(
-            $valor,
-            FILTER_VALIDATE_INT,
-            ["options" => ["min_range" => 1]]
-        );
+        $datos = $this->cuerpo();
 
-        return $id === false ? null : (int) $id;
-    }
-
-    private function listarInventario(): void
-    {
-        try {
-            $modelo = new AccesoDatosInventario($this->conectar());
-
-            RespuestaJSON::exito(
-                $modelo->listarInventario()
-            );
-
-        } catch (Throwable $error) {
-    error_log("ERROR INVENTARIO GET: " . $error->getMessage());
-
-    RespuestaJSON::error(
-        "Error al listar inventario: " . $error->getMessage(),
-        500
-    );
-        }
-    }
-
-    private function agregarInventario(
-        string $componente,
-        string $marca,
-        int $cantidad
-    ): void {
-        try {
-            $modelo = new AccesoDatosInventario($this->conectar());
-
-            $resultado = $modelo->agregarInventario(
-                $componente,
-                $marca,
-                $cantidad
-            );
-
-            if (!$resultado) {
-                RespuestaJSON::error(
-                    "No se pudo agregar el componente",
-                    500
-                );
-                return;
-            }
-
-            RespuestaJSON::exito([
-                "mensaje" => "Componente agregado correctamente"
-            ], 201);
-
-        } catch (Throwable $error) {
-    error_log("ERROR INVENTARIO: " . $error->getMessage());
-
-    RespuestaJSON::error(
-        "Error al agregar el componente: " . $error->getMessage(),
-        500
-    );
-}
-    }
-
-    private function editarInventario(
-        int $id,
-        string $componente,
-        string $marca,
-        int $cantidad
-    ): void {
-        try {
-            $modelo = new AccesoDatosInventario($this->conectar());
-
-            $resultado = $modelo->editarInventario(
-                $id,
-                $componente,
-                $marca,
-                $cantidad
-            );
-
-            if (!$resultado) {
-                RespuestaJSON::error(
-                    "El componente no existe",
-                    404
-                );
-                return;
-            }
-
-            RespuestaJSON::exito([
-                "mensaje" => "Componente actualizado correctamente"
-            ]);
-
-        } catch (Throwable $error) {
-            error_log($error->getMessage());
-
-            RespuestaJSON::error(
-                "Error al editar el componente",
-                500
-            );
-        }
-    }
-
-    private function eliminarInventario(array $datos): void
-    {
-        $id = $this->validarId(
-            $datos["id_inventario"] ?? null
-        );
+        $id = Validacion::entero($datos["id_inventario"] ?? null, 1);
 
         if ($id === null) {
-            RespuestaJSON::error(
-                "ID de inventario inválido",
-                422
-            );
-            return;
+            RespuestaJSON::error("ID de inventario inválido", 422);
         }
 
-        try {
-            $modelo = new AccesoDatosInventario($this->conectar());
+        $dao = new InventarioDAO(Conexion::conectar());
 
-            $resultado = $modelo->eliminarInventario($id);
-
-            if (!$resultado) {
-                RespuestaJSON::error(
-                    "El componente no existe",
-                    404
-                );
-                return;
-            }
-
-            RespuestaJSON::exito([
-                "mensaje" => "Componente eliminado correctamente"
-            ]);
-
-        } catch (Throwable $error) {
-            error_log($error->getMessage());
-
-            RespuestaJSON::error(
-                "Error al eliminar el componente",
-                500
-            );
+        if (!$dao->eliminar($id)) {
+            RespuestaJSON::error("El componente no existe", 404);
         }
+
+        RespuestaJSON::exito([
+            "mensaje" => "Componente eliminado correctamente"
+        ]);
+    }
+
+    /**
+     * Lee y valida el cuerpo JSON de la petición.
+     */
+    private function cuerpo(): array
+    {
+        $datos = json_decode(file_get_contents("php://input"), true);
+
+        if (!is_array($datos)) {
+            RespuestaJSON::error("JSON inválido", 400);
+        }
+
+        return $datos;
     }
 }

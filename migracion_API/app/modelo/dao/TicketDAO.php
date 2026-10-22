@@ -1,27 +1,24 @@
 <?php
 
 /**
- * Clase encargada de consultar y registrar tickets (incidentes de equipos).
- * Solo habla con la base de datos: las validaciones y los permisos
- * los decide TicketController.
+ * DAO de la entidad TICKETS (incidencias de los equipos).
+ *
+ * Un ticket se guarda junto con su aviso de estado (AVISO_DE_ESTADO) y
+ * con el docente que lo reportó (HACE). Eso se hace en una transacción.
  */
 class TicketDAO
 {
     private PDO $conexion;
 
-    /**
-     * @param PDO $conexion Conexión ya establecida. 
-     */
     public function __construct(PDO $conexion)
     {
         $this->conexion = $conexion;
     }
 
     /**
-     * Lista todos los tickets, del más nuevo al más viejo.
-     * @return array Lista de tickets (cada uno es un arreglo asociativo).
+     * Lista los tickets que todavía no fueron resueltos.
      */
-    public function listarTickets(): array
+    public function listarPendientes(): array
     {
         $sql = "
             SELECT
@@ -46,10 +43,8 @@ class TicketDAO
 
             LEFT JOIN AVISO_DE_ESTADO AS a
                 ON a.id_ticket = t.id_ticket
-
             LEFT JOIN HACE AS h
                 ON h.id_ticket = t.id_ticket
-
             LEFT JOIN USUARIO AS u
                 ON u.documento_identidad = h.documento_identidad
 
@@ -68,38 +63,80 @@ class TicketDAO
     }
 
     /**
-     * Comprueba si existe un salón.
-     * @return bool 
+     * Lista todos los tickets, resueltos o no.
      */
-    public function existeSalon(string $tipoDeSalon, int $numeroDeSalon): bool
+    public function listarTodos(): array
     {
         $sql = "
-            SELECT COUNT(*)
+            SELECT
+                t.id_ticket,
+                t.numero_de_equipo,
+                t.numero_de_salon,
+                t.tipo_de_salon,
+                t.asignatura,
+                t.hora_de_entrada,
+                t.hora_de_salida,
+                t.grupo,
+                t.turno,
+
+                a.estudiante_a_cargo,
+                a.estado,
+                a.urgencia,
+
+                u.nombre,
+                u.apellido
+
+            FROM TICKETS AS t
+
+            LEFT JOIN AVISO_DE_ESTADO AS a
+                ON a.id_ticket = t.id_ticket
+            LEFT JOIN HACE AS h
+                ON h.id_ticket = t.id_ticket
+            LEFT JOIN USUARIO AS u
+                ON u.documento_identidad = h.documento_identidad
+
+            ORDER BY t.id_ticket DESC
+        ";
+
+        $consulta = $this->conexion->prepare($sql);
+        $consulta->execute();
+
+        $tickets = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+        $consulta = null;
+
+        return $tickets;
+    }
+
+    /**
+     * ¿Existe el salón donde se quiere registrar el ticket?
+     */
+    public function existeSalon(string $tipoSalon, int $numeroSalon): bool
+    {
+        $sql = "
+            SELECT 1
             FROM SALON
             WHERE tipo_de_salon = :tipo_de_salon
-            AND numero_de_salon = :numero_de_salon
+              AND numero_de_salon = :numero_de_salon
         ";
 
         $consulta = $this->conexion->prepare($sql);
         $consulta->execute([
-            "tipo_de_salon" => $tipoDeSalon,
-            "numero_de_salon" => $numeroDeSalon
+            "tipo_de_salon" => $tipoSalon,
+            "numero_de_salon" => $numeroSalon
         ]);
 
-        $cantidad = (int) $consulta->fetchColumn();
+        $existe = $consulta->fetchColumn() !== false;
 
         $consulta = null;
 
-        return $cantidad > 0;
+        return $existe;
     }
 
     /**
-     * Registra un ticket con su aviso de estado y el docente que lo creó.
-     * Se usa una transacción, es decir o se guardan las tres cosas, o no se guarda ninguna.
-     * @param string $cedulaDocente Cédula del docente que registra el ticket (viene de la sesión).
-     * @return bool TRUE si se registró todo correctamente.
+     * Registra un ticket con su aviso de estado y el docente que lo reportó.
      */
-    public function registrarTickets(
+    public function registrar(
         string $cedulaDocente,
         string $estudianteACargo,
         string $horaDeEntrada,
@@ -113,9 +150,7 @@ class TicketDAO
         string $urgencia,
         string $estado
     ): bool {
-
         try {
-
             $this->conexion->beginTransaction();
 
             $sqlTicket = "
@@ -171,78 +206,71 @@ class TicketDAO
             $this->conexion->commit();
 
             return true;
-
         } catch (PDOException $error) {
-
             if ($this->conexion->inTransaction()) {
                 $this->conexion->rollBack();
             }
 
-            error_log("ERROR SQL (TicketDAO): " . $error->getMessage());
+            error_log("[TicketDAO] registrar: " . $error->getMessage());
 
             return false;
         }
     }
-    
-public function repararTicket(int $idTicket, string $cedulaTecnico): bool
-{
-    try {
-        $this->conexion->beginTransaction();
 
-        $consulta = $this->conexion->prepare("
-            SELECT a.estado
-            FROM AVISO_DE_ESTADO AS a
-            WHERE a.id_ticket = :id_ticket
-            FOR UPDATE
-        ");
+    /**
+     * Marca el ticket como resuelto y registra al técnico que lo reparó.
+     */
+    public function reparar(int $idTicket, string $cedulaTecnico): bool
+    {
+        try {
+            $this->conexion->beginTransaction();
 
-        $consulta->execute([
-            "id_ticket" => $idTicket
-        ]);
+            $consulta = $this->conexion->prepare("
+                SELECT a.estado
+                FROM AVISO_DE_ESTADO AS a
+                WHERE a.id_ticket = :id_ticket
+                FOR UPDATE
+            ");
 
-        $estado = $consulta->fetchColumn();
+            $consulta->execute(["id_ticket" => $idTicket]);
 
-        if ($estado === false || $estado === "Resuelto") {
-            $this->conexion->rollBack();
+            $estado = $consulta->fetchColumn();
+
+            if ($estado === false || $estado === "Resuelto") {
+                $this->conexion->rollBack();
+
+                return false;
+            }
+
+            $actualizar = $this->conexion->prepare("
+                UPDATE AVISO_DE_ESTADO
+                SET estado = 'Resuelto'
+                WHERE id_ticket = :id_ticket
+            ");
+
+            $actualizar->execute(["id_ticket" => $idTicket]);
+
+            $registrar = $this->conexion->prepare("
+                INSERT INTO SOLUCIONA (id_ticket, documento_identidad)
+                VALUES (:id_ticket, :cedula)
+            ");
+
+            $registrar->execute([
+                "id_ticket" => $idTicket,
+                "cedula" => $cedulaTecnico
+            ]);
+
+            $this->conexion->commit();
+
+            return true;
+        } catch (Throwable $error) {
+            if ($this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
+            }
+
+            error_log("[TicketDAO] reparar: " . $error->getMessage());
+
             return false;
         }
-
-        $actualizar = $this->conexion->prepare("
-            UPDATE AVISO_DE_ESTADO
-            SET estado = 'Resuelto'
-            WHERE id_ticket = :id_ticket
-        ");
-
-        $actualizar->execute([
-            "id_ticket" => $idTicket
-        ]);
-
-        $registrar = $this->conexion->prepare("
-            INSERT INTO SOLUCIONA
-                (id_ticket, documento_identidad)
-            VALUES
-                (:id_ticket, :cedula)
-        ");
-
-        $registrar->execute([
-            "id_ticket" => $idTicket,
-            "cedula" => $cedulaTecnico
-        ]);
-
-        $this->conexion->commit();
-        return true;
-
-    } catch (Throwable $error) {
-        if ($this->conexion->inTransaction()) {
-            $this->conexion->rollBack();
-        }
-
-        error_log(
-            "Error al reparar ticket: " . $error->getMessage()
-        );
-
-        return false;
     }
-}
-
 }

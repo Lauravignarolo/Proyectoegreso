@@ -1,118 +1,59 @@
-
 <?php
 
-require_once RUTA_MODELO . "/ConectarPDO.php";
-require_once RUTA_MODELO . "/Usuario.php";
-require_once RUTA_MODELO . "/AccesoDatosUsuario.php";
-require_once RUTA_MODELO . "/Login.php";
+require_once RUTA_NUCLEO . "/Conexion.php";
+require_once RUTA_NUCLEO . "/Sesion.php";
+require_once RUTA_NUCLEO . "/Token.php";
+require_once RUTA_NUCLEO . "/Validacion.php";
+require_once RUTA_DAO . "/UsuarioDAO.php";
+require_once RUTA_SERVICIO . "/Autenticacion.php";
 
+/**
+ * Controlador del recurso "login".
+ *
+ * Controla POST /index.php?ruta=login
+ */
 class ProcesarLogin
 {
-    public function autenticar(string $metodo): void
+    public function gestionar(string $metodo): void
     {
         if ($metodo !== "POST") {
-            header("Allow: POST");
-            RespuestaJson::error("Método no permitido", 405);
+            RespuestaJSON::metodoNoPermitido("POST");
         }
 
         $datos = json_decode(file_get_contents("php://input"), true);
 
         if (!is_array($datos)) {
-            RespuestaJson::error("JSON inválido", 400);
+            RespuestaJSON::error("JSON inválido", 400);
         }
 
-        $cedula = trim($datos["cedula"] ?? "");
-        $clave = $datos["clave"] ?? "";
+        $cedula = Validacion::cedula($datos["cedula"] ?? null);
+        $clave = $datos["clave"] ?? null;
 
-        if (!preg_match("/^[1-9][0-9]{7}$/", $cedula) ||
-            !is_string($clave) || $clave === "") {
-            RespuestaJson::error("Credenciales inválidas", 422);
+        if ($cedula === null || !is_string($clave) || $clave === "") {
+            RespuestaJSON::error("Credenciales inválidas", 422);
         }
 
-        $conector = new ConectorPDO(
-            $_ENV["DB_HOST"],
-            $_ENV["DB_USUARIO"],
-            $_ENV["DB_CLAVE"],
-            $_ENV["DB_NOMBRE"],
-            (int) ($_ENV["DB_PUERTO"] ?? 3306)
-        );
+        $dao = new UsuarioDAO(Conexion::conectar());
+        $autenticacion = new Autenticacion($dao);
 
-        $conexion = $conector->establecerConexion();
-        $dao = new AccesoDatosUsuario($conexion);
-        $login = new Login($dao);
-
-        $usuario = $login->autenticar($cedula, $clave);
-
-        $conector->desconectar();
+        $usuario = $autenticacion->autenticar($cedula, $clave);
 
         if ($usuario === null) {
-            RespuestaJson::error("Cédula o contraseña incorrecta", 401);
+            RespuestaJSON::error("Cédula o contraseña incorrecta", 401);
         }
 
-        session_regenerate_id(true);
-
-        $_SESSION["cedula"] = $usuario->getCedula();
-        $_SESSION["administrador"] = $usuario->esAdministrador();
-        $_SESSION["docente"] = $usuario->esDocente();
-        $_SESSION["direccion"] = $usuario->esDireccion();
-        $_SESSION["tecnico"] = $usuario->esTecnico();
-
-        $_SESSION["csrfToken"] = bin2hex(random_bytes(32));
-        
-
-        $rol = match (true) {
-            $usuario->esAdministrador() => "administrador",
-            $usuario->esDocente() => "docente",
-            $usuario->esTecnico() => "tecnico",
-            $usuario->esDireccion() => "direccion",
-            default => null
-        };
+        $rol = $autenticacion->rolDe($usuario);
 
         if ($rol === null) {
-            $_SESSION = [];
-            session_destroy();
-            RespuestaJson::error("Usuario sin rol autorizado", 403);
+            RespuestaJSON::error("Usuario sin rol autorizado", 403);
         }
 
-        RespuestaJson::exito([
+        Sesion::iniciar($usuario, $rol);
+
+        RespuestaJSON::exito([
             "cedula" => $usuario->getCedula(),
             "rol" => $rol,
-            "csrfToken" => $_SESSION["csrfToken"]
+            "csrfToken" => Token::generar()
         ]);
-    }
-
-    public function cerrarSesion(string $metodo): void
-    {
-        if ($metodo !== "POST") {
-            header("Allow: POST");
-            RespuestaJson::error("Método no permitido", 405);
-        }
-
-        $token = $_SERVER["HTTP_X_CSRF_TOKEN"] ?? "";
-
-        if (!isset($_SESSION["cedula"]) ||
-            !isset($_SESSION["csrfToken"]) ||
-            !is_string($token) ||
-            !hash_equals($_SESSION["csrfToken"], $token)) {
-            RespuestaJson::error("Sesión o token inválido", 403);
-        }
-
-        $_SESSION = [];
-
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), "", [
-                "expires" => time() - 3600,
-                "path" => $params["path"],
-                "domain" => $params["domain"],
-                "secure" => $params["secure"],
-                "httponly" => $params["httponly"],
-                "samesite" => $params["samesite"] ?? "Lax"
-            ]);
-        }
-
-        session_destroy();
-
-        RespuestaJson::exito(["mensaje" => "Sesión cerrada"]);
     }
 }

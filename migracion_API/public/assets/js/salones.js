@@ -1,6 +1,4 @@
 
-const API_SALONES = "../index.php?ruta=salones";
-
 // Tabla de salones
 const TbodySalones = document.getElementById("TbodySalones");
 
@@ -24,24 +22,15 @@ const FormGestionarSalones =
 // Obtener salones desde la API
 async function obtenerSalones() {
 
-    const respuesta = await fetch(API_SALONES, {
-        method: "GET",
-        credentials: "same-origin"
+    const salones = await peticionAPI(API_SALONES, {
+        metodo: "GET"
     });
 
-    const json = await respuesta.json();
-
-    if (!respuesta.ok) {
-        throw new Error(
-            json.mensaje ?? "No se pudieron obtener los salones."
-        );
-    }
-
-    if (!Array.isArray(json.datos)) {
+    if (!Array.isArray(salones)) {
         throw new Error("La API no devolvió una lista de salones.");
     }
 
-    return json.datos;
+    return salones;
 }
 
 
@@ -78,41 +67,30 @@ function mostrarSalones(salones) {
         botonEliminar.textContent = "Eliminar";
 
         botonEliminar.addEventListener("click", async () => {
-    const confirmacion = confirm(
-        `¿Está seguro de eliminar el salón ${salon.numero_de_salon}?`
-    );
+            const confirmacion = confirm(
+                `¿Está seguro de eliminar el salón ${salon.numero_de_salon}?`
+            );
 
-    if (!confirmacion) {
-        return;
-    }
+            if (!confirmacion) {
+                return;
+            }
 
-    try {
-        const respuesta = await fetch(API_SALONES, {
-            method: "DELETE",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify({
-                tipo_de_salon: salon.tipo_de_salon,
-                numero_de_salon: salon.numero_de_salon
-            })
+            try {
+                await peticionAPI(API_SALONES, {
+                    metodo: "DELETE",
+                    datos: {
+                        tipo_de_salon: salon.tipo_de_salon,
+                        numero_de_salon: salon.numero_de_salon
+                    }
+                });
+
+                await cargarSalones();
+
+            } catch (error) {
+                alert(error.message);
+                console.error(error);
+            }
         });
-
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(json.mensaje ?? "No se pudo eliminar el salón");
-        }
-
-        await cargarSalones();
-
-    } catch (error) {
-        alert(error.message);
-        console.error(error);
-    }
-});
 
         celdaAccion.appendChild(botonEliminar);
     });
@@ -205,24 +183,10 @@ async function gestionarSalon(evento) {
 
     try {
 
-        const respuesta = await fetch(API_SALONES, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify(datos)
+        await peticionAPI(API_SALONES, {
+            metodo: "POST",
+            datos: datos
         });
-
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo registrar el salón."
-            );
-        }
 
         alert("Salón registrado correctamente.");
 

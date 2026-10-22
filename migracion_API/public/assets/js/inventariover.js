@@ -1,6 +1,4 @@
 
-const API_INVENTARIO = "../index.php?ruta=inventario";
-
 const tablaInventario = document.getElementById("TbodyInventario");
 const mensajeInventario = document.getElementById("mensajeInventario");
 
@@ -12,31 +10,22 @@ async function cargarInventario() {
     }
 
     try {
-        const respuesta = await fetch(API_INVENTARIO, {
-            method: "GET",
-            credentials: "same-origin"
+        const inventario = await peticionAPI(API_INVENTARIO, {
+            metodo: "GET"
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo cargar el inventario."
-            );
-        }
-
-        if (!Array.isArray(json.datos)) {
+        if (!Array.isArray(inventario)) {
             throw new Error("La API no devolvió una lista válida.");
         }
 
         if (mensajeInventario) {
             mensajeInventario.textContent =
-                json.datos.length === 0
+                inventario.length === 0
                     ? "No hay componentes registrados."
                     : "";
         }
 
-        json.datos.forEach((item) => {
+        inventario.forEach((item) => {
             const fila = document.createElement("tr");
 
             const columnas = [

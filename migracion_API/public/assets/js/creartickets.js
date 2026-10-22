@@ -1,4 +1,3 @@
-const RUTA_API_TICKETS = "../index.php?ruta=tickets";
 const RUTA_LOGIN = "login.html";
 
 const FormCrearTickets = document.getElementById("FormCrearTickets");
@@ -6,10 +5,6 @@ const MensajeTicket = document.getElementById("MensajeTicket");
 
 const dialogConfirmacion = document.getElementById("dialogConfirmacion");
 const cerrarConfirmacion = document.getElementById("cerrarConfirmacion");
-
-function ObtenerTokenCsrf() {
-    return sessionStorage.getItem("csrfToken") ?? "";
-}
 
 function MostrarMensajeTicket(texto) {
     if (MensajeTicket) {
@@ -23,29 +18,10 @@ async function CrearTicket(eventoForm) {
     const datos = Object.fromEntries(new FormData(FormCrearTickets));
 
     try {
-        const respuesta = await fetch(RUTA_API_TICKETS, {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": ObtenerTokenCsrf()
-            },
-            body: JSON.stringify(datos)
+        await peticionAPI(API_TICKETS, {
+            metodo: "POST",
+            datos: datos
         });
-
-        if (respuesta.status === 401) {
-            window.location.href = RUTA_LOGIN;
-            return;
-        }
-
-        const resultado = await respuesta.json();
-
-        if (!respuesta.ok) {
-            MostrarMensajeTicket(
-                resultado.mensaje ?? "No se pudo registrar el equipo."
-            );
-            return;
-        }
 
         // El ticket se registró correctamente
         FormCrearTickets.reset();
@@ -54,14 +30,18 @@ async function CrearTicket(eventoForm) {
         if (dialogConfirmacion) {
             dialogConfirmacion.showModal();
         } else {
-            MostrarMensajeTicket(
-                resultado.datos?.mensaje ?? "Ticket registrado correctamente."
-            );
+            MostrarMensajeTicket("Ticket registrado correctamente.");
         }
 
     } catch (error) {
         console.error("Error al registrar ticket:", error);
-        MostrarMensajeTicket("No se pudo conectar con el servidor.");
+
+        if (error.message.includes("sesión")) {
+            window.location.href = RUTA_LOGIN;
+            return;
+        }
+
+        MostrarMensajeTicket(error.message);
     }
 }
 

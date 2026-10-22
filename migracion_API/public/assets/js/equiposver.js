@@ -1,6 +1,4 @@
 
-const API_EQUIPOS = "../index.php?ruta=equipos";
-
 const tablaEquipos = document.getElementById("TbodyEquipos");
 const mensajeEquipos = document.getElementById("mensajeEquipos");
 
@@ -43,26 +41,17 @@ async function cargarEquipos() {
     mostrarMensaje("Cargando equipos...");
 
     try {
-        const respuesta = await fetch(API_EQUIPOS, {
-            method: "GET",
-            credentials: "same-origin"
+        const equipos = await peticionAPI(API_EQUIPOS, {
+            metodo: "GET"
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudieron cargar los equipos."
-            );
-        }
-
-        if (!Array.isArray(json.datos)) {
+        if (!Array.isArray(equipos)) {
             throw new Error(
                 "La API no devolvió una lista válida de equipos."
             );
         }
 
-        mostrarEquipos(json.datos);
+        mostrarEquipos(equipos);
 
     } catch (error) {
         console.error("Error al cargar equipos:", error);

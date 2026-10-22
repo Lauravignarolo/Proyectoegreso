@@ -1,6 +1,4 @@
 
-const API_SALONES_SOLO_VER = "../index.php?ruta=salones";
-
 const tablaSalonesSoloVer =
     document.getElementById("TbodySalones");
 
@@ -17,29 +15,17 @@ async function cargarSalonesSoloVer() {
     mensajeSalonesSoloVer.textContent = "Cargando salones...";
 
     try {
-        const respuesta = await fetch(
-            API_SALONES_SOLO_VER,
-            {
-                method: "GET",
-                credentials: "same-origin"
-            }
-        );
+        const salones = await peticionAPI(API_SALONES, {
+            metodo: "GET"
+        });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudieron cargar los salones."
-            );
-        }
-
-        if (!Array.isArray(json.datos)) {
+        if (!Array.isArray(salones)) {
             throw new Error(
                 "La API no devolvió una lista válida de salones."
             );
         }
 
-        mostrarSalonesSoloVer(json.datos);
+        mostrarSalonesSoloVer(salones);
 
     } catch (error) {
         console.error("Error al cargar salones:", error);

@@ -1,6 +1,4 @@
 
-const API_SOLICITUDES = "../index.php?ruta=solicitudes";
-
 const tablaSolicitudes = document.getElementById("tablaSolicitudes");
 const mensajeSolicitudes = document.getElementById("mensajeSolicitudes");
 
@@ -67,26 +65,17 @@ async function cargarSolicitudes() {
     mostrarMensaje("Cargando solicitudes...");
 
     try {
-        const respuesta = await fetch(API_SOLICITUDES, {
-            method: "GET",
-            credentials: "same-origin"
+        const solicitudes = await peticionAPI(API_SOLICITUDES, {
+            metodo: "GET"
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudieron cargar las solicitudes."
-            );
-        }
-
-        if (!Array.isArray(json.datos)) {
+        if (!Array.isArray(solicitudes)) {
             throw new Error(
                 "La API no devolvió una lista válida de solicitudes."
             );
         }
 
-        mostrarSolicitudes(json.datos);
+        mostrarSolicitudes(solicitudes);
 
     } catch (error) {
         console.error("Error al cargar solicitudes:", error);
@@ -107,26 +96,12 @@ async function cumplirSolicitud(idSolicitud, boton) {
     boton.textContent = "Procesando...";
 
     try {
-        const respuesta = await fetch(API_SOLICITUDES, {
-            method: "PATCH",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify({
+        await peticionAPI(API_SOLICITUDES, {
+            metodo: "PATCH",
+            datos: {
                 id_solicitud: idSolicitud
-            })
+            }
         });
-
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo cumplir la solicitud."
-            );
-        }
 
         // Quitar la solicitud de la tabla
         const fila = boton.closest("tr");

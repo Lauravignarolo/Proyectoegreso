@@ -25,31 +25,13 @@ FormCrearSolicitud.addEventListener(
         botonEnviar.disabled = true;
 
         try {
-            const respuesta = await fetch(
-                "../index.php?ruta=solicitudes",
-                {
-                    method: "POST",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-Token":
-                            sessionStorage.getItem("csrfToken") ?? ""
-                    },
-                    body: JSON.stringify({
-                        fechaSolicitada,
-                        descripcion
-                    })
+            await peticionAPI(API_SOLICITUDES, {
+                metodo: "POST",
+                datos: {
+                    fechaSolicitada,
+                    descripcion
                 }
-            );
-
-            const json = await respuesta.json();
-
-            if (!respuesta.ok) {
-                throw new Error(
-                    json.mensaje ??
-                    "No se pudo registrar la solicitud"
-                );
-            }
+            });
 
             FormCrearSolicitud.reset();
 

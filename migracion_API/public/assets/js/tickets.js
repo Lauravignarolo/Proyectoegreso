@@ -1,6 +1,4 @@
 
-const API_TICKETS = "../index.php?ruta=tickets";
-
 const tablaTickets = document.getElementById("TbodyTickets");
 const mensajeTickets = document.getElementById("mensajeTickets");
 
@@ -75,24 +73,15 @@ async function cargarTickets() {
     mostrarMensaje("Cargando tickets...");
 
     try {
-        const respuesta = await fetch(API_TICKETS, {
-            method: "GET",
-            credentials: "same-origin"
+        const tickets = await peticionAPI(API_TICKETS, {
+            metodo: "GET"
         });
 
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudieron cargar los tickets."
-            );
-        }
-
-        if (!Array.isArray(json.datos)) {
+        if (!Array.isArray(tickets)) {
             throw new Error("La API no devolvió una lista de tickets.");
         }
 
-        mostrarTickets(json.datos);
+        mostrarTickets(tickets);
 
     } catch (error) {
         console.error("Error al cargar tickets:", error);
@@ -113,26 +102,12 @@ async function repararTicket(idTicket, boton) {
     boton.textContent = "Reparando...";
 
     try {
-        const respuesta = await fetch(API_TICKETS, {
-            method: "PATCH",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify({
+        await peticionAPI(API_TICKETS, {
+            metodo: "PATCH",
+            datos: {
                 id_ticket: idTicket
-            })
+            }
         });
-
-        const json = await respuesta.json();
-
-        if (!respuesta.ok) {
-            throw new Error(
-                json.mensaje ?? "No se pudo reparar el ticket."
-            );
-        }
 
         await cargarTickets();
 

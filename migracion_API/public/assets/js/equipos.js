@@ -1,7 +1,4 @@
 
-const API_EQUIPOS = "../index.php?ruta=equipos";
-const API_SALONES = "../index.php?ruta=salones";
-
 const tablaEquipos = document.getElementById("TbodyEquipos");
 const mensajeEquipos = document.getElementById("mensajeEquipos");
 
@@ -20,36 +17,10 @@ function mostrarMensaje(texto) {
     mensajeEquipos.textContent = texto;
 }
 
-async function solicitarJSON(url, opciones = {}) {
-    const respuesta = await fetch(url, {
-        credentials: "same-origin",
-        ...opciones
-    });
-
-    const texto = await respuesta.text();
-
-    let json;
-
-    try {
-        json = JSON.parse(texto);
-    } catch {
-        console.error("Respuesta PHP:", texto);
-        throw new Error(
-            "La API no devolvió JSON. Revisá F12 → Consola."
-        );
-    }
-
-    if (!respuesta.ok) {
-        throw new Error(
-            json.mensaje ?? "Ocurrió un error en la API."
-        );
-    }
-
-    return json.datos;
-}
-
 async function cargarSalones() {
-    const salones = await solicitarJSON(API_SALONES);
+    const salones = await peticionAPI(API_SALONES, {
+        metodo: "GET"
+    });
 
     if (!Array.isArray(salones)) {
         throw new Error("La lista de salones es inválida.");
@@ -112,7 +83,9 @@ async function cargarEquipos() {
     mostrarMensaje("Cargando equipos...");
 
     try {
-        const equipos = await solicitarJSON(API_EQUIPOS);
+        const equipos = await peticionAPI(API_EQUIPOS, {
+            metodo: "GET"
+        });
 
         if (!Array.isArray(equipos)) {
             throw new Error("La API no devolvió una lista de equipos.");
@@ -188,14 +161,9 @@ async function agregarEquipo(evento) {
     botonAceptar.disabled = true;
 
     try {
-        await solicitarJSON(API_EQUIPOS, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify(datos)
+        await peticionAPI(API_EQUIPOS, {
+            metodo: "POST",
+            datos: datos
         });
 
         dialogEquipos.close();
@@ -224,16 +192,11 @@ async function eliminarEquipo(numeroEquipo, boton) {
     boton.disabled = true;
 
     try {
-        await solicitarJSON(API_EQUIPOS, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token":
-                    sessionStorage.getItem("csrfToken") ?? ""
-            },
-            body: JSON.stringify({
+        await peticionAPI(API_EQUIPOS, {
+            metodo: "DELETE",
+            datos: {
                 numero_de_equipo: numeroEquipo
-            })
+            }
         });
 
         await cargarEquipos();
