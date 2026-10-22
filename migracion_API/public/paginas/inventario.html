@@ -18,7 +18,7 @@
 
 <body id="inicio">
     <header class="HeaderChico">
-        <img src="assets/img/iti utu.png" alt="" height="100px">
+        <img src="../assets/img/iti utu.png" alt="" height="100px">
         <h1> S.G.R.S.I </h1>
         <a href="tecnico.html">Volver</a>
     </header>
@@ -38,7 +38,7 @@
                         <th>Componente</th>
                         <th>Marca</th>
                         <th>Stock</th>
-                        <th>Accion</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
 
@@ -56,19 +56,33 @@
             <form id="FormGestionarInventario">
                 <fieldset class="FieldsetInventario">
                     <legend> REGISTRAR NUEVO COMPONENTE </legend>
+<label for="Componente">Componente</label>
+<input
+    class="Inputllenar"
+    id="Componente"
+    type="text"
+    maxlength="100"
+    required
+    placeholder="Ingresar componente">
 
-                    <label for="">Componente</label>
-                    <input class="Inputllenar" id="Componente" type="text" required placeholder="Ingresar Componente">
+<label for="Marca">Marca</label>
+<input
+    class="Inputllenar"
+    id="Marca"
+    type="text"
+    maxlength="100"
+    required
+    placeholder="Ingresar marca">
 
-
-                    <label for="">Marca</label>
-                    <input class="Inputllenar" id="Marca" type="text" required placeholder="Ingresar Marca">
-
-
-                    <label for="">Cantidad</label>
-                    <input class="Inputllenar" id="Cantidad" type="number" required placeholder="Ingresar Cantidad">
-
-
+<label for="Cantidad">Cantidad</label>
+<input
+    class="Inputllenar"
+    id="Cantidad"
+    type="number"
+    min="0"
+    step="1"
+    required
+    placeholder="Ingresar cantidad">
                     <button class="ButtonAceptar" type="submit">Aceptar</button>
                 </fieldset>
             </form>
@@ -85,8 +99,8 @@
     <footer>
         <p>&copy; 2026 SGRSI. Todos los derechos reservados.</p>
     </footer>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/inventario.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="../assets/js/inventario.js"></script>
 </body>
 
 </html>

@@ -1,255 +1,256 @@
-//Tomar datos para el cuadro de dialog
-const ButtonAgregar = document.getElementById("ButtonAgregarPC");
-const ButtonCerrarGestionarEquipos = document.getElementById("ButtonCerrarGestionarEquipos");
-const DialogGestionarEquipos = document.querySelector(".DialogGestionarEquipos");
 
-//tomar datos de la tabla de equipos
-const TbodyEquipos = document.getElementById("TbodyEquipos");
+const API_EQUIPOS = "../index.php?ruta=equipos";
+const API_SALONES = "../index.php?ruta=salones";
 
-//Tomar datos del formulario gestionar Equipos
-const FormGestionarEquipos = document.getElementById("FormGestionarEquipos");
+const tablaEquipos = document.getElementById("TbodyEquipos");
+const mensajeEquipos = document.getElementById("mensajeEquipos");
 
-//Tomar datos de los campos del formulario
-const EntradaPc = document.getElementById("Pc");
-const EntradaSalon = document.getElementById("Salon");
-const EntradaEstado = document.getElementById("Estado");
-const EntradaUrgencia = document.getElementById("Urgencia");
+const botonAgregar = document.getElementById("ButtonAgregarPC");
+const botonCerrar = document.getElementById("ButtonCerrarGestionarEquipos");
 
-//Auxiliar para guardar datos vinculados a la modificacion de un equipo
-let EquiposEnEdicion = null;
+const dialogEquipos = document.querySelector(".DialogGestionarEquipos");
+const formularioEquipos = document.getElementById("FormGestionarEquipos");
 
+const entradaPc = document.getElementById("Pc");
+const selectorSalon = document.getElementById("SalonExistente");
 
-//LocalStorage
+let salonesDisponibles = [];
 
-function GuardarEquiposLocal() {
+function mostrarMensaje(texto) {
+    mensajeEquipos.textContent = texto;
+}
 
-    const filas = TbodyEquipos.querySelectorAll("tr");
-
-    const Equipos = [];
-
-    filas.forEach(fila => {
-
-        const Equipo = {
-            pc: fila.cells[0].textContent,
-            salon: fila.cells[1].textContent,
-            estado: fila.cells[2].textContent,
-            urgencia: fila.cells[3].textContent
-        };
-
-        Equipos.push(Equipo);
-
+async function solicitarJSON(url, opciones = {}) {
+    const respuesta = await fetch(url, {
+        credentials: "same-origin",
+        ...opciones
     });
 
-    localStorage.setItem("equipos", JSON.stringify(Equipos));
-}
+    const texto = await respuesta.text();
 
-function CargarEquiposLocal() {
+    let json;
 
-    const EquiposGuardados = localStorage.getItem("equipos");
-
-    if (EquiposGuardados === null) {
-        return [];
+    try {
+        json = JSON.parse(texto);
+    } catch {
+        console.error("Respuesta PHP:", texto);
+        throw new Error(
+            "La API no devolvió JSON. Revisá F12 → Consola."
+        );
     }
 
-    return JSON.parse(EquiposGuardados);
+    if (!respuesta.ok) {
+        throw new Error(
+            json.mensaje ?? "Ocurrió un error en la API."
+        );
+    }
+
+    return json.datos;
 }
 
-function CargarTablaEquipos() {
+async function cargarSalones() {
+    const salones = await solicitarJSON(API_SALONES);
 
-    const Equipos = CargarEquiposLocal();
+    if (!Array.isArray(salones)) {
+        throw new Error("La lista de salones es inválida.");
+    }
 
-    Equipos.forEach(Equipo => {
-        AgregarFilaItemEquipos(Equipo);
+    salonesDisponibles = salones;
+
+    selectorSalon.replaceChildren();
+
+    const opcionInicial = document.createElement("option");
+    opcionInicial.value = "";
+    opcionInicial.textContent = "Seleccionar salón";
+    selectorSalon.appendChild(opcionInicial);
+
+    salones.forEach((salon, indice) => {
+        const opcion = document.createElement("option");
+
+        opcion.value = String(indice);
+        opcion.textContent =
+            `${salon.tipo_de_salon} - Salón ${salon.numero_de_salon}`;
+
+        selectorSalon.appendChild(opcion);
+    });
+}
+
+function agregarFilaEquipo(equipo) {
+    const fila = document.createElement("tr");
+
+    const columnas = [
+        equipo.numero_de_equipo,
+        equipo.tipo_de_salon,
+        equipo.numero_de_salon
+    ];
+
+    columnas.forEach((valor) => {
+        const celda = document.createElement("td");
+        celda.textContent = valor ?? "";
+        fila.appendChild(celda);
     });
 
+    const celdaAccion = document.createElement("td");
+
+    const botonEliminar = document.createElement("button");
+    botonEliminar.type = "button";
+    botonEliminar.className = "ButtonEliminar";
+    botonEliminar.textContent = "Eliminar";
+
+    botonEliminar.addEventListener("click", async () => {
+        await eliminarEquipo(equipo.numero_de_equipo, botonEliminar);
+    });
+
+    celdaAccion.appendChild(botonEliminar);
+    fila.appendChild(celdaAccion);
+
+    tablaEquipos.appendChild(fila);
 }
 
-//Gestion del estado del formulario
+async function cargarEquipos() {
+    tablaEquipos.replaceChildren();
+    mostrarMensaje("Cargando equipos...");
 
-function RecuperarDatosItemEquipos(filaItemEquipos){
-    const pc = filaItemEquipos.cells[0].textContent;
-    const salon = filaItemEquipos.cells[1].textContent;
-    const estado = filaItemEquipos.cells[2].textContent;
-    const urgencia = filaItemEquipos.cells[3].textContent;
+    try {
+        const equipos = await solicitarJSON(API_EQUIPOS);
 
-    const ItemEquipos = {
-        pc: pc,
-        salon: salon,
-        estado: estado,
-        urgencia: urgencia
+        if (!Array.isArray(equipos)) {
+            throw new Error("La API no devolvió una lista de equipos.");
+        }
+
+        equipos.forEach(agregarFilaEquipo);
+
+        mostrarMensaje(
+            equipos.length === 0
+                ? "No hay computadoras registradas."
+                : ""
+        );
+
+    } catch (error) {
+        console.error(error);
+        mostrarMensaje(error.message);
+    }
+}
+
+async function abrirAgregarEquipo() {
+    formularioEquipos.reset();
+    botonAgregar.disabled = true;
+
+    try {
+        await cargarSalones();
+
+        if (salonesDisponibles.length === 0) {
+            alert(
+                "No hay salones creados. El administrador debe registrar uno primero."
+            );
+            return;
+        }
+
+        dialogEquipos.showModal();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+    } finally {
+        botonAgregar.disabled = false;
+    }
+}
+
+async function agregarEquipo(evento) {
+    evento.preventDefault();
+
+    const numeroEquipo = Number(entradaPc.value);
+    const indiceSalon = Number(selectorSalon.value);
+
+    if (
+        !Number.isInteger(numeroEquipo) ||
+        numeroEquipo <= 0 ||
+        selectorSalon.value === "" ||
+        !salonesDisponibles[indiceSalon]
+    ) {
+        alert("Ingresá una PC y seleccioná un salón válido.");
+        return;
     }
 
-    return ItemEquipos;
-}
+    const salon = salonesDisponibles[indiceSalon];
 
-function ActualizarItemEquipos(filaItemEquipos, ItemEquipos){
-    filaItemEquipos.cells[0].textContent = ItemEquipos.pc;
-    filaItemEquipos.cells[1].textContent = ItemEquipos.salon;
-    filaItemEquipos.cells[2].textContent = ItemEquipos.estado;
-    filaItemEquipos.cells[3].textContent = ItemEquipos.urgencia;
-}
-
-function AbrirEditarItemEquipos(ItemEquipos){
-    EntradaPc.value = ItemEquipos.pc;
-    EntradaSalon.value = ItemEquipos.salon;
-    EntradaEstado.value = ItemEquipos.estado;
-    EntradaUrgencia.value = ItemEquipos.urgencia;
-
-    EntradaPc.readOnly = true;
-    EntradaSalon.readOnly = true;
-
-    DialogGestionarEquipos.showModal();
-}
-
-function EditarItemEquipos(EventoEditarIteam) {
-    const botonPresionado = EventoEditarIteam.currentTarget;
-
-    const filaItemEquipos = botonPresionado.closest('tr');
-
-    EquiposEnEdicion = filaItemEquipos;
-
-    const ItemEquipos = RecuperarDatosItemEquipos(filaItemEquipos);
-
-    AbrirEditarItemEquipos(ItemEquipos);
-}
-
-function EliminarItemEquipos(EventoEliminarIteam) {
-    const botonPresionado = EventoEliminarIteam.currentTarget;
-
-    const filaItemEquipos = botonPresionado.closest('tr');
-
-    filaItemEquipos.remove();
-
-    GuardarEquiposLocal();
-}
-
-//Limpia todos los campos del formulario
-function limpiarEstadoGestionarEquipos() {
-    EquiposEnEdicion = null;
-    EntradaPc.readOnly = false;
-    EntradaSalon.readOnly = false;
-    FormGestionarEquipos.reset();
-}
-
-function AbrirAgregarEquipos() {
-    limpiarEstadoGestionarEquipos();
-
-    //Muestra el diálogo
-    DialogGestionarEquipos.showModal();
-}
-
-function CerrarGestionarEquipos() {
-    limpiarEstadoGestionarEquipos();
-
-    //Cierra el dialog
-    DialogGestionarEquipos.close();
-}
-
-//Obtener datos del equipo
-function ObtenerDatosEquipo() {
-
-    const NuevoItemEquipos = {
-
-        pc: EntradaPc.value,
-
-        salon: EntradaSalon.value,
-
-        estado: EntradaEstado.value,
-
-        urgencia: EntradaUrgencia.value
-
+    const datos = {
+        numero_de_equipo: numeroEquipo,
+        tipo_de_salon: salon.tipo_de_salon,
+        numero_de_salon: Number(salon.numero_de_salon)
     };
 
-    return NuevoItemEquipos;
+    const botonAceptar = formularioEquipos.querySelector(
+        'button[type="submit"]'
+    );
+
+    botonAceptar.disabled = true;
+
+    try {
+        await solicitarJSON(API_EQUIPOS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token":
+                    sessionStorage.getItem("csrfToken") ?? ""
+            },
+            body: JSON.stringify(datos)
+        });
+
+        dialogEquipos.close();
+        formularioEquipos.reset();
+
+        await cargarEquipos();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+
+    } finally {
+        botonAceptar.disabled = false;
+    }
 }
 
-//Agregar fila item equipos
-function AgregarFilaItemEquipos(ItemEquipos){
+async function eliminarEquipo(numeroEquipo, boton) {
+    const confirmar = confirm(
+        `¿Querés eliminar la PC ${numeroEquipo}?`
+    );
 
-    const fila = document.createElement('tr');
-
-    const columnaPc = document.createElement('td');
-    columnaPc.textContent = ItemEquipos.pc;
-
-
-    const columnaSalon = document.createElement('td');
-    columnaSalon.textContent = ItemEquipos.salon;
-
-
-    const columnaEstado = document.createElement('td');
-    columnaEstado.textContent = ItemEquipos.estado;
-
-
-    const columnaUrgencia = document.createElement('td');
-    columnaUrgencia.textContent = ItemEquipos.urgencia;
-
-
-    const columnaAccion = document.createElement('td');
-    const DivAccion = document.createElement('div');
-    DivAccion.classList.add("DivAccion");
-
-    //Boton Editar
-
-    const botonEditar = document.createElement('button');
-    botonEditar.textContent = "Editar";
-    botonEditar.type = "button";
-    botonEditar.classList.add("ButtonEditar");
-
-    //Evento editar item
-    botonEditar.addEventListener("click", EditarItemEquipos);
-
-    //Boton Eliminar
-
-    const botonEliminar = document.createElement('button');
-    botonEliminar.textContent = "Eliminar";
-    botonEliminar.type = "button";
-    botonEliminar.classList.add("ButtonEliminar");
-
-    //Evento eliminar item
-    botonEliminar.addEventListener("click", EliminarItemEquipos);
-
-    DivAccion.appendChild(botonEditar);
-    DivAccion.appendChild(botonEliminar);
-
-    
-    columnaAccion.appendChild(DivAccion);
-
-
-    fila.appendChild(columnaPc);
-    fila.appendChild(columnaSalon);
-    fila.appendChild(columnaEstado);
-    fila.appendChild(columnaUrgencia);
-    fila.appendChild(columnaAccion);
-
-    TbodyEquipos.appendChild(fila);
-
-}
-
-//Ingresar nuevo item al equipo
-function IngresarItemEquipos(eventoForm){
-    eventoForm.preventDefault();
-
-    const ItemEquipos = ObtenerDatosEquipo();
-
-    if (EquiposEnEdicion === null){
-        AgregarFilaItemEquipos(ItemEquipos);
-    } else {
-        ActualizarItemEquipos(EquiposEnEdicion, ItemEquipos);
+    if (!confirmar) {
+        return;
     }
 
-    GuardarEquiposLocal();
+    boton.disabled = true;
 
-    CerrarGestionarEquipos();
+    try {
+        await solicitarJSON(API_EQUIPOS, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token":
+                    sessionStorage.getItem("csrfToken") ?? ""
+            },
+            body: JSON.stringify({
+                numero_de_equipo: numeroEquipo
+            })
+        });
 
+        await cargarEquipos();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+        boton.disabled = false;
+    }
 }
 
+botonAgregar.addEventListener("click", abrirAgregarEquipo);
 
+botonCerrar.addEventListener("click", () => {
+    dialogEquipos.close();
+});
 
-//EVENTOS BOTONES MODAL
+formularioEquipos.addEventListener("submit", agregarEquipo);
 
-FormGestionarEquipos.addEventListener("submit", IngresarItemEquipos);
-ButtonAgregar.addEventListener("click", AbrirAgregarEquipos);
-ButtonCerrarGestionarEquipos.addEventListener("click", CerrarGestionarEquipos);
-DialogGestionarEquipos.addEventListener("cancel", limpiarEstadoGestionarEquipos);
-
-CargarTablaEquipos();
+document.addEventListener("DOMContentLoaded", cargarEquipos);

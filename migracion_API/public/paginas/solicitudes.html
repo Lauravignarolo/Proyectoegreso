@@ -14,9 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
           rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/general.css">
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/solicitudes.css">
@@ -45,23 +43,21 @@
 
     <article class="ArticleTablaSolicitudes">
 
-        <table class="table table-striped">
+        <table class="TableSolicitudes">
+    <thead>
+        <tr>
+            <th>Id solicitud</th>
+            <th>Solicitud</th>
+            <th>Creada por</th>
+            <th>Fecha solicitada</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
 
-            <thead>
-                <tr>
-                    <th>ID solicitud</th>
-                    <th>Descripción</th>
-                    <th>Creada por</th>
-                    <th>Fecha solicitada</th>
-                </tr>
-            </thead>
+    <tbody id="tablaSolicitudes"></tbody>
+</table>
 
-            <tbody id="tablaSolicitudes">
-            </tbody>
-
-        </table>
-
-        <p id="mensajeSolicitudes" role="status"></p>
+<p id="mensajeSolicitudes" role="status"></p>
 
     </article>
 

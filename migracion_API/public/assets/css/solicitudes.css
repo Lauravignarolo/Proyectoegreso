@@ -13,6 +13,80 @@
     --Blanco: #f8f8fa;
     --Negro: #101010;
 }
+.TableSolicitudes {
+    width: 60%;
+}
+.SectionSolicitudes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2%;
+    flex-direction: column;
+    
+    
+}
+
+.ArticleSolicitudes{
+    background-color: var(--GrisClaro);
+    border: 1px solid var(--Gris);
+    padding: 8px;
+    width: 60%;
+}
+.ArticleSolicitudes header{
+    display: block;
+    color: var(--Azul);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.FieldsetSolicitudes{
+    width: 100%;
+}
+
+.TableSolicitudes tr,.TableSolicitudes th,.TableSolicitudes td{
+    border: 1px solid var(--Gris);
+    padding: 5px 15px 5px 15px;
+    text-align: center;
+    font-size: 1.2rem;
+}
+.TableSolicitudes thead{
+    background-color: var(--Azul);
+    color: var(--Blanco);
+}
+
+
+@media (max-width: 768px) {
+    
+.TableSolicitudes {
+    width: 20%;
+}
+
+.TableSolicitudes, tr, th, td{
+    font-size: 1.1rem;
+}
+
+    .ArticleSolicitudes{
+    width: 100%;
+    overflow-x: auto;
+    }
+
+}
+/*
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --Azul: #4A4C91;
+    --AzulClaro: #6d6fa3;
+    --AzulOscuro: #343576;
+    --DoradoClaro: #DFD398;
+    --GrisClaro: #eeeeee;
+    --Gris: #999999;
+    --GrisOscuro: #757575;
+    --Blanco: #f8f8fa;
+    --Negro: #101010;
+}
 
 .SectionSolicitudes{
     margin: 2%;
@@ -47,6 +121,9 @@
     padding: 2px;
 }
 
+
+
+
         
 @media (max-width: 768px) {
     .TableSolicitudes{
@@ -57,3 +134,4 @@
     overflow-x: auto;
     }
 }
+    */
