@@ -189,15 +189,6 @@ footer {
     align-items: center;
     margin-top: 5%;
 }
-.ABotones{
-    display: flex;
-    width: 33%;
-    margin-top: 2%;
-    margin-right: 52%;
-    border: 1px solid var(--Negro);
-    background-color: var(--Azul);
-    color: var(--Blanco);
-}
 
 
 

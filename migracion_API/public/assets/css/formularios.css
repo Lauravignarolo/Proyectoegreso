@@ -2,18 +2,6 @@
     box-sizing: border-box;
 }
 
-:root {
-    --Azul: #4A4C91;
-    --AzulClaro: #6d6fa3;
-    --AzulOscuro: #343576;
-    --DoradoClaro: #DFD398;
-    --GrisClaro: #eeeeee;
-    --Gris: #999999;
-    --GrisOscuro: #757575;
-    --Blanco: #f8f8fa;
-    --Negro: #101010;
-}
-
 
 .Inputllenar {
     background-color: var(--Blanco);
@@ -40,7 +28,6 @@ select {
 }
 
 fieldset {
-    display: flex;
     display: inline;
     border: none;
     width: 40%;
@@ -72,17 +59,12 @@ form {
 
 }
 
-.AEnviar {
-    width: 100%;
-}
-
 label {
     color: var(--Azul);
 }
 
 @media (max-width: 768px) {
     fieldset {
-    display: flex;
     display: inline;
     border: none;
     width: 60%;

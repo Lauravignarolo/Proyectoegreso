@@ -54,45 +54,6 @@ class SolicitudDAO
     }
 
     /**
-     * Lista las solicitudes ya cumplidas, con el técnico que las resolvió.
-     */
-    public function listarCumplidas(): array
-    {
-        $sql = "
-            SELECT
-                s.id_solicitud,
-                s.descripcion,
-                s.fecha_solicitada,
-                s_c.fecha_cumplimiento,
-                u.nombre,
-                u.apellido,
-                t.nombre AS tecnico_nombre,
-                t.apellido AS tecnico_apellido
-
-            FROM SOLICITUD AS s
-            INNER JOIN PIDE AS p
-                ON s.id_solicitud = p.id_solicitud
-            INNER JOIN USUARIO AS u
-                ON p.documento_identidad = u.documento_identidad
-            INNER JOIN SOLICITUD_CUMPLIDA AS s_c
-                ON s_c.id_solicitud = s.id_solicitud
-            INNER JOIN USUARIO AS t
-                ON t.documento_identidad = s_c.documento_identidad_tecnico
-
-            ORDER BY s_c.fecha_cumplimiento DESC
-        ";
-
-        $consulta = $this->conexion->prepare($sql);
-        $consulta->execute();
-
-        $solicitudes = $consulta->fetchAll(PDO::FETCH_ASSOC);
-
-        $consulta = null;
-
-        return $solicitudes;
-    }
-
-    /**
      * Registra una solicitud y la vincula al docente que la hizo.
      */
     public function registrar(

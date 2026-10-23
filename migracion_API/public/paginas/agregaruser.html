@@ -26,18 +26,18 @@
                 <fieldset>
                     <legend> REGISTRAR NUEVO USUARIO </legend>
 
-                    <label for="">Cedula</label>
-                    <input class="Inputllenar" type="text" name="cedula" required pattern="[1-9][0-9]{7}" maxlength="8" placeholder="Ingresar Cédula">
+                    <label for="cedula">Cedula</label>
+                    <input class="Inputllenar" type="text" id="cedula" name="cedula" required pattern="[1-9][0-9]{7}" maxlength="8" placeholder="Ingresar Cédula">
 
-                    <label for="">Nombre</label>
-                    <input class="Inputllenar" type="text" name="nombre" required placeholder="Ingresar Nombre">
-
-
-                    <label for="">Apellido</label>
-                    <input class="Inputllenar" type="text" name="apellido" required placeholder="Ingresar Apellido">
+                    <label for="nombre">Nombre</label>
+                    <input class="Inputllenar" type="text" id="nombre" name="nombre" required placeholder="Ingresar Nombre">
 
 
-                    <label for="">Contraseña</label>
+                    <label for="apellido">Apellido</label>
+                    <input class="Inputllenar" type="text" id="apellido" name="apellido" required placeholder="Ingresar Apellido">
+
+
+                    <label for="clave">Contraseña</label>
                     <input class="Inputllenar" type="password" id="clave"
                         name="clave" required minlength="12"
                         placeholder="Ingresar contraseña">
@@ -47,7 +47,7 @@
                         name="confirmarClave" required minlength="12"
                         placeholder="Repetir contraseña">
 
-                    <label for="">Tipo de Usuario</label>
+                    <label for="rol">Tipo de Usuario</label>
                     <select id="rol" name="rol" required>
                         <option value="" disabled selected>Seleccione un tipo de usuario</option>
                         <option value="docente">Docente</option>

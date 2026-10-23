@@ -84,29 +84,4 @@ class SalonDAO
             return false;
         }
     }
-
-    /**
-     * ¿Existe el salón indicado?
-     */
-    public function existe(string $tipoSalon, int $numeroSalon): bool
-    {
-        $sql = "
-            SELECT 1
-            FROM SALON
-            WHERE tipo_de_salon = :tipo_de_salon
-              AND numero_de_salon = :numero_de_salon
-        ";
-
-        $consulta = $this->conexion->prepare($sql);
-        $consulta->execute([
-            "tipo_de_salon" => $tipoSalon,
-            "numero_de_salon" => $numeroSalon
-        ]);
-
-        $existe = $consulta->fetchColumn() !== false;
-
-        $consulta = null;
-
-        return $existe;
-    }
 }
