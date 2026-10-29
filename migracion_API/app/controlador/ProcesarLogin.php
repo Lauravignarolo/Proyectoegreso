@@ -6,6 +6,7 @@ require_once RUTA_NUCLEO . "/Token.php";
 require_once RUTA_NUCLEO . "/Validacion.php";
 require_once RUTA_DAO . "/UsuarioDAO.php";
 require_once RUTA_SERVICIO . "/Autenticacion.php";
+require_once __DIR__ . "/../../vendor/autoload.php";
 
 /**
  * Controlador del recurso "login".
@@ -52,7 +53,19 @@ class ProcesarLogin
             RespuestaJSON::error("Usuario sin rol autorizado", 403);
         }
 
-        Sesion::iniciar($usuario, $rol);
+        $config = require __DIR__ . "/../../config/secretos.php";
+        $claveSecreta = $config["secreto"];
+
+        $ahora = time();
+
+        $claims = [
+        "sub" => $usuario->getCedula(), // ID del usuario autenticado
+        "rol" => $rol, // Rol del usuario
+        "exp" => $ahora + 3600, // Fecha de vencimiento del token
+        "ver" => 1 // Versión de la API
+        ];
+
+        $token = JWT::encode($claims, $claveSecreta, "HS256");
 
         RespuestaJSON::exito([
             "cedula" => $usuario->getCedula(),
