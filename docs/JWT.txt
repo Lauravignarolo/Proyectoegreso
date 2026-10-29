@@ -1,0 +1,11 @@
+#JWT implementacion por primera vez
+
+Al principio no entendi nada, porque en el documento no mencionaba nada sobre como instalarlo, 
+entonces despues de que el profe lo mencionara busque la forma de instalarlo con composer.
+
+la idea de usar JWT es evitar que quede guardada la informacion de los usuarios ediante session.
+
+con lo primero que empece fue darle un secreto al servidor en config\secretos.php y desde ProcesarLogin.php 
+se accede al secreto y a la informacion del usuario.
+
+despues se creo la clase AutorizaionJWT en AutorizaionJWT.php
