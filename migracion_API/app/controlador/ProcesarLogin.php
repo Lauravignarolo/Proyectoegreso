@@ -6,6 +6,7 @@ require_once RUTA_NUCLEO . "/Token.php";
 require_once RUTA_NUCLEO . "/Validacion.php";
 require_once RUTA_DAO . "/UsuarioDAO.php";
 require_once RUTA_SERVICIO . "/Autenticacion.php";
+require_once RUTA_NUCLEO . "/TokenJWT.php";
 
 /**
  * Controlador del recurso "login".
@@ -58,6 +59,7 @@ class ProcesarLogin
             "cedula" => $usuario->getCedula(),
             "rol" => $rol,
             "csrfToken" => Token::generar()
+            "token" => TokenJWT::generar($usuario->getCedula(), $rol)
         ]);
     }
 }

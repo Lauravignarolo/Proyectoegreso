@@ -5,6 +5,7 @@ require_once RUTA_NUCLEO . "/Sesion.php";
 require_once RUTA_NUCLEO . "/Token.php";
 require_once RUTA_NUCLEO . "/Validacion.php";
 require_once RUTA_DAO . "/SalonDAO.php";
+require_once RUTA_NUCLEO . "/TokenJWT.php";
 
 /**
  * Controlador del recurso "salones".
@@ -17,8 +18,6 @@ class ProcesarSalones
 {
     public function gestionar(string $metodo): void
     {
-        Sesion::exigirSesion();
-
         match ($metodo) {
             "GET" => $this->listar(),
             "POST" => $this->agregar(),
@@ -32,6 +31,8 @@ class ProcesarSalones
      */
     private function listar(): void
     {
+        Sesion::exigirSesion();
+
         $dao = new SalonDAO(Conexion::conectar());
 
         RespuestaJSON::exito($dao->listar());
@@ -42,8 +43,7 @@ class ProcesarSalones
      */
     private function agregar(): void
     {
-        Sesion::exigirRol("administrador");
-        Token::verificar();
+        TokenJWT::exigirRol("administrador")
 
         $datos = $this->cuerpo();
 
@@ -73,6 +73,7 @@ class ProcesarSalones
      */
     private function eliminar(): void
     {
+        Sesion::exigirSesion();
         Sesion::exigirRol("administrador");
         Token::verificar();
 
