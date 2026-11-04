@@ -22,6 +22,7 @@ class Conexion
             return self::$conexion;
         }
 
+        
         $host = $_ENV["DB_HOST"] ?? "localhost";
         $puerto = (int) ($_ENV["DB_PUERTO"] ?? 3306);
         $nombre = $_ENV["DB_NOMBRE"] ?? "";
