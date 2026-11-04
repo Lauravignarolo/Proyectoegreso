@@ -1,8 +1,5 @@
 <?php
 
-require_once __DIR__ . "/../config/config.php";
-require_once RUTA_VISTA . "/RespuestaJSON.php";
-
 header("Content-Type: application/json; charset=utf-8");
 header("X-Content-Type-Options: nosniff");
 
@@ -16,9 +13,12 @@ header("X-Content-Type-Options: nosniff");
  * el router queda como una tabla `ruta -> controlador`.
  */
 
-
+ini_set("display_errors", "0");
+ini_set("log_errors", "1");
 
 try {
+      require_once __DIR__ . "/../config/config.php";
+    require_once RUTA_VISTA . "/RespuestaJSON.php";
     $ruta = trim((string) ($_GET["ruta"] ?? ""));
     $metodo = strtoupper((string) ($_SERVER["REQUEST_METHOD"] ?? "GET"));
 
@@ -42,20 +42,27 @@ try {
 
     require_once RUTA_RUTAS . "/api.php";
 } catch (Throwable $error) {
-    error_log("[API] " . $error->getMessage() . " en " . $error->getFile() . ":" . $error->getLine());
 
-    // El detalle del error solo se muestra cuando APP_DEBUG está activo
-    // en el .env. En producción el cliente recibe un mensaje genérico.
-    $debug = filter_var($_ENV["APP_DEBUG"] ?? "false", FILTER_VALIDATE_BOOLEAN);
+    error_log(
+        "[API] " . $error->getMessage() .
+        " en " . $error->getFile() .
+        ":" . $error->getLine()
+    );
 
-    if ($debug) {
-        RespuestaJSON::error(
-            "Error: " . $error->getMessage() .
-            " | Archivo: " . $error->getFile() .
-            " | Línea: " . $error->getLine(),
-            500
-        );
-    }
+    $debug = filter_var(
+        $_ENV["APP_DEBUG"] ?? "false",
+        FILTER_VALIDATE_BOOLEAN
+    );
 
-    RespuestaJSON::error("Error interno del servidor", 500);
+    http_response_code(500);
+
+    echo json_encode([
+        "mensaje" => $debug
+            ? "Error: " . $error->getMessage() .
+              " | Archivo: " . $error->getFile() .
+              " | Línea: " . $error->getLine()
+            : "Error interno del servidor"
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
 }
