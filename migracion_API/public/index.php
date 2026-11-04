@@ -15,6 +15,7 @@ header("X-Content-Type-Options: nosniff");
  * La ruta y el verbo son las dos únicas entradas del protocolo, así que
  * el router queda como una tabla `ruta -> controlador`.
  */
+
 try {
     $ruta = trim((string) ($_GET["ruta"] ?? ""));
     $metodo = strtoupper((string) ($_SERVER["REQUEST_METHOD"] ?? "GET"));
