@@ -13,6 +13,7 @@
  *   app/rutas        -> tabla de ruteo de la API
  */
 
+
 define("RUTA_RAIZ", dirname(__DIR__));
 define("RUTA_APP", RUTA_RAIZ . "/app");
 define("RUTA_MODELO", RUTA_APP . "/modelo");
