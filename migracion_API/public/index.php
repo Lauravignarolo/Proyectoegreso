@@ -16,6 +16,8 @@ header("X-Content-Type-Options: nosniff");
  * el router queda como una tabla `ruta -> controlador`.
  */
 
+
+
 try {
     $ruta = trim((string) ($_GET["ruta"] ?? ""));
     $metodo = strtoupper((string) ($_SERVER["REQUEST_METHOD"] ?? "GET"));
