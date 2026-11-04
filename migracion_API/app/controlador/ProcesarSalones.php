@@ -6,6 +6,8 @@ require_once RUTA_NUCLEO . "/Token.php";
 require_once RUTA_NUCLEO . "/Validacion.php";
 require_once RUTA_DAO . "/SalonDAO.php";
 
+
+
 /**
  * Controlador del recurso "salones".
  *
