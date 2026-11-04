@@ -105,10 +105,10 @@ async function gestionarLogin(eventoFormulario) {
             default:
                 throw new Error("El usuario no tiene un rol válido.");
         }
-
-    } catch (error) {
-        window.alert(error.message);
-    }
+} catch (error) {
+    console.error("Error al iniciar sesión:", error.message);
+    window.alert(error.message);
+}
 }
 
 formularioLogin.addEventListener("submit", gestionarLogin);
