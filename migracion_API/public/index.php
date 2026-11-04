@@ -49,10 +49,7 @@ try {
         ":" . $error->getLine()
     );
 
-    $debug = filter_var(
-        $_ENV["APP_DEBUG"] ?? "false",
-        FILTER_VALIDATE_BOOLEAN
-    );
+$debug = true;
 
     http_response_code(500);
 
