@@ -38,9 +38,9 @@ class Conexion
                 PDO::ATTR_EMULATE_PREPARES => false
             ]);
         } catch (PDOException $error) {
-            error_log("[Conexion] " . $error->getMessage());
+         error_log("[Conexion] " . $error->getMessage());
 
-            RespuestaJSON::error("Error de conexión con la base de datos.", 500);
+    throw $error;
         }
 
         return self::$conexion;
